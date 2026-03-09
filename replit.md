@@ -1,41 +1,48 @@
-# BD News Card Maker
+# OTV Card Maker
 
 ## Overview
-A premium Bangladeshi TV news-style photo card generator web application. Users can create professional news cards similar to Jamuna TV, Bongo Wiki, Prothom Alo, and DBS News style graphics.
+Premium Bangladeshi TV news-style photo card generator for otv.online. Features flagship-level UI with motion graphics, Bengali font support, and 13 premium templates.
 
 ## Architecture
-- **Frontend**: React + TypeScript + Tailwind CSS + Shadcn UI
-- **Backend**: Express.js (minimal, mostly serves static files)
+- **Frontend**: React + TypeScript + Tailwind CSS + Shadcn UI + Framer Motion
+- **Backend**: Express.js (minimal, serves static files)
 - **Canvas Rendering**: HTML5 Canvas API for client-side card generation
 - **PDF Export**: jsPDF library
 - **Routing**: wouter
 
+## Branding
+- Domain: otv.online
+- Logo: /images/otv-logo.png (transparent PNG)
+- Theme: Deep dark navy (#04060e) with blue/cyan accents
+- All UI labels in Bengali (Noto Sans Bengali, Hind Siliguri)
+
 ## Key Features
-- 13 distinct news card templates (dark, light, quote, sports, breaking, etc.)
-- Upload main photo + channel logo (PNG transparency)
-- Editable headline (Bangla + English Unicode support)
-- Category badge selection (JUSTICE, NATIONAL, WORLD, BREAKING, etc.)
+- 13 premium news card templates
+- Upload main photo + channel logo
+- Bengali + English headline editing
+- Category badge with Bengali labels
 - Via text customization
-- Person name/title fields for quote-style cards
-- Accent color picker
-- Live canvas preview (1200x1200px)
-- Download as PNG, JPG, or A4 PDF
-- Free/Pro toggle (UI-only, Pro removes watermark)
-- Responsive design for mobile and desktop
-- Bengali font support (Noto Sans Bengali, Hind Siliguri)
-- Templated.io API key placeholder for automation
+- Person name/title for quote cards
+- Accent color picker (8 colors with Bengali names)
+- Live canvas preview with animated loading
+- Download PNG / JPG / PDF (A4)
+- Free/Pro toggle (watermark control)
+- Floating particle animations
+- Tab-based editor (edit / style tabs)
+- Framer Motion animations throughout
 
 ## File Structure
-- `client/src/pages/home.tsx` - Main page with editor UI and preview
+- `client/src/pages/home.tsx` - Main page with premium UI
 - `client/src/lib/templates.ts` - 13 template render functions
 - `client/src/lib/canvas-utils.ts` - Canvas drawing utilities
 - `client/src/App.tsx` - Router setup
+- `client/public/images/otv-logo.png` - OTV logo (transparent)
+- `attached_assets/otv_1773042288152.jpg` - Original OTV logo
 
 ## Fonts
-- Noto Sans Bengali (Bengali text)
+- Noto Sans Bengali (primary Bengali font, Facebook-compatible)
 - Hind Siliguri (Bengali fallback)
 - Montserrat (Headlines, English text)
-- Open Sans (UI text)
 
 ## Template IDs
 jamuna-dark, national-dark, quote-card, clean-news, dual-quote, world-report, breaking-red, sports-green, opinion-blue, investigation, social-modern, classic-formal, minimal-light
