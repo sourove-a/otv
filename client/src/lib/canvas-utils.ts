@@ -769,6 +769,383 @@ export function drawGlassBadge(
   ctx.fillText(text, x, y + 1);
 }
 
+function drawPremiumSparkle(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const r = size * 0.5;
+  const innerR = r * 0.25;
+  const points = 4;
+
+  ctx.shadowColor = "rgba(255,215,0,0.8)";
+  ctx.shadowBlur = size * 0.6;
+
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+  grad.addColorStop(0, "#fffbe6");
+  grad.addColorStop(0.3, "#ffd700");
+  grad.addColorStop(0.7, "#ffaa00");
+  grad.addColorStop(1, "rgba(255,170,0,0)");
+  ctx.fillStyle = grad;
+
+  ctx.beginPath();
+  for (let i = 0; i < points * 2; i++) {
+    const angle = (i * Math.PI) / points - Math.PI / 2;
+    const radius = i % 2 === 0 ? r : innerR;
+    const px = x + Math.cos(angle) * radius;
+    const py = y + Math.sin(angle) * radius;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.12, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPremiumFire(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const s = size * 0.5;
+
+  ctx.shadowColor = "rgba(255,100,0,0.7)";
+  ctx.shadowBlur = size * 0.5;
+
+  const outerGrad = ctx.createRadialGradient(x, y + s * 0.2, 0, x, y - s * 0.3, s * 1.2);
+  outerGrad.addColorStop(0, "#fff7a0");
+  outerGrad.addColorStop(0.3, "#ffcc00");
+  outerGrad.addColorStop(0.6, "#ff6600");
+  outerGrad.addColorStop(1, "rgba(255,0,0,0)");
+
+  ctx.fillStyle = outerGrad;
+  ctx.beginPath();
+  ctx.moveTo(x, y - s);
+  ctx.bezierCurveTo(x + s * 0.3, y - s * 0.6, x + s * 0.7, y - s * 0.2, x + s * 0.5, y + s * 0.3);
+  ctx.bezierCurveTo(x + s * 0.6, y + s * 0.1, x + s * 0.4, y + s * 0.6, x, y + s * 0.7);
+  ctx.bezierCurveTo(x - s * 0.4, y + s * 0.6, x - s * 0.6, y + s * 0.1, x - s * 0.5, y + s * 0.3);
+  ctx.bezierCurveTo(x - s * 0.7, y - s * 0.2, x - s * 0.3, y - s * 0.6, x, y - s);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  const innerGrad = ctx.createRadialGradient(x, y + s * 0.15, 0, x, y - s * 0.1, s * 0.6);
+  innerGrad.addColorStop(0, "rgba(255,255,220,0.9)");
+  innerGrad.addColorStop(0.5, "rgba(255,200,50,0.5)");
+  innerGrad.addColorStop(1, "rgba(255,150,0,0)");
+  ctx.fillStyle = innerGrad;
+  ctx.beginPath();
+  ctx.moveTo(x, y - s * 0.4);
+  ctx.bezierCurveTo(x + s * 0.2, y - s * 0.2, x + s * 0.25, y + s * 0.1, x, y + s * 0.35);
+  ctx.bezierCurveTo(x - s * 0.25, y + s * 0.1, x - s * 0.2, y - s * 0.2, x, y - s * 0.4);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPremiumCrown(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const s = size * 0.5;
+
+  ctx.shadowColor = "rgba(255,215,0,0.6)";
+  ctx.shadowBlur = size * 0.4;
+
+  const grad = ctx.createLinearGradient(x - s, y - s * 0.5, x + s, y + s * 0.5);
+  grad.addColorStop(0, "#ffd700");
+  grad.addColorStop(0.3, "#ffec80");
+  grad.addColorStop(0.5, "#ffd700");
+  grad.addColorStop(0.7, "#daa520");
+  grad.addColorStop(1, "#b8860b");
+
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(x - s, y + s * 0.4);
+  ctx.lineTo(x - s, y - s * 0.2);
+  ctx.lineTo(x - s * 0.5, y + s * 0.05);
+  ctx.lineTo(x, y - s * 0.5);
+  ctx.lineTo(x + s * 0.5, y + s * 0.05);
+  ctx.lineTo(x + s, y - s * 0.2);
+  ctx.lineTo(x + s, y + s * 0.4);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(180,130,20,0.6)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  const jewels = [
+    { cx: x, cy: y - s * 0.1, color: "#ff0040", r: s * 0.12 },
+    { cx: x - s * 0.5, cy: y + s * 0.05, color: "#00bfff", r: s * 0.08 },
+    { cx: x + s * 0.5, cy: y + s * 0.05, color: "#00ff80", r: s * 0.08 },
+  ];
+  for (const j of jewels) {
+    const jGrad = ctx.createRadialGradient(j.cx - j.r * 0.3, j.cy - j.r * 0.3, 0, j.cx, j.cy, j.r);
+    jGrad.addColorStop(0, "rgba(255,255,255,0.9)");
+    jGrad.addColorStop(0.4, j.color);
+    jGrad.addColorStop(1, j.color);
+    ctx.fillStyle = jGrad;
+    ctx.beginPath();
+    ctx.arc(j.cx, j.cy, j.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.3)";
+  ctx.fillRect(x - s, y + s * 0.3, s * 2, s * 0.1);
+
+  ctx.restore();
+}
+
+function drawPremiumHeart(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const s = size * 0.45;
+
+  ctx.shadowColor = "rgba(255,50,80,0.6)";
+  ctx.shadowBlur = size * 0.5;
+
+  const grad = ctx.createRadialGradient(x - s * 0.2, y - s * 0.3, 0, x, y, s * 1.3);
+  grad.addColorStop(0, "#ff6b8a");
+  grad.addColorStop(0.4, "#ff1744");
+  grad.addColorStop(1, "#c51162");
+  ctx.fillStyle = grad;
+
+  ctx.beginPath();
+  ctx.moveTo(x, y + s * 0.8);
+  ctx.bezierCurveTo(x - s * 1.5, y - s * 0.1, x - s * 0.8, y - s * 1.1, x, y - s * 0.4);
+  ctx.bezierCurveTo(x + s * 0.8, y - s * 1.1, x + s * 1.5, y - s * 0.1, x, y + s * 0.8);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  const shineGrad = ctx.createRadialGradient(x - s * 0.35, y - s * 0.35, 0, x - s * 0.2, y - s * 0.2, s * 0.5);
+  shineGrad.addColorStop(0, "rgba(255,255,255,0.6)");
+  shineGrad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = shineGrad;
+  ctx.beginPath();
+  ctx.ellipse(x - s * 0.3, y - s * 0.3, s * 0.25, s * 0.2, -0.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPremiumLightning(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const s = size * 0.5;
+
+  ctx.shadowColor = "rgba(100,200,255,0.8)";
+  ctx.shadowBlur = size * 0.6;
+
+  const grad = ctx.createLinearGradient(x, y - s, x, y + s);
+  grad.addColorStop(0, "#80d8ff");
+  grad.addColorStop(0.3, "#40c4ff");
+  grad.addColorStop(0.6, "#00b0ff");
+  grad.addColorStop(1, "#0091ea");
+  ctx.fillStyle = grad;
+
+  ctx.beginPath();
+  ctx.moveTo(x + s * 0.1, y - s);
+  ctx.lineTo(x - s * 0.4, y - s * 0.05);
+  ctx.lineTo(x + s * 0.05, y - s * 0.05);
+  ctx.lineTo(x - s * 0.15, y + s);
+  ctx.lineTo(x + s * 0.45, y + s * 0.05);
+  ctx.lineTo(x, y + s * 0.05);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  ctx.beginPath();
+  ctx.moveTo(x + s * 0.05, y - s * 0.8);
+  ctx.lineTo(x - s * 0.2, y - s * 0.1);
+  ctx.lineTo(x + s * 0.02, y - s * 0.1);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPremiumStar(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const r = size * 0.5;
+  const innerR = r * 0.4;
+  const points = 5;
+
+  ctx.shadowColor = "rgba(255,215,0,0.7)";
+  ctx.shadowBlur = size * 0.5;
+
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+  grad.addColorStop(0, "#fffde7");
+  grad.addColorStop(0.3, "#ffd54f");
+  grad.addColorStop(0.7, "#ffb300");
+  grad.addColorStop(1, "rgba(255,160,0,0.3)");
+  ctx.fillStyle = grad;
+
+  ctx.beginPath();
+  for (let i = 0; i < points * 2; i++) {
+    const angle = (i * Math.PI) / points - Math.PI / 2;
+    const radius = i % 2 === 0 ? r : innerR;
+    const px = x + Math.cos(angle) * radius;
+    const py = y + Math.sin(angle) * radius;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.beginPath();
+  ctx.arc(x - r * 0.15, y - r * 0.15, r * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPremiumVerified(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const r = size * 0.45;
+
+  ctx.shadowColor = "rgba(30,136,229,0.7)";
+  ctx.shadowBlur = size * 0.4;
+
+  const grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 0, x, y, r);
+  grad.addColorStop(0, "#42a5f5");
+  grad.addColorStop(0.5, "#1e88e5");
+  grad.addColorStop(1, "#1565c0");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = size * 0.08;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.35, y + r * 0.05);
+  ctx.lineTo(x - r * 0.05, y + r * 0.35);
+  ctx.lineTo(x + r * 0.4, y - r * 0.3);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawPremiumThumbsUp(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const s = size * 0.45;
+
+  ctx.shadowColor = "rgba(255,193,7,0.5)";
+  ctx.shadowBlur = size * 0.3;
+
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, s * 1.2);
+  grad.addColorStop(0, "#ffecb3");
+  grad.addColorStop(0.5, "#ffc107");
+  grad.addColorStop(1, "#ff8f00");
+  ctx.fillStyle = grad;
+
+  ctx.beginPath();
+  ctx.moveTo(x - s * 0.1, y - s * 0.7);
+  ctx.bezierCurveTo(x - s * 0.15, y - s * 0.9, x + s * 0.15, y - s * 0.9, x + s * 0.2, y - s * 0.6);
+  ctx.lineTo(x + s * 0.5, y - s * 0.6);
+  ctx.bezierCurveTo(x + s * 0.65, y - s * 0.6, x + s * 0.65, y - s * 0.3, x + s * 0.5, y - s * 0.3);
+  ctx.bezierCurveTo(x + s * 0.6, y - s * 0.3, x + s * 0.6, y - s * 0.05, x + s * 0.45, y - s * 0.05);
+  ctx.bezierCurveTo(x + s * 0.55, y - s * 0.05, x + s * 0.55, y + s * 0.2, x + s * 0.4, y + s * 0.2);
+  ctx.lineTo(x - s * 0.1, y + s * 0.2);
+  ctx.lineTo(x - s * 0.1, y - s * 0.7);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = grad;
+  roundedRect(ctx, x - s * 0.5, y - s * 0.05, s * 0.35, s * 0.75, s * 0.08);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPremiumWow(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const r = size * 0.45;
+
+  ctx.shadowColor = "rgba(255,193,7,0.5)";
+  ctx.shadowBlur = size * 0.3;
+
+  const grad = ctx.createRadialGradient(x - r * 0.2, y - r * 0.2, 0, x, y, r);
+  grad.addColorStop(0, "#fff9c4");
+  grad.addColorStop(0.5, "#fdd835");
+  grad.addColorStop(1, "#f9a825");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#5d4037";
+  ctx.beginPath();
+  ctx.arc(x - r * 0.3, y - r * 0.15, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + r * 0.3, y - r * 0.15, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#5d4037";
+  ctx.beginPath();
+  ctx.ellipse(x, y + r * 0.3, r * 0.15, r * 0.22, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#3e2723";
+  ctx.beginPath();
+  ctx.ellipse(x, y + r * 0.32, r * 0.12, r * 0.18, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+const EMOJI_RENDERERS: Record<string, (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, opacity: number) => void> = {
+  "\u2728": drawPremiumSparkle,
+  "\u2B50": drawPremiumStar,
+  "\u26A1": drawPremiumLightning,
+  "\uD83D\uDD25": drawPremiumFire,
+  "\uD83D\uDC51": drawPremiumCrown,
+  "\u2764\uFE0F": drawPremiumHeart,
+  "\uD83D\uDC9C": drawPremiumHeart,
+  "\u2764": drawPremiumHeart,
+  "\uD83C\uDF1F": drawPremiumStar,
+  "\uD83D\uDCAF": drawPremiumVerified,
+  "\uD83D\uDE0D": drawPremiumWow,
+  "\uD83D\uDC4D": drawPremiumThumbsUp,
+  "\u2705": drawPremiumVerified,
+  "\uD83D\uDE2E": drawPremiumWow,
+  "\uD83D\uDCA0": drawPremiumSparkle,
+  "\uD83D\uDD36": drawPremiumStar,
+  "\uD83C\uDF89": drawPremiumSparkle,
+  "\uD83C\uDF8A": drawPremiumSparkle,
+  "\uD83C\uDF86": drawPremiumStar,
+  "\uD83D\uDE80": drawPremiumLightning,
+  "\uD83E\uDD16": drawPremiumVerified,
+  "\uD83D\uDD2E": drawPremiumSparkle,
+  "\uD83D\uDEA8": drawPremiumFire,
+  "\u26A0\uFE0F": drawPremiumLightning,
+  "\uD83D\uDD34": drawPremiumFire,
+  "\uD83D\uDCAC": drawPremiumVerified,
+  "\uD83C\uDF38": drawPremiumHeart,
+  "\uD83C\uDF3C": drawPremiumStar,
+  "\uD83E\uDD8B": drawPremiumSparkle,
+  "\uD83D\uDCF0": drawPremiumVerified,
+  "\u270D\uFE0F": drawPremiumSparkle,
+  "\uD83D\uDCDD": drawPremiumVerified,
+};
+
 export function drawDecorativeEmoji(
   ctx: CanvasRenderingContext2D,
   emoji: string,
@@ -780,30 +1157,29 @@ export function drawDecorativeEmoji(
   ctx.save();
 
   if (glow) {
-    const bubbleR = size * 0.7;
+    const bubbleR = size * 0.6;
     const bubbleGrad = ctx.createRadialGradient(x, y, 0, x, y, bubbleR);
-    bubbleGrad.addColorStop(0, "rgba(255,255,255,0.12)");
-    bubbleGrad.addColorStop(0.7, "rgba(255,255,255,0.05)");
+    bubbleGrad.addColorStop(0, "rgba(255,255,255,0.08)");
+    bubbleGrad.addColorStop(0.6, "rgba(255,255,255,0.03)");
     bubbleGrad.addColorStop(1, "transparent");
     ctx.fillStyle = bubbleGrad;
     ctx.beginPath();
     ctx.arc(x, y, bubbleR, 0, Math.PI * 2);
     ctx.fill();
-
-    ctx.strokeStyle = "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(x, y, bubbleR * 0.85, 0, Math.PI * 2);
-    ctx.stroke();
   }
 
-  ctx.globalAlpha = opacity;
-  ctx.font = `${size}px sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(emoji, x, y);
+  const renderer = EMOJI_RENDERERS[emoji];
+  if (renderer) {
+    renderer(ctx, x, y, size, opacity);
+  } else {
+    ctx.globalAlpha = opacity;
+    ctx.font = `${size}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(emoji, x, y);
+    ctx.globalAlpha = 1;
+  }
 
-  ctx.globalAlpha = 1;
   ctx.restore();
 }
 

@@ -33,6 +33,20 @@ import {
   BENGALI_FONT,
 } from "./canvas-utils";
 
+// ─── Bengali Category Mapping ──────────────────────────────────────────────
+const CAT_BN: Record<string, string> = {
+  JUSTICE: "বিচার", NATIONAL: "জাতীয়", WORLD: "বিশ্ব",
+  BREAKING: "ব্রেকিং", SPORTS: "খেলা", POLITICS: "রাজনীতি",
+  ENTERTAINMENT: "বিনোদন", INVESTIGATION: "অনুসন্ধান",
+  OPINION: "মতামত", TRENDING: "ট্রেন্ডিং", CRIME: "অপরাধ",
+  EDUCATION: "শিক্ষা", HEALTH: "স্বাস্থ্য", ECONOMY: "অর্থনীতি",
+  TECHNOLOGY: "প্রযুক্তি", CULTURE: "সংস্কৃতি", FEATURE: "বিশেষ",
+  "BREAKING NEWS": "ব্রেকিং নিউজ",
+};
+function catBn(cat: string): string {
+  return CAT_BN[cat?.toUpperCase()] ?? cat ?? "";
+}
+
 export interface CardData {
   headline: string;
   headline2: string;
@@ -481,7 +495,7 @@ function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: numb
   drawAccentBar(ctx, 60, h * 0.15, 50, 4, data.highlightColor || "#FFD700", true);
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", data.badgeColor || data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 32);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.17, "transparent", data.badgeColor || data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 32);
 
   const hlEnd = drawHeadlineWithHighlight(
     ctx, data.headline, 60, h * 0.22, w - 120, 68, data.headlineColor || "#ffffff", data.highlightColor || "#FFD700", 84, "left", hlFont(data), data.highlightWords
@@ -492,55 +506,157 @@ function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: numb
   drawDateLine(ctx, data, 60, h - 90, "rgba(255,255,255,0.3)");
   drawUserTextures(ctx, data, w, h);
 
-  drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
-  drawPaperTexture(ctx, w, h, "#f8f3eb", 0.03);
-  drawEditorialGrid(ctx, 0, 0, w, h * 0.5, 45, "rgba(60,50,30,0.035)", "down");
-  drawSandyGrain(ctx, w, h, 0.025, true);
+  const accent = data.highlightColor || "#FFD700";
 
-  ctx.save();
-  ctx.font = `300 280px Georgia, serif`;
-  ctx.fillStyle = "rgba(200,168,50,0.08)";
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.fillText("\u201C", 30, -30);
-  ctx.restore();
+  // Dark navy gradient background
+  const bgGrad = createGradient(ctx, 0, 0, w, h, [
+    [0, "#07101f"], [0.5, "#0a1628"], [1, "#060d1a"]
+  ]);
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
 
-  drawAccentBar(ctx, 60, 55, 50, 5, data.highlightColor || "#FFD700", true);
+  // Subtle noise grain
+  drawNoiseOverlay(ctx, w, h, 0.04);
 
-  const quoteOrHeadline = data.quoteText || data.headline;
-  ctx.font = `700 54px ${bnFont(data)}`;
-  ctx.fillStyle = "#1a1a1a";
-  ctx.textBaseline = "top";
-  const endY = wrapText(ctx, quoteOrHeadline, 60, 80, w * 0.55, 72, "left");
+  // Decorative radial glow behind quote area
+  const glow = ctx.createRadialGradient(w * 0.3, h * 0.4, 0, w * 0.3, h * 0.4, w * 0.5);
+  glow.addColorStop(0, "rgba(30,80,160,0.18)");
+  glow.addColorStop(1, "transparent");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, w, h);
 
-  drawAccentBar(ctx, 60, endY + 15, 80, 4, data.highlightColor || "#FFD700");
-
-  ctx.font = `700 30px ${bnFont(data)}`;
-  ctx.fillStyle = "#1a1a1a";
-  ctx.textAlign = "left";
-  ctx.fillText(data.personName || data.category, 60, endY + 35);
-
-  ctx.font = `400 22px ${bnFont(data)}`;
-  ctx.fillStyle = "#666";
-  ctx.fillText(data.personTitle || data.viaText, 60, endY + 72);
-  drawDateLine(ctx, data, 60, endY + 100, "#999");
-
+  // Right-side photo (full height portrait)
+  const photoX = w * 0.52;
+  const photoW = w * 0.48;
   if (data.mainPhoto) {
-    drawPhoto(ctx, data, w * 0.3, h * 0.48, w * 0.7, h * 0.52, 8);
-    const fadeGrad = createGradient(ctx, w * 0.3, h * 0.48, w * 0.42, h * 0.48, [
-      [0, "#f8f3eb"], [1, "transparent"]
+    drawPhoto(ctx, data, photoX, 0, photoW, h, 0);
+    // Gradient fade: photo → dark on left edge
+    const photoFade = createGradient(ctx, photoX, 0, photoX + w * 0.2, 0, [
+      [0, "#0a1628"], [1, "transparent"]
     ]);
-    ctx.fillStyle = fadeGrad;
-    ctx.fillRect(w * 0.3, h * 0.48, w * 0.12, h * 0.52);
+    ctx.fillStyle = photoFade;
+    ctx.fillRect(photoX, 0, w * 0.2, h);
+    // Dark vignette top + bottom on photo
+    const vigTop = createGradient(ctx, 0, 0, 0, h * 0.25, [
+      [0, "rgba(7,16,31,0.7)"], [1, "transparent"]
+    ]);
+    ctx.fillStyle = vigTop;
+    ctx.fillRect(photoX, 0, photoW, h * 0.25);
+    const vigBot = createGradient(ctx, 0, h * 0.75, 0, h, [
+      [0, "transparent"], [1, "rgba(7,16,31,0.8)"]
+    ]);
+    ctx.fillStyle = vigBot;
+    ctx.fillRect(photoX, h * 0.75, photoW, h * 0.25);
+  } else {
+    // No photo — subtle right-side accent
+    const rGlow = ctx.createRadialGradient(w * 0.78, h * 0.5, 0, w * 0.78, h * 0.5, w * 0.3);
+    rGlow.addColorStop(0, "rgba(40,80,180,0.25)");
+    rGlow.addColorStop(1, "transparent");
+    ctx.fillStyle = rGlow;
+    ctx.fillRect(0, 0, w, h);
   }
 
-  drawLogo(ctx, data.channelLogo, 50, h - 80, 140, 55);
-  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
+  // Top accent bar
+  const accentGrad = createGradient(ctx, 0, 0, w * 0.55, 0, [
+    [0, accent], [0.7, accent], [1, "transparent"]
+  ]);
+  ctx.fillStyle = accentGrad;
+  ctx.fillRect(0, 0, w * 0.55, 5);
+
+  // Large decorative quotation mark
+  ctx.save();
+  ctx.font = `700 220px Georgia, "Times New Roman", serif`;
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.18;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("\u201C", 40, -30);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  // Quote / headline text
+  const quoteOrHeadline = data.quoteText || data.headline;
+  const textW = w * 0.49;
+  const textX = 55;
+  const textStartY = 80;
+
+  ctx.font = `700 48px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  const endY = wrapText(ctx, quoteOrHeadline, textX, textStartY, textW, 68, "left");
+
+  // Closing quote mark (small)
+  ctx.save();
+  ctx.font = `700 80px Georgia, serif`;
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = 0.5;
+  ctx.fillText("\u201D", textX + 10, endY + 4);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  // Separator line
+  const sepY = endY + 60;
+  drawAccentBar(ctx, textX, sepY, 70, 3, accent);
+
+  // Person name box (bordered)
+  const nameY = sepY + 18;
+  const personName = data.personName || "";
+  const personTitle = data.personTitle || data.viaText || "";
+
+  if (personName) {
+    ctx.font = `700 26px ${bnFont(data)}`;
+    const nameW = ctx.measureText(personName).width;
+    const boxPadX = 16, boxPadY = 8;
+    const boxW = Math.min(nameW + boxPadX * 2, textW);
+    const boxH = 44;
+
+    // Box background
+    ctx.fillStyle = "rgba(255,215,0,0.1)";
+    roundedRect(ctx, textX, nameY, boxW, boxH, 6);
+    ctx.fill();
+    // Box border
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    roundedRect(ctx, textX, nameY, boxW, boxH, 6);
+    ctx.stroke();
+
+    ctx.fillStyle = accent;
+    ctx.textBaseline = "middle";
+    ctx.fillText(personName, textX + boxPadX, nameY + boxH / 2);
+  }
+
+  if (personTitle) {
+    ctx.font = `400 22px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.textBaseline = "top";
+    ctx.fillText(personTitle, textX, nameY + (personName ? 54 : 0));
+  }
+
+  // Bottom: Logo + source
+  const bottomY = h - 70;
+  drawLogo(ctx, data.channelLogo, textX - 5, bottomY, 140, 52);
+
+  if (data.viaText && data.viaText !== personTitle) {
+    ctx.font = `400 20px ${SANS_FONT}`;
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    ctx.fillText(data.viaText, textX + 150, bottomY + 26);
+  }
+
+  // Bottom accent bar (left portion)
+  const botGrad = createGradient(ctx, 0, 0, w * 0.55, 0, [
+    [0, accent], [0.7, accent], [1, "transparent"]
+  ]);
+  ctx.fillStyle = botGrad;
+  ctx.fillRect(0, h - 5, w * 0.55, 5);
+
   drawOtvWatermark(ctx, data);
 }
 
@@ -565,7 +681,7 @@ function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   ctx.font = `400 22px ${SANS_FONT}`;
   ctx.fillStyle = "#888";
   ctx.textAlign = "left";
-  ctx.fillText(`${data.viaText} | ${data.category}`, 80, endY + 25);
+  ctx.fillText(`${data.viaText} | ${catBn(data.category)}`, 80, endY + 25);
 
   if (data.mainPhoto) {
     drawPhoto(ctx, data, 0, h * 0.52, w, h * 0.48);
@@ -657,13 +773,12 @@ function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawAccentBar(ctx, 60, h * 0.14, 45, 4, data.highlightColor || "#FFD700", true);
-  drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", data.badgeColor || data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 30);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.16, "transparent", data.badgeColor || data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 30);
 
   drawHeadlineWithHighlight(
     ctx, data.headline, 60, h * 0.21, w - 120, 62, data.headlineColor || "#ffffff", data.highlightColor || "#FFD700", 78, "left", hlFont(data)
   );
 
-  drawPhotoCredit(ctx, "Image \u2014 Collected", w - 25, h - 60);
   drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
@@ -697,7 +812,7 @@ function renderWorldReport(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  drawBadge(ctx, data.category, w / 2, h * 0.16, data.highlightColor || "#FFD700", "#000", undefined, 32);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.16, data.highlightColor || "#FFD700", "#000", undefined, 32);
 
   drawHeadlineWithHighlight(
     ctx, data.headline, 60, h * 0.22, w - 120, 64, "#ffffff", data.highlightColor || "#FFD700", 80, "left", hlFont(data)
@@ -726,7 +841,7 @@ function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   drawLogo(ctx, data.channelLogo, 50, 30, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 40);
-  drawBadge(ctx, "BREAKING", w / 2, h * 0.14, "#cc0000", "#ffffff", undefined, 38);
+  drawBadge(ctx, "ব্রেকিং", w / 2, h * 0.14, "#cc0000", "#ffffff", undefined, 38);
 
   ctx.font = `900 72px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
@@ -789,7 +904,7 @@ function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  drawBadge(ctx, data.category || "SPORTS", w / 2, h * 0.12, "#00c853", "#ffffff", undefined, 30);
+  drawBadge(ctx, catBn(data.category || "SPORTS"), w / 2, h * 0.12, "#00c853", "#ffffff", undefined, 30);
   drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.17, w - 120, 60, "#ffffff", "#00e676", 76, data.textAlign || "left", hlFont(data), data.highlightWords);
   drawUserTextures(ctx, data, w, h);
   drawAccentBar(ctx, 0, h - 5, w, 5, "#00e676", true);
@@ -885,10 +1000,9 @@ function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: n
 
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  drawBadge(ctx, data.category || "INVESTIGATION", w / 2, h * 0.15, "#9c27b0", "#ffffff", undefined, 28);
+  drawBadge(ctx, catBn(data.category || "INVESTIGATION"), w / 2, h * 0.15, "#9c27b0", "#ffffff", undefined, 28);
   drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#e0c0ff", "#d580ff", 78, data.textAlign || "left", hlFont(data), data.highlightWords);
   drawUserTextures(ctx, data, w, h);
-  drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawAccentBar(ctx, 0, h - 5, w, 5, "#9c27b0", true);
   drawOtvWatermark(ctx, data);
 }
@@ -910,7 +1024,7 @@ function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: nu
 
   drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
   drawViaText(ctx, data.viaText, w - 50, 60);
-  drawBadge(ctx, data.category, w / 2, h * 0.18, "rgba(255,255,255,0.15)", "#ffffff", "rgba(255,255,255,0.3)", 28);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.18, "rgba(255,255,255,0.15)", "#ffffff", "rgba(255,255,255,0.3)", 28);
 
   ctx.font = `900 70px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
@@ -944,7 +1058,7 @@ function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: n
   drawLogo(ctx, data.channelLogo, 60, 55, 130, 50);
   drawViaText(ctx, data.viaText, w - 60, 60);
   drawAccentBar(ctx, w / 2 - 40, h * 0.12, 80, 3, "#d4af37", true);
-  drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", "#d4af37", "#d4af37", 28);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.16, "transparent", "#d4af37", "#d4af37", 28);
 
   ctx.font = `800 60px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
@@ -987,7 +1101,7 @@ function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 40, 120, w * 0.48, 70, "left");
 
-  drawBadge(ctx, data.category, 40 + 60, endY + 30, data.highlightColor || "#FFD700", "#000", undefined, 24);
+  drawBadge(ctx, catBn(data.category), 40 + 60, endY + 30, data.highlightColor || "#FFD700", "#000", undefined, 24);
 
   ctx.font = `400 20px ${SANS_FONT}`;
   ctx.fillStyle = "#999";
@@ -1154,7 +1268,7 @@ function renderNewsSummary(ctx: CanvasRenderingContext2D, data: CardData, w: num
   ctx.fillStyle = "#333";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
-  const subText = data.headline2 || data.category;
+  const subText = data.headline2 || catBn(data.category);
   wrapText(ctx, subText, 50, headlineEndY + 10, w - 100, 34, "left");
 
   drawOtvWatermark(ctx, data);
@@ -1208,7 +1322,7 @@ function makeGradientCard(
     drawAccentBar(ctx, 60, h * 0.14, 45, 4, accent, true);
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
-    drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", data.badgeColor || accent, accent, 30);
+    drawBadge(ctx, catBn(data.category), w / 2, h * 0.16, "transparent", data.badgeColor || accent, accent, 30);
     const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, data.headlineColor || "#ffffff", accent, 78, data.textAlign || "left", hlFont(data), data.highlightWords);
     drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.5)");
     drawUserTextures(ctx, data, w, h);
@@ -1232,7 +1346,7 @@ function makePhotoOverlayCard(
     drawNoiseOverlay(ctx, w, h, 0.01);
     drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
     drawViaText(ctx, data.viaText, w - 50, 60);
-    drawBadge(ctx, data.category, w / 2, h * 0.15, badgeBg, data.badgeColor || badgeText, undefined, 28);
+    drawBadge(ctx, catBn(data.category), w / 2, h * 0.15, badgeBg, data.badgeColor || badgeText, undefined, 28);
     ctx.font = `900 66px ${hlFont(data)}`;
     ctx.fillStyle = data.headlineColor || "#ffffff";
     ctx.textBaseline = "top";
@@ -1256,7 +1370,7 @@ function makeLightCard(
     ctx.fillStyle = data.headlineColor || textColor;
     ctx.textBaseline = "top";
     const endY = wrapText(ctx, data.headline, 50, 135, w * 0.5, 72, "left");
-    drawBadge(ctx, data.category, 50 + 60, endY + 20, accent, data.badgeColor || "#000", undefined, 22);
+    drawBadge(ctx, catBn(data.category), 50 + 60, endY + 20, accent, data.badgeColor || "#000", undefined, 22);
     ctx.font = `400 20px ${SANS_FONT}`;
     ctx.fillStyle = data.sourceTextColor || "#999";
     ctx.textAlign = "left";
@@ -1295,7 +1409,7 @@ function makeThemedCard(
     drawAccentBar(ctx, w / 2 - 30, h * 0.12, 60, 3, accent, true);
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
-    drawBadge(ctx, data.category, w / 2, h * 0.14, accent, data.badgeColor || "#ffffff", undefined, 30);
+    drawBadge(ctx, catBn(data.category), w / 2, h * 0.14, accent, data.badgeColor || "#ffffff", undefined, 30);
     const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, data.headlineColor || "#ffffff", accent, 76, data.textAlign || "left", hlFont(data), data.highlightWords);
     drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.5)");
     drawUserTextures(ctx, data, w, h);
@@ -1336,7 +1450,7 @@ function makePremiumCard(
     drawLogo(ctx, data.channelLogo, 50, 50, 130, 50);
     drawViaText(ctx, data.viaText, w - 50, 55);
     drawAccentBar(ctx, w / 2 - 40, h * 0.13, 80, 3, accent, true);
-    drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", data.badgeColor || accent, accent, 28);
+    drawBadge(ctx, catBn(data.category), w / 2, h * 0.17, "transparent", data.badgeColor || accent, accent, 28);
     ctx.font = `800 60px ${hlFont(data)}`;
     ctx.fillStyle = data.headlineColor || "#ffffff";
     ctx.textBaseline = "top";
@@ -1478,7 +1592,7 @@ function renderPhotoVignette(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillStyle = bottomFade;
   ctx.fillRect(0, h * 0.6, w, h * 0.4);
   drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
-  drawBadge(ctx, data.category, w / 2, h * 0.12, "rgba(0,0,0,0.5)", "#ffffff", "rgba(255,255,255,0.3)", 26);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.12, "rgba(0,0,0,0.5)", "#ffffff", "rgba(255,255,255,0.3)", 26);
   ctx.font = `900 64px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
@@ -1573,7 +1687,7 @@ function renderGlassCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   ctx.stroke();
   drawLogo(ctx, data.channelLogo, panelX + 20, panelY + 20, 120, 45);
   drawViaText(ctx, data.viaText, panelX + panelW - 20, panelY + 25);
-  drawBadge(ctx, data.category, w / 2, panelY + panelH * 0.18, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 26);
+  drawBadge(ctx, catBn(data.category), w / 2, panelY + panelH * 0.18, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 26);
   ctx.font = `800 58px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
@@ -1636,7 +1750,7 @@ function renderGradientMesh(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   }
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  drawBadge(ctx, data.category, w / 2, h * 0.15, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 28);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.15, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 28);
   drawUserTextures(ctx, data, w, h);
   drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78, data.textAlign || "left", hlFont(data), data.highlightWords);
   drawAccentBar(ctx, 0, h - 5, w, 5, "#ff6ec7", true);
@@ -1652,7 +1766,7 @@ function renderPaperTexture(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.fillStyle = "#2c1810";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 50, 130, w - 100, 70, "left");
-  drawBadge(ctx, data.category, 50 + 60, endY + 20, "#8d6e63", "#f0e8d8", undefined, 22);
+  drawBadge(ctx, catBn(data.category), 50 + 60, endY + 20, "#8d6e63", "#f0e8d8", undefined, 22);
   ctx.font = `400 20px ${SANS_FONT}`;
   ctx.fillStyle = "#8d6e63";
   ctx.textAlign = "left";
@@ -1881,7 +1995,7 @@ function renderGlassBreaking(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("BREAKING NEWS", w / 2, 60);
+  ctx.fillText("ব্রেকিং নিউজ", w / 2, 60);
 
   drawLogo(ctx, data.channelLogo, 50, 110, 140, 55);
   drawViaText(ctx, data.viaText, w - 50, 120);
@@ -2403,7 +2517,7 @@ function renderPhotoBreakingTicker(ctx: CanvasRenderingContext2D, data: CardData
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "middle";
   ctx.textAlign = "center";
-  ctx.fillText("BREAKING", 110, h - tickerH - 50 + tickerH / 2);
+  ctx.fillText("ব্রেকিং", 110, h - tickerH - 50 + tickerH / 2);
   ctx.fillStyle = "rgba(0,0,0,0.85)";
   ctx.fillRect(220, h - tickerH - 50, w - 220, tickerH);
   ctx.font = `700 30px ${bnFont(data)}`;
@@ -2463,7 +2577,7 @@ function renderPhotoLeftPanel(ctx: CanvasRenderingContext2D, data: CardData, w: 
   ctx.fillStyle = accent;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText(data.category, 30, 120);
+  ctx.fillText(catBn(data.category), 30, 120);
   // Headline
   ctx.font = `800 58px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
@@ -2511,7 +2625,7 @@ function renderPhotoCinematicDark(ctx: CanvasRenderingContext2D, data: CardData,
   ctx.fillStyle = accent;
   ctx.textAlign = "right";
   ctx.textBaseline = "middle";
-  ctx.fillText(data.category, w - 40, h * 0.08);
+  ctx.fillText(catBn(data.category), w - 40, h * 0.08);
   // Bottom bar content
   ctx.font = `800 62px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
@@ -2546,7 +2660,7 @@ function renderPhotoMagazineCover(ctx: CanvasRenderingContext2D, data: CardData,
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "right";
   ctx.textBaseline = "middle";
-  ctx.fillText("NEWS", w - 30, 55);
+  ctx.fillText("নিউজ", w - 30, 55);
   // Bottom white band
   const bandH = h * 0.32;
   ctx.fillStyle = "rgba(255,255,255,0.95)";
@@ -2558,7 +2672,7 @@ function renderPhotoMagazineCover(ctx: CanvasRenderingContext2D, data: CardData,
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(data.category, 90, h - bandH + 37);
+  ctx.fillText(catBn(data.category), 90, h - bandH + 37);
   // Headline in white band
   ctx.font = `800 52px ${bnFont(data)}`;
   ctx.fillStyle = "#111111";
@@ -2599,7 +2713,7 @@ function renderPhotoNewsCard(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(data.category, 90, photoH - 22);
+  ctx.fillText(catBn(data.category), 90, photoH - 22);
   // Text section
   ctx.fillStyle = "#f8f9fa";
   ctx.fillRect(0, photoH, w, h - photoH);
@@ -2661,7 +2775,7 @@ function renderPhotoSplitGradient(ctx: CanvasRenderingContext2D, data: CardData,
   ctx.fillStyle = accent;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("▶  " + data.category, 35, 125);
+  ctx.fillText("▶  " + catBn(data.category), 35, 125);
   // Headline
   ctx.font = `800 58px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
@@ -2716,7 +2830,7 @@ function renderPhotoTopBanner(ctx: CanvasRenderingContext2D, data: CardData, w: 
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(data.category, w - 102, 48);
+  ctx.fillText(catBn(data.category), w - 102, 48);
   // Bottom card section
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, photoH, w, h - photoH);
@@ -2775,7 +2889,7 @@ function renderPhotoVignetteText(ctx: CanvasRenderingContext2D, data: CardData, 
   drawLogo(ctx, data.channelLogo, 40, 35, 150, 55);
   drawViaText(ctx, data.viaText, w - 40, 58);
   // Center badge
-  drawBadge(ctx, data.category, w / 2, h * 0.42, accent, "#000", undefined, 28);
+  drawBadge(ctx, catBn(data.category), w / 2, h * 0.42, accent, "#000", undefined, 28);
   // Center headline
   ctx.font = `800 68px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
