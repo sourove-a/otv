@@ -77,6 +77,12 @@ export interface CardData {
   blurIntensity?: number;
   transparencyLevel?: number;
   cornerRadius?: number;
+  headlineColor?: string;
+  subheadlineColor?: string;
+  labelColor?: string;
+  sourceTextColor?: string;
+  badgeColor?: string;
+  glassTintColor?: string;
 }
 
 export interface TemplateConfig {
@@ -147,7 +153,7 @@ function drawHeadlineWithHighlight(
   mainColor: string,
   highlightColor: string,
   lineHeight: number,
-  align: "left" | "center" = "left",
+  align: "left" | "center" | "right" = "left",
   fontOverride?: string,
   highlightWords?: string
 ): number {
@@ -217,51 +223,63 @@ export const DECOR_PRESETS: Record<string, {
   placementStyle: "corners" | "edges" | "scattered" | "top" | "bottom";
 }> = {
   sparkle: {
-    emojis: ["\u2728", "\u2B50", "\u26A1"],
+    emojis: ["\u2728", "\u2B50", "\uD83C\uDF1F", "\u2728"],
     sparkleCount: 18,
     glowColors: ["rgba(255,215,0,0.3)", "rgba(255,255,255,0.2)"],
     placementStyle: "scattered",
   },
   breaking: {
-    emojis: ["\uD83D\uDEA8", "\u26A0\uFE0F", "\uD83D\uDD34"],
+    emojis: ["\uD83D\uDD25", "\u26A1", "\uD83D\uDD25", "\u26A1"],
     sparkleCount: 10,
     glowColors: ["rgba(255,0,0,0.4)", "rgba(255,100,0,0.3)"],
     placementStyle: "edges",
   },
   social: {
-    emojis: ["\uD83D\uDCAC", "\uD83D\uDD25", "\uD83D\uDC4D"],
+    emojis: ["\uD83D\uDC4D", "\u2764\uFE0F", "\uD83D\uDCAF", "\u2728"],
     sparkleCount: 14,
     glowColors: ["rgba(168,85,247,0.3)", "rgba(236,72,153,0.3)"],
     placementStyle: "corners",
   },
   cute: {
-    emojis: ["\uD83C\uDF38", "\uD83C\uDF3C", "\uD83E\uDD8B"],
+    emojis: ["\u2764\uFE0F", "\u2728", "\u2B50", "\u2764\uFE0F"],
     sparkleCount: 20,
     glowColors: ["rgba(255,182,193,0.3)", "rgba(255,218,185,0.25)"],
     placementStyle: "scattered",
   },
   editorial: {
-    emojis: ["\uD83D\uDCF0", "\u270D\uFE0F", "\uD83D\uDCDD"],
+    emojis: ["\u2705", "\u2728", "\u2B50"],
     sparkleCount: 8,
     glowColors: ["rgba(100,150,255,0.2)", "rgba(200,200,200,0.15)"],
     placementStyle: "corners",
   },
   futuristic: {
-    emojis: ["\uD83D\uDE80", "\uD83E\uDD16", "\uD83D\uDD2E"],
+    emojis: ["\u26A1", "\uD83D\uDCAF", "\u2728", "\u26A1"],
     sparkleCount: 16,
     glowColors: ["rgba(0,255,200,0.3)", "rgba(0,150,255,0.3)"],
     placementStyle: "edges",
   },
   neon: {
-    emojis: ["\uD83C\uDF1F", "\uD83D\uDCA0", "\uD83D\uDD36"],
+    emojis: ["\u2728", "\u2B50", "\uD83C\uDF1F", "\u26A1"],
     sparkleCount: 22,
     glowColors: ["rgba(0,255,255,0.35)", "rgba(255,0,200,0.3)", "rgba(0,255,100,0.25)"],
     placementStyle: "scattered",
   },
   celebration: {
-    emojis: ["\uD83C\uDF89", "\uD83C\uDF8A", "\uD83C\uDF86"],
+    emojis: ["\u2728", "\u2B50", "\uD83D\uDC51", "\uD83C\uDF1F"],
     sparkleCount: 24,
     glowColors: ["rgba(255,215,0,0.3)", "rgba(255,100,50,0.25)", "rgba(200,0,255,0.2)"],
+    placementStyle: "scattered",
+  },
+  royal: {
+    emojis: ["\uD83D\uDC51", "\u2B50", "\u2728", "\uD83D\uDC51"],
+    sparkleCount: 16,
+    glowColors: ["rgba(255,215,0,0.35)", "rgba(218,165,32,0.3)"],
+    placementStyle: "corners",
+  },
+  love: {
+    emojis: ["\u2764\uFE0F", "\u2728", "\u2764\uFE0F", "\uD83C\uDF1F"],
+    sparkleCount: 20,
+    glowColors: ["rgba(255,20,80,0.3)", "rgba(255,100,150,0.25)"],
     placementStyle: "scattered",
   },
 };
@@ -397,7 +415,7 @@ function getGlassEdgeColor(data: CardData, fallback: string): string {
 function drawSubheadline(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, maxWidth: number, color: string): number {
   if (!data.subheadline) return y;
   ctx.font = `600 32px ${bnFont(data)}`;
-  ctx.fillStyle = color;
+  ctx.fillStyle = data.subheadlineColor || color;
   ctx.textBaseline = "top";
   return wrapText(ctx, data.subheadline, x, y + 8, maxWidth, 42, data.textAlign || "left") + 12;
 }
@@ -436,7 +454,7 @@ function drawQuoteBlock(ctx: CanvasRenderingContext2D, data: CardData, x: number
 function drawDateLine(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, color: string) {
   if (!data.dateText) return;
   ctx.font = `600 24px ${SANS_FONT}`;
-  ctx.fillStyle = color;
+  ctx.fillStyle = data.sourceTextColor || color;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   ctx.fillText(data.dateText, x, y);
@@ -463,14 +481,14 @@ function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: numb
   drawAccentBar(ctx, 60, h * 0.15, 50, 4, data.highlightColor || "#FFD700", true);
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 32);
+  drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", data.badgeColor || data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 32);
 
   const hlEnd = drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.22, w - 120, 68, "#ffffff", data.highlightColor || "#FFD700", 84, "left", hlFont(data), data.highlightWords
+    ctx, data.headline, 60, h * 0.22, w - 120, 68, data.headlineColor || "#ffffff", data.highlightColor || "#FFD700", 84, "left", hlFont(data), data.highlightWords
   );
 
   let contentY = drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.6)");
-  contentY = drawBulletText(ctx, data, 60, contentY, w - 120, "rgba(255,255,255,0.7)", data.highlightColor || "#FFD700");
+  contentY = drawBulletText(ctx, data, 60, contentY, w - 120, data.labelColor || "rgba(255,255,255,0.7)", data.highlightColor || "#FFD700");
   drawDateLine(ctx, data, 60, h - 90, "rgba(255,255,255,0.3)");
   drawUserTextures(ctx, data, w, h);
 
@@ -639,10 +657,10 @@ function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawAccentBar(ctx, 60, h * 0.14, 45, 4, data.highlightColor || "#FFD700", true);
-  drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 30);
+  drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", data.badgeColor || data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 30);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", data.highlightColor || "#FFD700", 78, "left", hlFont(data)
+    ctx, data.headline, 60, h * 0.21, w - 120, 62, data.headlineColor || "#ffffff", data.highlightColor || "#FFD700", 78, "left", hlFont(data)
   );
 
   drawPhotoCredit(ctx, "Image \u2014 Collected", w - 25, h - 60);
@@ -1190,8 +1208,8 @@ function makeGradientCard(
     drawAccentBar(ctx, 60, h * 0.14, 45, 4, accent, true);
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
-    drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", accent, accent, 30);
-    const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", accent, 78, data.textAlign || "left", hlFont(data), data.highlightWords);
+    drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", data.badgeColor || accent, accent, 30);
+    const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, data.headlineColor || "#ffffff", accent, 78, data.textAlign || "left", hlFont(data), data.highlightWords);
     drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.5)");
     drawUserTextures(ctx, data, w, h);
     drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
@@ -1214,9 +1232,9 @@ function makePhotoOverlayCard(
     drawNoiseOverlay(ctx, w, h, 0.01);
     drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
     drawViaText(ctx, data.viaText, w - 50, 60);
-    drawBadge(ctx, data.category, w / 2, h * 0.15, badgeBg, badgeText, undefined, 28);
+    drawBadge(ctx, data.category, w / 2, h * 0.15, badgeBg, data.badgeColor || badgeText, undefined, 28);
     ctx.font = `900 66px ${hlFont(data)}`;
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = data.headlineColor || "#ffffff";
     ctx.textBaseline = "top";
     wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.55, w - 120, 82, "left");
     drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
@@ -1231,26 +1249,31 @@ function makeLightCard(
     drawPaperTexture(ctx, w, h, bg1, 0.025);
     drawEditorialGrid(ctx, 0, 0, w * 0.55, h, 45, "rgba(50,50,50,0.025)", "none");
     drawSandyGrain(ctx, w, h, 0.018, true);
+    drawUserTextures(ctx, data, w, h);
     drawLogo(ctx, data.channelLogo, 50, 40, 130, 50);
     drawAccentBar(ctx, 50, 110, 50, 5, accent, true);
     ctx.font = `800 56px ${bnFont(data)}`;
-    ctx.fillStyle = textColor;
+    ctx.fillStyle = data.headlineColor || textColor;
     ctx.textBaseline = "top";
     const endY = wrapText(ctx, data.headline, 50, 135, w * 0.5, 72, "left");
-    drawBadge(ctx, data.category, 50 + 60, endY + 20, accent, "#000", undefined, 22);
+    drawBadge(ctx, data.category, 50 + 60, endY + 20, accent, data.badgeColor || "#000", undefined, 22);
     ctx.font = `400 20px ${SANS_FONT}`;
-    ctx.fillStyle = "#999";
+    ctx.fillStyle = data.sourceTextColor || "#999";
     ctx.textAlign = "left";
     ctx.fillText(data.viaText, 50, endY + 70);
     drawSubheadline(ctx, data, 50, endY + 95, w * 0.48, "#555");
     drawDateLine(ctx, data, 50, h - 80, "#aaa");
     if (data.mainPhoto) {
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.25)";
+      ctx.shadowBlur = 15;
+      ctx.shadowOffsetX = -4;
       drawPhoto(ctx, data, w * 0.52, 0, w * 0.48, h);
-      const edgeGrad = createGradient(ctx, w * 0.52, 0, w * 0.58, 0, [[0, bg1], [1, "transparent"]]);
+      ctx.restore();
+      const edgeGrad = createGradient(ctx, w * 0.52, 0, w * 0.545, 0, [[0, bg1], [1, "transparent"]]);
       ctx.fillStyle = edgeGrad;
-      ctx.fillRect(w * 0.52, 0, w * 0.06, h);
+      ctx.fillRect(w * 0.52, 0, w * 0.025, h);
     }
-    drawUserTextures(ctx, data, w, h);
     drawAccentBar(ctx, 0, h - 4, w, 4, accent, true);
     drawOtvWatermark(ctx, data);
   };
@@ -1272,9 +1295,10 @@ function makeThemedCard(
     drawAccentBar(ctx, w / 2 - 30, h * 0.12, 60, 3, accent, true);
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
-    drawBadge(ctx, data.category, w / 2, h * 0.14, accent, "#ffffff", undefined, 30);
-    const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, "#ffffff", accent, 76, data.textAlign || "left", hlFont(data), data.highlightWords);
+    drawBadge(ctx, data.category, w / 2, h * 0.14, accent, data.badgeColor || "#ffffff", undefined, 30);
+    const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, data.headlineColor || "#ffffff", accent, 76, data.textAlign || "left", hlFont(data), data.highlightWords);
     drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.5)");
+    drawUserTextures(ctx, data, w, h);
     if (data.mainPhoto) {
       ctx.save();
       ctx.shadowColor = `${accent}40`;
@@ -1288,7 +1312,6 @@ function makeThemedCard(
       roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 8);
       ctx.stroke();
     }
-    drawUserTextures(ctx, data, w, h);
     drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
     drawOtvWatermark(ctx, data);
   };
@@ -1313,9 +1336,9 @@ function makePremiumCard(
     drawLogo(ctx, data.channelLogo, 50, 50, 130, 50);
     drawViaText(ctx, data.viaText, w - 50, 55);
     drawAccentBar(ctx, w / 2 - 40, h * 0.13, 80, 3, accent, true);
-    drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", accent, accent, 28);
+    drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", data.badgeColor || accent, accent, 28);
     ctx.font = `800 60px ${hlFont(data)}`;
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = data.headlineColor || "#ffffff";
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     const endY = wrapText(ctx, data.headline.toUpperCase(), w / 2, h * 0.23, w - 140, 76, "center");
@@ -1368,7 +1391,7 @@ const renderPhotoFullOverlay = makePhotoOverlayCard(
   "#ffc107", "rgba(255,255,255,0.15)", "#ffffff"
 );
 const renderPhotoBlurBg = makePhotoOverlayCard(
-  [[0, "rgba(20,0,40,0.85)"], [0.5, "rgba(10,0,30,0.6)"], [1, "rgba(0,0,0,0.95)"]],
+  [[0, "rgba(20,0,40,0.55)"], [0.5, "rgba(10,0,30,0.35)"], [1, "rgba(0,0,0,0.8)"]],
   "#e040fb", "rgba(224,64,251,0.2)", "#ffffff"
 );
 const renderPhotoCinematic = makePhotoOverlayCard(
@@ -1376,11 +1399,11 @@ const renderPhotoCinematic = makePhotoOverlayCard(
   "#ff9800", "#ff9800", "#000000"
 );
 const renderPhotoMagazine = makePhotoOverlayCard(
-  [[0, "rgba(0,0,0,0.7)"], [0.3, "rgba(0,0,0,0.2)"], [0.7, "rgba(0,0,0,0.2)"], [1, "rgba(0,0,0,0.8)"]],
+  [[0, "rgba(0,0,0,0.5)"], [0.3, "rgba(0,0,0,0.1)"], [0.7, "rgba(0,0,0,0.1)"], [1, "rgba(0,0,0,0.75)"]],
   "#ffffff", "#ffffff", "#000000"
 );
 const renderPhotoEditorial = makePhotoOverlayCard(
-  [[0, "rgba(0,0,50,0.6)"], [0.5, "rgba(0,0,30,0.3)"], [1, "rgba(0,0,0,0.85)"]],
+  [[0, "rgba(0,0,50,0.4)"], [0.5, "rgba(0,0,30,0.15)"], [1, "rgba(0,0,0,0.8)"]],
   "#4fc3f7", "rgba(79,195,247,0.2)", "#ffffff"
 );
 
@@ -1535,7 +1558,7 @@ const renderEducationPurple = makeThemedCard("#0a0018", "#05000c", "#7b1fa2", "r
 function renderGlassCard(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
     drawPhoto(ctx, data, 0, 0, w, h);
-    ctx.fillStyle = "rgba(0,0,0,0.4)";
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
     ctx.fillRect(0, 0, w, h);
   } else {
     drawDarkBg(ctx, w, h, "#0a1628", "#060e1a");
@@ -1614,8 +1637,8 @@ function renderGradientMesh(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawBadge(ctx, data.category, w / 2, h * 0.15, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 28);
-  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78, data.textAlign || "left", hlFont(data), data.highlightWords);
   drawUserTextures(ctx, data, w, h);
+  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78, data.textAlign || "left", hlFont(data), data.highlightWords);
   drawAccentBar(ctx, 0, h - 5, w, 5, "#ff6ec7", true);
   drawOtvWatermark(ctx, data);
 }
@@ -1704,7 +1727,7 @@ function renderGlassHeadline(ctx: CanvasRenderingContext2D, data: CardData, w: n
   const r = getGlassRadius(data, 20);
   const panelX = 50, panelY = h * 0.18, panelW = w - 100, panelH = h * 0.55;
   drawGlassPanel(ctx, panelX, panelY, panelW, panelH, r, {
-    bgColor: "rgba(255,255,255,0.08)",
+    bgColor: data.glassTintColor || "rgba(255,255,255,0.08)",
     opacity: getGlassOpacity(data, 0.12),
     edgeGlow: true,
     glossyStreak: true,
@@ -1714,17 +1737,17 @@ function renderGlassHeadline(ctx: CanvasRenderingContext2D, data: CardData, w: n
   drawLogo(ctx, data.channelLogo, 60, 40, 140, 55);
   drawViaText(ctx, data.viaText, w - 60, 50);
 
-  drawGlassBadge(ctx, data.category, w / 2, panelY + 50, "rgba(255,255,255,0.15)", "#ffffff", "rgba(100,150,255,0.5)", 28);
+  drawGlassBadge(ctx, data.category, w / 2, panelY + 50, "rgba(255,255,255,0.15)", data.badgeColor || "#ffffff", "rgba(100,150,255,0.5)", 28);
 
   ctx.font = `900 64px ${hlFont(data)}`;
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = data.headlineColor || "#ffffff";
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
   const endY = wrapText(ctx, data.headline.toUpperCase(), w / 2, panelY + 100, panelW - 80, 80, "center");
 
   if (data.subheadline) {
     ctx.font = `500 30px ${bnFont(data)}`;
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.fillStyle = data.subheadlineColor || "rgba(255,255,255,0.6)";
     wrapText(ctx, data.subheadline, w / 2, endY + 10, panelW - 100, 40, "center");
   }
 
@@ -1742,7 +1765,7 @@ function renderGlassHeadline(ctx: CanvasRenderingContext2D, data: CardData, w: n
 function renderGlassPhotoOverlay(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
     drawPhoto(ctx, data, 0, 0, w, h);
-    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
     ctx.fillRect(0, 0, w, h);
   } else {
     drawGradientMesh(ctx, w, h, ["#0a0a2e", "#1a0040", "#000a20"]);
@@ -1753,7 +1776,7 @@ function renderGlassPhotoOverlay(ctx: CanvasRenderingContext2D, data: CardData, 
   const r = getGlassRadius(data, 18);
   const panelX = 40, panelY = h * 0.55, panelW = w - 80, panelH = h * 0.38;
   drawGlassPanel(ctx, panelX, panelY, panelW, panelH, r, {
-    bgColor: "rgba(0,0,0,0.3)",
+    bgColor: data.glassTintColor || "rgba(0,0,0,0.3)",
     opacity: getGlassOpacity(data, 0.2),
     edgeGlow: true,
     glossyStreak: true,
@@ -1763,16 +1786,16 @@ function renderGlassPhotoOverlay(ctx: CanvasRenderingContext2D, data: CardData, 
   drawLogo(ctx, data.channelLogo, 50, 40, 140, 55);
   drawViaText(ctx, data.viaText, w - 50, 50);
 
-  drawGlassBadge(ctx, data.category, w / 2, h * 0.12, "rgba(255,255,255,0.2)", "#ffffff", "rgba(255,255,255,0.4)", 26);
+  drawGlassBadge(ctx, data.category, w / 2, h * 0.12, "rgba(255,255,255,0.2)", data.badgeColor || "#ffffff", "rgba(255,255,255,0.4)", 26);
 
   ctx.font = `900 58px ${hlFont(data)}`;
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = data.headlineColor || "#ffffff";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline.toUpperCase(), panelX + 30, panelY + 30, panelW - 60, 72, "left");
 
   if (data.subheadline) {
     ctx.font = `500 26px ${bnFont(data)}`;
-    ctx.fillStyle = "rgba(255,255,255,0.65)";
+    ctx.fillStyle = data.subheadlineColor || "rgba(255,255,255,0.65)";
     wrapText(ctx, data.subheadline, panelX + 30, endY + 5, panelW - 60, 34, "left");
   }
 
@@ -1807,7 +1830,7 @@ function renderGlassQuote(ctx: CanvasRenderingContext2D, data: CardData, w: numb
 
   const quoteText = data.quoteText || data.headline;
   ctx.font = `700 48px ${bnFont(data)}`;
-  ctx.fillStyle = "#e8f0ff";
+  ctx.fillStyle = data.headlineColor || "#e8f0ff";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, quoteText, panelX + 50, panelY + 100, panelW - 100, 64, "left");
 
@@ -1822,13 +1845,13 @@ function renderGlassQuote(ctx: CanvasRenderingContext2D, data: CardData, w: numb
 
   if (data.personName) {
     ctx.font = `700 28px ${bnFont(data)}`;
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = data.labelColor || "#ffffff";
     ctx.textAlign = "left";
     ctx.fillText(data.personName, panelX + 50, endY + 40);
   }
   if (data.personTitle) {
     ctx.font = `400 22px ${SANS_FONT}`;
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillStyle = data.sourceTextColor || "rgba(255,255,255,0.5)";
     ctx.fillText(data.personTitle, panelX + 50, endY + 74);
   }
 
@@ -1872,7 +1895,7 @@ function renderGlassBreaking(ctx: CanvasRenderingContext2D, data: CardData, w: n
   });
 
   ctx.font = `900 66px ${hlFont(data)}`;
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = data.headlineColor || "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), mainPanelX + 30, mainPanelY + 30, mainPanelW - 60, 82, "left");
 

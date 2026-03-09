@@ -1,6 +1,37 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+.npm
+
+# Build output
+dist/
+
+# Environment variables (NEVER commit these)
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# OS files
 .DS_Store
-server/public
-vite.config.ts.*
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Uploads / temp files
+uploads/
+tmp/
+
+# Zip files
+*.zip
 *.tar.gz
