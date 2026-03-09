@@ -9,6 +9,9 @@ import {
   drawViaText,
   drawPhotoCredit,
   drawBottomTicker,
+  drawGridLines,
+  drawHighlightedText,
+  drawCircularImage,
   HEADLINE_FONT,
   SANS_FONT,
   BENGALI_FONT,
@@ -16,12 +19,17 @@ import {
 
 export interface CardData {
   headline: string;
+  headline2: string;
   category: string;
   viaText: string;
   mainPhoto: HTMLImageElement | null;
+  secondPhoto: HTMLImageElement | null;
   channelLogo: HTMLImageElement | null;
+  otvLogo: HTMLImageElement | null;
   personName: string;
   personTitle: string;
+  personName2: string;
+  personTitle2: string;
   highlightColor: string;
 }
 
@@ -47,6 +55,17 @@ function drawPurpleGlow(ctx: CanvasRenderingContext2D, w: number, h: number) {
   grad.addColorStop(1, "transparent");
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
+}
+
+function drawOtvWatermark(ctx: CanvasRenderingContext2D, logo: HTMLImageElement | null, cx: number, cy: number, size: number = 60) {
+  if (!logo) return;
+  const ratio = Math.min(size / logo.naturalWidth, size / logo.naturalHeight);
+  const lw = logo.naturalWidth * ratio;
+  const lh = logo.naturalHeight * ratio;
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  ctx.drawImage(logo, cx - lw / 2, cy - lh / 2, lw, lh);
+  ctx.restore();
 }
 
 function drawHeadlineWithHighlight(
@@ -124,6 +143,7 @@ function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: numb
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawBottomTicker(ctx, w, h);
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 50, 55);
 }
 
 function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -160,6 +180,7 @@ function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
 
   drawLogo(ctx, data.channelLogo, 50, h - 80, 140, 55);
   drawBottomTicker(ctx, w, h, "#ffc107");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
 }
 
 function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -189,6 +210,7 @@ function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   if (data.mainPhoto) {
     drawImageCover(ctx, data.mainPhoto, 0, h * 0.52, w, h * 0.48);
   }
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 30, 50);
 }
 
 function renderDualQuote(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -204,35 +226,49 @@ function renderDualQuote(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   }
 
   const halfW = w / 2;
-  const lines = data.headline.split("\n");
-  const leftText = lines[0] || data.headline;
-  const rightText = lines[1] || "";
+  const leftText = data.headline || "";
+  const rightText = data.headline2 || data.headline || "";
 
   ctx.font = `800 44px ${BENGALI_FONT}`;
   ctx.fillStyle = "#111";
   ctx.textBaseline = "top";
-  wrapText(ctx, leftText, 40, 120, halfW - 80, 58, "left");
+  const leftEndY = wrapText(ctx, leftText, 40, 120, halfW - 80, 58, "left");
 
   if (data.personName) {
     ctx.font = `400 22px ${SANS_FONT}`;
     ctx.fillStyle = "#555";
-    ctx.fillText(`- ${data.personName}`, 40, h * 0.55);
+    ctx.fillText(`- ${data.personName}`, 40, leftEndY + 10);
+  }
+  if (data.personTitle) {
+    ctx.font = `400 18px ${SANS_FONT}`;
+    ctx.fillStyle = "#888";
+    ctx.fillText(data.personTitle, 40, leftEndY + 38);
   }
 
   ctx.font = `800 44px ${BENGALI_FONT}`;
   ctx.fillStyle = "#e0e0e0";
-  wrapText(ctx, rightText || leftText, halfW + 40, 120, halfW - 80, 58, "left");
+  const rightEndY = wrapText(ctx, rightText, halfW + 40, 120, halfW - 80, 58, "left");
 
-  if (data.personTitle) {
+  if (data.personName2 || data.personName) {
     ctx.font = `400 22px ${SANS_FONT}`;
     ctx.fillStyle = "#aaa";
-    ctx.fillText(`- ${data.personTitle}`, halfW + 40, h * 0.55);
+    ctx.fillText(`- ${data.personName2 || data.personName}`, halfW + 40, rightEndY + 10);
+  }
+  if (data.personTitle2 || data.personTitle) {
+    ctx.font = `400 18px ${SANS_FONT}`;
+    ctx.fillStyle = "#777";
+    ctx.fillText(data.personTitle2 || data.personTitle, halfW + 40, rightEndY + 38);
   }
 
   if (data.mainPhoto) {
     drawImageCover(ctx, data.mainPhoto, 0, h * 0.62, halfW, h * 0.38);
+  }
+  if (data.secondPhoto) {
+    drawImageCover(ctx, data.secondPhoto, halfW, h * 0.62, halfW, h * 0.38);
+  } else if (data.mainPhoto) {
     drawImageCover(ctx, data.mainPhoto, halfW, h * 0.62, halfW, h * 0.38);
   }
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 30, 50);
 }
 
 function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -269,6 +305,7 @@ function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: nu
 
   ctx.fillStyle = "#ffc107";
   ctx.fillRect(0, h - 5, w, 5);
+  drawOtvWatermark(ctx, data.otvLogo, w - 60, h - 40, 45);
 }
 
 function renderWorldReport(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -315,6 +352,7 @@ function renderWorldReport(ctx: CanvasRenderingContext2D, data: CardData, w: num
   ctx.textBaseline = "middle";
   ctx.fillText("Sponsor Area", w / 2, h - 45);
   drawBottomTicker(ctx, w, h, "#000");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 50, 55);
 }
 
 function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -359,6 +397,7 @@ function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: num
   }
 
   drawBottomTicker(ctx, w, h, "#cc0000");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
 }
 
 function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -408,6 +447,7 @@ function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: num
   );
 
   drawBottomTicker(ctx, w, h, "#00e676");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
 }
 
 function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -470,6 +510,7 @@ function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: num
   }
 
   drawBottomTicker(ctx, w, h, "#4a90d9");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
 }
 
 function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -507,6 +548,7 @@ function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: n
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawBottomTicker(ctx, w, h, "#9c27b0");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
 }
 
 function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -547,6 +589,7 @@ function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   }
 
   drawBottomTicker(ctx, w, h, "#a855f7");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
 }
 
 function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -595,6 +638,7 @@ function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: n
   }
 
   drawBottomTicker(ctx, w, h, "#d4af37");
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
 }
 
 function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -626,6 +670,192 @@ function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: nu
     ]);
     ctx.fillStyle = edgeGrad;
     ctx.fillRect(w * 0.5, 0, w * 0.05, h);
+  }
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 30, 50);
+}
+
+function renderDualQuoteSplit(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const halfW = w / 2;
+  ctx.fillStyle = "#5c1a1a";
+  ctx.fillRect(0, 0, halfW, h);
+  ctx.fillStyle = "#1a4a3a";
+  ctx.fillRect(halfW, 0, halfW, h);
+
+  const leftGrad = createGradient(ctx, 0, 0, 0, h, [[0, "#6b1f1f"], [1, "#3d0f0f"]]);
+  ctx.fillStyle = leftGrad;
+  ctx.fillRect(0, 0, halfW, h);
+  const rightGrad = createGradient(ctx, halfW, 0, halfW, h, [[0, "#1a5c42"], [1, "#0d3828"]]);
+  ctx.fillStyle = rightGrad;
+  ctx.fillRect(halfW, 0, halfW, h);
+
+  ctx.font = `700 120px ${SANS_FONT}`;
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  ctx.fillText("\u201C", 20, 10);
+  ctx.fillText("\u201C", halfW + 20, 10);
+
+  ctx.font = `700 42px ${BENGALI_FONT}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  const leftText = data.headline || "";
+  const rightText = data.headline2 || data.headline || "";
+  const leftEndY = wrapText(ctx, leftText, 45, 100, halfW - 90, 56, "left");
+  const rightEndY = wrapText(ctx, rightText, halfW + 45, 100, halfW - 90, 56, "left");
+
+  ctx.fillStyle = data.highlightColor || "#ffc107";
+  ctx.fillRect(45, leftEndY + 8, 70, 4);
+  ctx.fillRect(halfW + 45, rightEndY + 8, 70, 4);
+
+  ctx.font = `800 28px ${BENGALI_FONT}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "left";
+  const ln1 = data.personName || "";
+  const ln2 = data.personName2 || "";
+  if (ln1) ctx.fillText(`\u2014 ${ln1}`, 45, leftEndY + 25);
+  if (ln2) ctx.fillText(`\u2014 ${ln2}`, halfW + 45, rightEndY + 25);
+
+  ctx.font = `400 20px ${BENGALI_FONT}`;
+  ctx.fillStyle = "rgba(255,255,255,0.6)";
+  if (data.personTitle) ctx.fillText(data.personTitle, 45, leftEndY + 60);
+  if (data.personTitle2) ctx.fillText(data.personTitle2, halfW + 45, rightEndY + 60);
+
+  if (data.mainPhoto) {
+    const photoY = h * 0.58;
+    const photoH = h * 0.42;
+    drawImageCover(ctx, data.mainPhoto, 0, photoY, halfW, photoH);
+    const leftOvr = createGradient(ctx, 0, photoY, 0, photoY + photoH * 0.3, [[0, "#3d0f0f"], [1, "transparent"]]);
+    ctx.fillStyle = leftOvr;
+    ctx.fillRect(0, photoY, halfW, photoH * 0.3);
+  }
+  if (data.secondPhoto) {
+    const photoY = h * 0.58;
+    const photoH = h * 0.42;
+    drawImageCover(ctx, data.secondPhoto, halfW, photoY, halfW, photoH);
+    const rightOvr = createGradient(ctx, halfW, photoY, halfW, photoY + photoH * 0.3, [[0, "#0d3828"], [1, "transparent"]]);
+    ctx.fillStyle = rightOvr;
+    ctx.fillRect(halfW, photoY, halfW, photoH * 0.3);
+  }
+
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 55);
+}
+
+function renderGridHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  ctx.fillStyle = "#e8e4dc";
+  ctx.fillRect(0, 0, w, h);
+
+  drawGridLines(ctx, 0, 0, w, h * 0.42, 35, "rgba(100,120,100,0.12)");
+
+  ctx.fillStyle = "#1a5c42";
+  ctx.fillRect(0, 0, 6, h * 0.42);
+  ctx.fillRect(w - 6, 0, 6, h * 0.42);
+  ctx.fillRect(0, 0, w, 6);
+  ctx.fillRect(0, h * 0.42 - 6, w, 6);
+
+  const endY = drawHighlightedText(
+    ctx, data.headline, 50, 50, w - 100, 54, "#1a1a1a", "#ffc107", 72, BENGALI_FONT, "left", 16, 8
+  );
+
+  ctx.font = `500 22px ${BENGALI_FONT}`;
+  ctx.fillStyle = "#555";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(`\u09A4\u09A5\u09CD\u09AF\u09B8\u09C2\u09A4\u09CD\u09B0: ${data.viaText}`, 50, endY + 15);
+
+  if (data.mainPhoto) {
+    drawImageCover(ctx, data.mainPhoto, 0, h * 0.42, w, h * 0.58);
+  }
+
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, h * 0.42 - 35, 55);
+}
+
+function renderQuoteHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  ctx.fillStyle = "#e8e2d8";
+  ctx.fillRect(0, 0, w, h);
+
+  const topGrad = createGradient(ctx, 0, 0, 0, h * 0.1, [[0, "#d8d0c4"], [1, "#e8e2d8"]]);
+  ctx.fillStyle = topGrad;
+  ctx.fillRect(0, 0, w, h * 0.1);
+
+  ctx.font = `700 140px ${SANS_FONT}`;
+  ctx.fillStyle = "rgba(0,0,0,0.06)";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  ctx.fillText("\u201C", 20, 10);
+
+  const endY = drawHighlightedText(
+    ctx, data.headline, 50, 100, w - 100, 58, "#1a1a1a", data.highlightColor || "#ffc107", 78, BENGALI_FONT, "left", 14, 8
+  );
+
+  ctx.font = `500 22px ${BENGALI_FONT}`;
+  ctx.fillStyle = "#666";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(`\u09A4\u09A5\u09CD\u09AF\u09B8\u09C2\u09A4\u09CD\u09B0: ${data.viaText}`, 50, endY + 12);
+
+  drawOtvWatermark(ctx, data.otvLogo, 90, endY + 70, 55);
+
+  if (data.mainPhoto) {
+    const photoW = w * 0.55;
+    const photoH = h * 0.45;
+    const photoX = w - photoW;
+    const photoY = h - photoH;
+    drawImageCover(ctx, data.mainPhoto, photoX, photoY, photoW, photoH);
+    const fadeGrad = createGradient(ctx, photoX, photoY, photoX + photoW * 0.3, photoY, [[0, "#e8e2d8"], [1, "transparent"]]);
+    ctx.fillStyle = fadeGrad;
+    ctx.fillRect(photoX, photoY, photoW * 0.3, photoH);
+    const fadeTop = createGradient(ctx, photoX, photoY, photoX, photoY + photoH * 0.2, [[0, "#e8e2d8"], [1, "transparent"]]);
+    ctx.fillStyle = fadeTop;
+    ctx.fillRect(photoX, photoY, photoW, photoH * 0.2);
+  }
+}
+
+function renderNewsSummary(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  ctx.fillStyle = "#c8dcc8";
+  ctx.fillRect(0, 0, w, h);
+
+  const topGrad = createGradient(ctx, 0, 0, 0, h * 0.15, [[0, "#b0ccb0"], [1, "#c8dcc8"]]);
+  ctx.fillStyle = topGrad;
+  ctx.fillRect(0, 0, w, h * 0.15);
+
+  drawGridLines(ctx, 0, 0, w, h * 0.18, 35, "rgba(50,100,70,0.08)");
+
+  const headlineEndY = drawHighlightedText(
+    ctx, data.headline, 50, 30, w - 100, 50, "#1a1a1a", data.highlightColor || "#ffc107", 68, BENGALI_FONT, "left", 14, 8
+  );
+
+  ctx.font = `500 26px ${BENGALI_FONT}`;
+  ctx.fillStyle = "#333";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  const subText = data.headline2 || data.category;
+  wrapText(ctx, subText, 50, headlineEndY + 10, w - 100, 34, "left");
+
+  drawOtvWatermark(ctx, data.otvLogo, w / 2, headlineEndY + 60, 55);
+
+  if (data.mainPhoto) {
+    const cr = w * 0.16;
+    const cx = 50 + cr;
+    const cy = h * 0.58;
+    drawCircularImage(ctx, data.mainPhoto, cx, cy, cr, "#1a5c42", 5);
+  }
+
+  const bulletX = data.mainPhoto ? w * 0.42 : 60;
+  const bulletW = w - bulletX - 50;
+  const bulletY = h * 0.43;
+  const bulletText = data.headline2 || data.headline;
+  const bullets = bulletText.split("\n").filter((b: string) => b.trim());
+  let by = bulletY;
+  for (const bullet of bullets) {
+    ctx.beginPath();
+    ctx.arc(bulletX, by + 16, 8, 0, Math.PI * 2);
+    ctx.fillStyle = "#1a5c42";
+    ctx.fill();
+
+    const endY = drawHighlightedText(
+      ctx, bullet, bulletX + 22, by + 2, bulletW - 30, 26, "#1a1a1a", data.highlightColor || "#ffc107", 34, BENGALI_FONT, "left", 8, 4
+    );
+    by = endY + 12;
   }
 }
 
@@ -746,5 +976,41 @@ export const templates: TemplateConfig[] = [
     accentColor: "#ffc107",
     defaultCategory: "NATIONAL",
     render: renderMinimalLight,
+  },
+  {
+    id: "dual-quote-split",
+    name: "Dual Quote Split",
+    nameBn: "\u09A1\u09C1\u09AF\u09BC\u09BE\u09B2 \u0989\u09A6\u09CD\u09A7\u09C3\u09A4\u09BF",
+    previewColors: ["#6b1f1f", "#1a5c42"],
+    accentColor: "#ffc107",
+    defaultCategory: "OPINION",
+    render: renderDualQuoteSplit,
+  },
+  {
+    id: "grid-highlight",
+    name: "Grid Highlight",
+    nameBn: "\u0997\u09CD\u09B0\u09BF\u09A1 \u09B9\u09BE\u0987\u09B2\u09BE\u0987\u099F",
+    previewColors: ["#e8e4dc", "#c8dcc8"],
+    accentColor: "#ffc107",
+    defaultCategory: "WORLD",
+    render: renderGridHighlight,
+  },
+  {
+    id: "quote-highlight",
+    name: "Quote Highlight",
+    nameBn: "\u0989\u09A6\u09CD\u09A7\u09C3\u09A4\u09BF \u09B9\u09BE\u0987\u09B2\u09BE\u0987\u099F",
+    previewColors: ["#e8e2d8", "#d8d0c4"],
+    accentColor: "#ffc107",
+    defaultCategory: "OPINION",
+    render: renderQuoteHighlight,
+  },
+  {
+    id: "news-summary",
+    name: "News Summary",
+    nameBn: "\u09A8\u09BF\u0989\u099C \u09B8\u09BE\u09B0\u09BE\u0982\u09B6",
+    previewColors: ["#c8dcc8", "#b0ccb0"],
+    accentColor: "#ffc107",
+    defaultCategory: "NATIONAL",
+    render: renderNewsSummary,
   },
 ];

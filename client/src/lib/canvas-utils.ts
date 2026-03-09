@@ -249,6 +249,86 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+export function drawGridLines(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  w: number, h: number,
+  spacing: number = 40,
+  color: string = "rgba(100,100,100,0.08)"
+) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 0.8;
+  for (let i = x; i <= x + w; i += spacing) {
+    ctx.beginPath();
+    ctx.moveTo(i, y);
+    ctx.lineTo(i, y + h);
+    ctx.stroke();
+  }
+  for (let i = y; i <= y + h; i += spacing) {
+    ctx.beginPath();
+    ctx.moveTo(x, i);
+    ctx.lineTo(x + w, i);
+    ctx.stroke();
+  }
+}
+
+export function drawHighlightedText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number, y: number,
+  maxWidth: number,
+  fontSize: number,
+  textColor: string,
+  highlightColor: string,
+  lineHeight: number,
+  font: string,
+  align: "left" | "center" = "left",
+  padX: number = 14,
+  padY: number = 6
+): number {
+  ctx.font = `800 ${fontSize}px ${font}`;
+  ctx.textBaseline = "top";
+  const lines = wrapTextLines(ctx, text, maxWidth - padX * 2);
+  let currentY = y;
+  for (const line of lines) {
+    if (line.trim() === "") { currentY += lineHeight; continue; }
+    const m = ctx.measureText(line);
+    const lw = m.width + padX * 2;
+    const lh = fontSize + padY * 2;
+    const lx = align === "center" ? x - lw / 2 : x;
+    ctx.fillStyle = highlightColor;
+    ctx.fillRect(lx, currentY, lw, lh);
+    ctx.fillStyle = textColor;
+    ctx.textAlign = "left";
+    ctx.fillText(line, lx + padX, currentY + padY);
+    currentY += lineHeight;
+  }
+  return currentY;
+}
+
+export function drawCircularImage(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  cx: number, cy: number,
+  radius: number,
+  borderColor?: string,
+  borderWidth: number = 4
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.clip();
+  drawImageCover(ctx, img, cx - radius, cy - radius, radius * 2, radius * 2);
+  ctx.restore();
+  if (borderColor) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
 export const BENGALI_FONT = '"Noto Sans Bengali", "Hind Siliguri", sans-serif';
 export const HEADLINE_FONT = '"Montserrat", "Noto Sans Bengali", "Hind Siliguri", sans-serif';
 export const SANS_FONT = '"Montserrat", sans-serif';

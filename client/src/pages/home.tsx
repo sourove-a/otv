@@ -24,6 +24,7 @@ import {
   Camera,
   Wand2,
   Settings2,
+  Users,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import otvLogoPath from "@assets/otv_1773042288152.jpg";
@@ -57,18 +58,26 @@ const ACCENT_COLORS = [
 const CANVAS_SIZE = 1200;
 const BN = "'Noto Sans Bengali', 'Hind Siliguri', sans-serif";
 
+const DUAL_TEMPLATES = ["dual-quote", "dual-quote-split"];
+
 export default function Home() {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateConfig>(templates[0]);
   const [headline, setHeadline] = useState("\u099C\u09BE\u099F\u09CD\u09B0\u09BE\u09AC\u09BE\u09DC\u09C0\u09A4\u09C7 \u09E8\u09E6\u099F\u09BF \u0995\u09C1\u0995\u09C1\u09B0 \u09B9\u09A4\u09CD\u09AF\u09BE\u09B0 \u0998\u099F\u09A8\u09BE\u09AF\u09BC \u09E9 \u099C\u09A8\u09C7\u09B0 \u09E8.\u09EB \u09AC\u099B\u09B0\u09C7\u09B0 \u099C\u09C7\u09B2");
+  const [headline2, setHeadline2] = useState("");
   const [category, setCategory] = useState("JUSTICE");
   const [viaText, setViaText] = useState("Via | OTV");
   const [personName, setPersonName] = useState("");
   const [personTitle, setPersonTitle] = useState("");
+  const [personName2, setPersonName2] = useState("");
+  const [personTitle2, setPersonTitle2] = useState("");
   const [highlightColor, setHighlightColor] = useState("#ffc107");
   const [mainPhotoSrc, setMainPhotoSrc] = useState<string | null>(null);
   const [mainPhotoImg, setMainPhotoImg] = useState<HTMLImageElement | null>(null);
+  const [secondPhotoSrc, setSecondPhotoSrc] = useState<string | null>(null);
+  const [secondPhotoImg, setSecondPhotoImg] = useState<HTMLImageElement | null>(null);
   const [logoSrc, setLogoSrc] = useState<string | null>(null);
   const [logoImg, setLogoImg] = useState<HTMLImageElement | null>(null);
+  const [otvLogoImg, setOtvLogoImg] = useState<HTMLImageElement | null>(null);
   const [isPro, setIsPro] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
@@ -77,7 +86,10 @@ export default function Home() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mainPhotoInputRef = useRef<HTMLInputElement>(null);
+  const secondPhotoInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
+
+  const isDual = DUAL_TEMPLATES.includes(selectedTemplate.id);
 
   useEffect(() => {
     document.fonts.ready.then(() => setFontsReady(true));
@@ -93,6 +105,10 @@ export default function Home() {
     });
   }, []);
 
+  useEffect(() => {
+    loadImg(otvLogoPath).then(setOtvLogoImg).catch(() => {});
+  }, [loadImg]);
+
   const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -102,6 +118,16 @@ export default function Home() {
     setMainPhotoImg(await loadImg(url));
     setIsGenerated(false);
   }, [loadImg, mainPhotoSrc]);
+
+  const handleSecondPhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (secondPhotoSrc) URL.revokeObjectURL(secondPhotoSrc);
+    const url = URL.createObjectURL(file);
+    setSecondPhotoSrc(url);
+    setSecondPhotoImg(await loadImg(url));
+    setIsGenerated(false);
+  }, [loadImg, secondPhotoSrc]);
 
   const handleLogoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -121,7 +147,12 @@ export default function Home() {
     canvas.width = CANVAS_SIZE;
     canvas.height = CANVAS_SIZE;
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-    selectedTemplate.render(ctx, { headline, category, viaText, mainPhoto: mainPhotoImg, channelLogo: logoImg, personName, personTitle, highlightColor }, CANVAS_SIZE, CANVAS_SIZE);
+    selectedTemplate.render(ctx, {
+      headline, headline2, category, viaText,
+      mainPhoto: mainPhotoImg, secondPhoto: secondPhotoImg,
+      channelLogo: logoImg, otvLogo: otvLogoImg,
+      personName, personTitle, personName2, personTitle2, highlightColor,
+    }, CANVAS_SIZE, CANVAS_SIZE);
     if (!isPro) {
       ctx.save();
       ctx.globalAlpha = 0.12;
@@ -134,7 +165,7 @@ export default function Home() {
       ctx.fillText("OTV.ONLINE", 0, 0);
       ctx.restore();
     }
-  }, [headline, category, viaText, mainPhotoImg, logoImg, selectedTemplate, isPro, personName, personTitle, highlightColor]);
+  }, [headline, headline2, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor]);
 
   const renderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -213,18 +244,19 @@ export default function Home() {
             <div className="flex gap-2 overflow-x-auto pb-3 -mx-1 px-1" style={{ scrollbarWidth: "none" }} data-testid="template-gallery">
               {templates.map((t, i) => {
                 const isActive = selectedTemplate.id === t.id;
+                const isSplit = t.previewColors[0] !== t.previewColors[1] && DUAL_TEMPLATES.includes(t.id);
                 return (
                   <motion.button
                     key={t.id}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05 * i, duration: 0.4 }}
+                    transition={{ delay: 0.03 * i, duration: 0.4 }}
                     onClick={() => { setSelectedTemplate(t); setCategory(t.defaultCategory); setIsGenerated(false); }}
                     className="flex-shrink-0 group relative"
                     data-testid={`button-template-${t.id}`}
                   >
                     <div className={`w-[100px] rounded-2xl overflow-hidden transition-all duration-500 ${isActive ? "ring-[2.5px] ring-blue-400/80 ring-offset-[3px] ring-offset-[#080b14] scale-[1.02]" : "opacity-50 hover:opacity-80"}`}>
-                      <div className="h-[68px] relative" style={{ background: `linear-gradient(135deg, ${t.previewColors[0]}, ${t.previewColors[1]})` }}>
+                      <div className="h-[68px] relative" style={isSplit ? { background: `linear-gradient(90deg, ${t.previewColors[0]} 50%, ${t.previewColors[1]} 50%)` } : { background: `linear-gradient(135deg, ${t.previewColors[0]}, ${t.previewColors[1]})` }}>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                         <div className="absolute bottom-1.5 left-2 right-2 space-y-[2px]">
                           <div className="h-[2.5px] w-5 rounded-full" style={{ backgroundColor: t.accentColor }} />
@@ -273,9 +305,9 @@ export default function Home() {
               <AnimatePresence mode="wait">
                 {activeSection === "content" && (
                   <motion.div key="content" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className={`grid gap-3 ${isDual ? "grid-cols-2" : "grid-cols-2"}`}>
                       <div>
-                        <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{"\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB"}</p>
+                        <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E7" : "\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB"}</p>
                         <input ref={mainPhotoInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" id="photo-upload" data-testid="input-main-photo" />
                         <label htmlFor="photo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") mainPhotoInputRef.current?.click(); }} className="block rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden group" style={{ background: "rgba(255,255,255,0.02)", border: "1.5px dashed rgba(255,255,255,0.06)" }} data-testid="dropzone-main-photo">
                           {mainPhotoSrc ? (
@@ -285,53 +317,114 @@ export default function Home() {
                               <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (mainPhotoSrc) URL.revokeObjectURL(mainPhotoSrc); setMainPhotoSrc(null); setMainPhotoImg(null); }} className="absolute top-2 right-2 w-5 h-5 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center" aria-label="Remove photo" data-testid="button-remove-photo">
                                 <X className="w-3 h-3 text-white/80" />
                               </button>
-                              <span className="absolute bottom-2 left-2 text-[8px] text-white/50 font-medium">{"\u09AB\u099F\u09CB \u09AF\u09CB\u0997 \u09B9\u09AF\u09BC\u09C7\u099B\u09C7"}</span>
                             </div>
                           ) : (
                             <div className="flex flex-col items-center justify-center py-6 group-hover:scale-105 transition-transform">
                               <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-2" style={{ background: "rgba(59,130,246,0.08)" }}>
                                 <Upload className="w-4 h-4 text-blue-400/50" />
                               </div>
-                              <p className="text-[10px] text-white/30 font-medium">{"\u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
+                              <p className="text-[10px] text-white/30 font-medium">{isDual ? "\u09AC\u09BE\u09AE \u09AB\u099F\u09CB" : "\u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
                             </div>
                           )}
                         </label>
                       </div>
 
                       <div>
+                        <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E8" : "\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
+                        {isDual ? (
+                          <>
+                            <input ref={secondPhotoInputRef} type="file" accept="image/*" onChange={handleSecondPhotoUpload} className="hidden" id="photo2-upload" data-testid="input-second-photo" />
+                            <label htmlFor="photo2-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") secondPhotoInputRef.current?.click(); }} className="block rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden group" style={{ background: "rgba(255,255,255,0.02)", border: "1.5px dashed rgba(255,255,255,0.06)" }} data-testid="dropzone-second-photo">
+                              {secondPhotoSrc ? (
+                                <div className="relative">
+                                  <img src={secondPhotoSrc} alt="Second photo" className="w-full h-24 object-cover" />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (secondPhotoSrc) URL.revokeObjectURL(secondPhotoSrc); setSecondPhotoSrc(null); setSecondPhotoImg(null); }} className="absolute top-2 right-2 w-5 h-5 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center" aria-label="Remove second photo" data-testid="button-remove-second-photo">
+                                    <X className="w-3 h-3 text-white/80" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center py-6 group-hover:scale-105 transition-transform">
+                                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-2" style={{ background: "rgba(59,130,246,0.08)" }}>
+                                    <Users className="w-4 h-4 text-blue-400/50" />
+                                  </div>
+                                  <p className="text-[10px] text-white/30 font-medium">{"\u09A1\u09BE\u09A8 \u09AB\u099F\u09CB"}</p>
+                                </div>
+                              )}
+                            </label>
+                          </>
+                        ) : (
+                          <>
+                            <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" data-testid="input-logo" />
+                            <label htmlFor="logo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden group" style={{ background: "rgba(255,255,255,0.02)", border: "1.5px dashed rgba(255,255,255,0.06)" }} data-testid="dropzone-logo">
+                              {logoSrc ? (
+                                <div className="relative flex items-center justify-center py-4">
+                                  <img src={logoSrc} alt="Uploaded channel logo" className="h-14 object-contain" />
+                                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (logoSrc) URL.revokeObjectURL(logoSrc); setLogoSrc(null); setLogoImg(null); }} className="absolute top-2 right-2 w-5 h-5 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center" aria-label="Remove logo" data-testid="button-remove-logo">
+                                    <X className="w-3 h-3 text-white/80" />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center py-6 group-hover:scale-105 transition-transform">
+                                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-2" style={{ background: "rgba(59,130,246,0.08)" }}>
+                                    <ImageIcon className="w-4 h-4 text-blue-400/50" />
+                                  </div>
+                                  <p className="text-[10px] text-white/30 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB"}</p>
+                                </div>
+                              )}
+                            </label>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {isDual && (
+                      <div>
                         <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{"\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
-                        <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" data-testid="input-logo" />
-                        <label htmlFor="logo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden group" style={{ background: "rgba(255,255,255,0.02)", border: "1.5px dashed rgba(255,255,255,0.06)" }} data-testid="dropzone-logo">
+                        <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload-dual" data-testid="input-logo-dual" />
+                        <label htmlFor="logo-upload-dual" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block rounded-2xl cursor-pointer transition-all duration-300 overflow-hidden group" style={{ background: "rgba(255,255,255,0.02)", border: "1.5px dashed rgba(255,255,255,0.06)" }} data-testid="dropzone-logo-dual">
                           {logoSrc ? (
-                            <div className="relative flex items-center justify-center py-4">
-                              <img src={logoSrc} alt="Uploaded channel logo" className="h-14 object-contain" />
-                              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (logoSrc) URL.revokeObjectURL(logoSrc); setLogoSrc(null); setLogoImg(null); }} className="absolute top-2 right-2 w-5 h-5 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center" aria-label="Remove logo" data-testid="button-remove-logo">
+                            <div className="relative flex items-center justify-center py-3">
+                              <img src={logoSrc} alt="Uploaded channel logo" className="h-10 object-contain" />
+                              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (logoSrc) URL.revokeObjectURL(logoSrc); setLogoSrc(null); setLogoImg(null); }} className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center" aria-label="Remove logo" data-testid="button-remove-logo-dual">
                                 <X className="w-3 h-3 text-white/80" />
                               </button>
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center justify-center py-6 group-hover:scale-105 transition-transform">
-                              <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-2" style={{ background: "rgba(59,130,246,0.08)" }}>
-                                <ImageIcon className="w-4 h-4 text-blue-400/50" />
-                              </div>
-                              <p className="text-[10px] text-white/30 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB"}</p>
+                            <div className="flex items-center justify-center py-3 gap-2 group-hover:scale-105 transition-transform">
+                              <ImageIcon className="w-4 h-4 text-blue-400/30" />
+                              <p className="text-[10px] text-white/20 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
                             </div>
                           )}
                         </label>
                       </div>
-                    </div>
+                    )}
 
                     <div>
-                      <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{"\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
+                      <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E7 (\u09AC\u09BE\u09AE)" : "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
                       <Textarea
                         value={headline}
                         onChange={(e) => { setHeadline(e.target.value); setIsGenerated(false); }}
                         placeholder={"\u09A8\u09BF\u0989\u099C \u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09B2\u09BF\u0996\u09C1\u09A8..."}
-                        className="border-0 text-white text-sm rounded-2xl resize-none min-h-[80px] focus-visible:ring-1 focus-visible:ring-blue-500/30"
+                        className="border-0 text-white text-sm rounded-2xl resize-none min-h-[70px] focus-visible:ring-1 focus-visible:ring-blue-500/30"
                         style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }}
                         data-testid="textarea-headline"
                       />
                     </div>
+
+                    {(isDual || selectedTemplate.id === "news-summary") && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                        <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E8 (\u09A1\u09BE\u09A8)" : "\u09AC\u09BF\u09B8\u09CD\u09A4\u09BE\u09B0\u09BF\u09A4 / \u09AC\u09C1\u09B2\u09C7\u099F"}</p>
+                        <Textarea
+                          value={headline2}
+                          onChange={(e) => { setHeadline2(e.target.value); setIsGenerated(false); }}
+                          placeholder={isDual ? "\u09A6\u09CD\u09AC\u09BF\u09A4\u09C0\u09AF\u09BC \u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE..." : "\u09AA\u09CD\u09B0\u09A4\u09BF\u099F\u09BF \u09B2\u09BE\u0987\u09A8\u09C7 \u09A8\u09A4\u09C1\u09A8 \u09AC\u09C1\u09B2\u09C7\u099F \u09AA\u09AF\u09BC\u09C7\u09A8\u09CD\u099F..."}
+                          className="border-0 text-white text-sm rounded-2xl resize-none min-h-[70px] focus-visible:ring-1 focus-visible:ring-blue-500/30"
+                          style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }}
+                          data-testid="textarea-headline2"
+                        />
+                      </motion.div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
@@ -357,14 +450,27 @@ export default function Home() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{"\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF\u09B0 \u09A8\u09BE\u09AE"}</p>
-                        <Input value={personName} onChange={(e) => setPersonName(e.target.value)} placeholder={"\u09AF\u09C7\u09AE\u09A8: \u0986\u09B0\u09BF\u09AB\u09C1\u09B2 \u0987\u09B8\u09B2\u09BE\u09AE"} className="border-0 text-white text-xs rounded-2xl h-10" style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }} data-testid="input-person-name" />
+                        <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{isDual ? "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E7" : "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF\u09B0 \u09A8\u09BE\u09AE"}</p>
+                        <Input value={personName} onChange={(e) => setPersonName(e.target.value)} placeholder={"\u09A8\u09BE\u09AE"} className="border-0 text-white text-xs rounded-2xl h-10" style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }} data-testid="input-person-name" />
                       </div>
                       <div>
                         <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{"\u09AA\u09A6\u09AC\u09C0"}</p>
-                        <Input value={personTitle} onChange={(e) => setPersonTitle(e.target.value)} placeholder={"\u09AF\u09C7\u09AE\u09A8: \u09B8\u09BE\u0982\u09AC\u09BE\u09A6\u09BF\u0995"} className="border-0 text-white text-xs rounded-2xl h-10" style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }} data-testid="input-person-title" />
+                        <Input value={personTitle} onChange={(e) => setPersonTitle(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0"} className="border-0 text-white text-xs rounded-2xl h-10" style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }} data-testid="input-person-title" />
                       </div>
                     </div>
+
+                    {isDual && (
+                      <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
+                        <div>
+                          <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{"\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E8"}</p>
+                          <Input value={personName2} onChange={(e) => setPersonName2(e.target.value)} placeholder={"\u09A8\u09BE\u09AE \u09E8"} className="border-0 text-white text-xs rounded-2xl h-10" style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }} data-testid="input-person-name2" />
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-white/20 uppercase mb-1.5 pl-1" style={{ letterSpacing: "0.15em" }}>{"\u09AA\u09A6\u09AC\u09C0 \u09E8"}</p>
+                          <Input value={personTitle2} onChange={(e) => setPersonTitle2(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0 \u09E8"} className="border-0 text-white text-xs rounded-2xl h-10" style={{ background: "rgba(255,255,255,0.03)", fontFamily: BN }} data-testid="input-person-title2" />
+                        </div>
+                      </motion.div>
+                    )}
                   </motion.div>
                 )}
 
@@ -392,6 +498,14 @@ export default function Home() {
                       </div>
                     </div>
 
+                    <div className="rounded-2xl p-3" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <img src={otvLogoPath} alt="OTV" className="w-6 h-6 rounded-lg object-cover" />
+                        <span className="text-[10px] font-bold text-white/40">OTV {"\u09B2\u09CB\u0997\u09CB \u09B8\u09AC \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u09B8\u09CD\u09AC\u09AF\u09BC\u0982\u0995\u09CD\u09B0\u09BF\u09AF\u09BC"}</span>
+                      </div>
+                      <p className="text-[9px] text-white/20">{"\u0993\u099F\u09BF\u09AD\u09BF \u09B2\u09CB\u0997\u09CB \u09AA\u09CD\u09B0\u09A4\u09BF\u099F\u09BF \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u0985\u099F\u09CB\u09AE\u09CD\u09AF\u09BE\u099F\u09BF\u0995 \u09AF\u09CB\u0997 \u09B9\u09AF\u09BC"}</p>
+                    </div>
+
                     {!isPro && (
                       <div className="rounded-2xl p-4 relative overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.06), rgba(245,158,11,0.03))", border: "1px solid rgba(251,191,36,0.12)" }}>
                         <div className="absolute top-0 right-0 w-32 h-32 rounded-full" style={{ background: "radial-gradient(circle, rgba(251,191,36,0.08), transparent 70%)" }} />
@@ -413,27 +527,21 @@ export default function Home() {
                 {activeSection === "settings" && (
                   <motion.div key="settings" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-4">
                     <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
-                      <p className="text-[9px] font-bold text-white/20 uppercase mb-2" style={{ letterSpacing: "0.15em" }}>API Integration</p>
-                      <p className="text-[10px] text-white/15 mb-2">{"\u0985\u099F\u09CB\u09AE\u09C7\u09B6\u09A8\u09C7\u09B0 \u099C\u09A8\u09CD\u09AF Templated.io API Key \u09A6\u09BF\u09A8"}</p>
-                      <Input placeholder="API Key" className="border-0 text-white text-[10px] rounded-xl h-9" style={{ background: "rgba(255,255,255,0.03)" }} data-testid="input-api-key" />
-                      <p className="text-[7px] text-white/10 mt-1.5" style={{ fontFamily: "'Montserrat', monospace" }}>Layers: main_photo, channel_logo, main_headline, category_badge, via_text</p>
-                    </div>
-                    <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
                       <p className="text-[9px] font-bold text-white/20 uppercase mb-2" style={{ letterSpacing: "0.15em" }}>{"\u09AC\u09CD\u09AF\u09AC\u09B9\u09BE\u09B0 \u09AC\u09BF\u09A7\u09BF"}</p>
                       <div className="space-y-2">
                         {[
-                          "\u09E7. \u099F\u09C7\u09AE\u09CD\u09AA\u09B2\u09C7\u099F \u09B8\u09BF\u09B2\u09C7\u0995\u09CD\u099F \u0995\u09B0\u09C1\u09A8",
-                          "\u09E8. \u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1 \u0995\u09B0\u09C1\u09A8",
-                          "\u09E9. \u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB \u09AF\u09CB\u0997 \u0995\u09B0\u09C1\u09A8",
-                          "\u09EA. \u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u0993 \u0995\u09CD\u09AF\u09BE\u099F\u09BE\u0997\u09B0\u09BF \u09B2\u09BF\u0996\u09C1\u09A8",
-                          "\u09EB. \u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u0995\u09BE\u09B0\u09CD\u09A1 \u09A4\u09C8\u09B0\u09BF \u0995\u09B0\u09C1\u09A8",
-                          "\u09EC. PNG / JPG / PDF \u09A1\u09BE\u0989\u09A8\u09B2\u09CB\u09A1 \u0995\u09B0\u09C1\u09A8",
+                          "\u099F\u09C7\u09AE\u09CD\u09AA\u09B2\u09C7\u099F \u09B8\u09BF\u09B2\u09C7\u0995\u09CD\u099F \u0995\u09B0\u09C1\u09A8",
+                          "\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1 \u0995\u09B0\u09C1\u09A8",
+                          "\u09A1\u09C1\u09AF\u09BC\u09BE\u09B2 \u099F\u09C7\u09AE\u09CD\u09AA\u09B2\u09C7\u099F\u09C7 \u09E8\u099F\u09BF \u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1",
+                          "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u0993 \u0995\u09CD\u09AF\u09BE\u099F\u09BE\u0997\u09B0\u09BF \u09B2\u09BF\u0996\u09C1\u09A8",
+                          "\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u0995\u09BE\u09B0\u09CD\u09A1 \u09A4\u09C8\u09B0\u09BF \u0995\u09B0\u09C1\u09A8",
+                          "PNG / JPG / PDF \u09A1\u09BE\u0989\u09A8\u09B2\u09CB\u09A1 \u0995\u09B0\u09C1\u09A8",
                         ].map((step, i) => (
                           <div key={i} className="flex items-start gap-2">
                             <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(59,130,246,0.1)" }}>
                               <span className="text-[7px] text-blue-400 font-bold">{i + 1}</span>
                             </div>
-                            <p className="text-[10px] text-white/25 leading-relaxed">{step.substring(3)}</p>
+                            <p className="text-[10px] text-white/25 leading-relaxed">{step}</p>
                           </div>
                         ))}
                       </div>

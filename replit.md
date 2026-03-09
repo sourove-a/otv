@@ -17,9 +17,9 @@ Premium Bangladeshi TV news-style photo card generator for otv.online. Features 
 - All UI labels in Bengali (Noto Sans Bengali, Hind Siliguri)
 
 ## Key Features
-- 13 premium news card templates
-- Upload main photo + channel logo
-- Bengali + English headline editing
+- 17 premium news card templates (13 original + 4 new)
+- Upload main photo + channel logo + second photo for dual templates
+- Bengali + English headline editing with dual headline support
 - Category badge with Bengali labels
 - Via text customization
 - Person name/title for quote cards
@@ -28,7 +28,11 @@ Premium Bangladeshi TV news-style photo card generator for otv.online. Features 
 - Download PNG / JPG / PDF (A4)
 - Free/Pro toggle (watermark control)
 - Floating particle animations
-- Tab-based editor (edit / style tabs)
+- Tab-based editor (কন্টেন্ট / স্টাইল / সেটিংস tabs)
+- OTV logo auto-embedded on all cards
+- Dual-photo upload for split templates
+- Second headline field for dual/summary templates
+- Person Name 2 / Title 2 fields for dual quote cards
 - Framer Motion animations throughout
 
 ## File Structure
@@ -45,4 +49,19 @@ Premium Bangladeshi TV news-style photo card generator for otv.online. Features 
 - Montserrat (Headlines, English text)
 
 ## Template IDs
-jamuna-dark, national-dark, quote-card, clean-news, dual-quote, world-report, breaking-red, sports-green, opinion-blue, investigation, social-modern, classic-formal, minimal-light
+jamuna-dark, national-dark, quote-card, clean-news, dual-quote, world-report, breaking-red, sports-green, opinion-blue, investigation, social-modern, classic-formal, minimal-light, dual-quote-split, grid-highlight, quote-highlight, news-summary
+
+## New Templates (4)
+- **dual-quote-split**: Two colored halves (red/green), two people, two quotes, two photos
+- **grid-highlight**: Grid background with yellow highlighted text, news photo below
+- **quote-highlight**: Big quotemark, highlighter-style text, faded photo
+- **news-summary**: Green grid bg, circular photo, bullet highlights
+
+## Canvas Utilities
+- `drawGridLines` - Grid line overlay
+- `drawHighlightedText` - Yellow-highlighted text blocks
+- `drawCircularImage` - Circular photo with border
+- `drawOtvWatermark` - OTV logo watermark (used in all templates)
+
+## CardData Interface
+headline, headline2, category, viaText, mainPhoto, secondPhoto, channelLogo, otvLogo, personName, personTitle, personName2, personTitle2, highlightColor
