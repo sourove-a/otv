@@ -2368,6 +2368,440 @@ function renderGlassAiPoster(ctx: CanvasRenderingContext2D, data: CardData, w: n
   drawOtvWatermark(ctx, data);
 }
 
+// ─── NEW PREMIUM PHOTO TEMPLATES ──────────────────────────────────────────────
+
+function renderPhotoBreakingTicker(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  // Full bleed photo background
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 0, 0, w, h);
+  } else {
+    drawDarkBg(ctx, w, h, "#0a0a0a", "#1a1a1a");
+  }
+  // Heavy bottom gradient for text readability
+  const btmGrad = createGradient(ctx, 0, h * 0.35, 0, h, [
+    [0, "transparent"],
+    [0.4, "rgba(0,0,0,0.6)"],
+    [1, "rgba(0,0,0,0.95)"],
+  ]);
+  ctx.fillStyle = btmGrad;
+  ctx.fillRect(0, 0, w, h);
+  // Top logo area
+  const topGrad = createGradient(ctx, 0, 0, 0, h * 0.18, [
+    [0, "rgba(0,0,0,0.7)"],
+    [1, "transparent"],
+  ]);
+  ctx.fillStyle = topGrad;
+  ctx.fillRect(0, 0, w, h);
+  drawLogo(ctx, data.channelLogo, 40, 35, 160, 60);
+  drawViaText(ctx, data.viaText, w - 40, 55);
+  // Breaking ticker bar
+  const tickerH = 68;
+  const accent = data.highlightColor || "#ff1744";
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, h - tickerH - 50, 220, tickerH);
+  ctx.font = `900 24px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  ctx.fillText("BREAKING", 110, h - tickerH - 50 + tickerH / 2);
+  ctx.fillStyle = "rgba(0,0,0,0.85)";
+  ctx.fillRect(220, h - tickerH - 50, w - 220, tickerH);
+  ctx.font = `700 30px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  const tickerText = data.headline.length > 60 ? data.headline.substring(0, 60) + "..." : data.headline;
+  ctx.fillText(tickerText, 240, h - tickerH - 50 + tickerH / 2);
+  // Main headline above ticker
+  ctx.font = `800 64px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "bottom";
+  const lines = [];
+  const words = data.headline.split(" ");
+  let line = "";
+  for (const word of words) {
+    const test = line + word + " ";
+    if (ctx.measureText(test).width > w - 90 && line) {
+      lines.push(line.trim()); line = word + " ";
+    } else { line = test; }
+  }
+  if (line.trim()) lines.push(line.trim());
+  const lastLines = lines.slice(-2);
+  for (let i = lastLines.length - 1; i >= 0; i--) {
+    ctx.fillText(lastLines[i], 45, h - tickerH - 60 - (lastLines.length - 1 - i) * 76);
+  }
+  drawAccentBar(ctx, 0, h - 50, w, 8, accent, true);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderPhotoLeftPanel(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const accent = data.highlightColor || "#ffc107";
+  // Right half: photo
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, w * 0.45, 0, w * 0.55, h);
+    // Gradient blend from text panel to photo
+    const blend = createGradient(ctx, w * 0.42, 0, w * 0.58, 0, [
+      [0, "#0f1220"],
+      [0.5, "rgba(15,18,32,0.8)"],
+      [1, "transparent"],
+    ]);
+    ctx.fillStyle = blend;
+    ctx.fillRect(w * 0.42, 0, w * 0.2, h);
+  }
+  // Left panel background
+  ctx.fillStyle = "#0f1220";
+  ctx.fillRect(0, 0, w * 0.45, h);
+  drawEditorialGrid(ctx, 0, 0, w * 0.45, h, 50, "rgba(100,120,255,0.035)", "none");
+  drawNoiseOverlay(ctx, w * 0.45, h, 0.012);
+  // Accent bar on left
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, 6, h);
+  drawLogo(ctx, data.channelLogo, 30, 40, 150, 55);
+  // Badge
+  ctx.font = `900 18px 'Montserrat', sans-serif`;
+  ctx.fillStyle = accent;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(data.category, 30, 120);
+  // Headline
+  ctx.font = `800 58px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  const endY = wrapText(ctx, data.headline, 30, 160, w * 0.42, 74, "left");
+  // Subheadline
+  if (data.subheadline) {
+    ctx.font = `400 28px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    wrapText(ctx, data.subheadline, 30, endY + 20, w * 0.42, 40, "left");
+  }
+  // Via text bottom
+  ctx.font = `500 22px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "rgba(255,255,255,0.35)";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(data.viaText, 30, h - 40);
+  drawAccentBar(ctx, 0, h - 6, w, 6, accent, true);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderPhotoCinematicDark(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const accent = data.highlightColor || "#ffd700";
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 0, 0, w, h);
+  } else {
+    ctx.fillStyle = "#111";
+    ctx.fillRect(0, 0, w, h);
+  }
+  // Cinematic letterbox bars
+  ctx.fillStyle = "rgba(0,0,0,0.92)";
+  ctx.fillRect(0, 0, w, h * 0.16);
+  ctx.fillRect(0, h * 0.77, w, h * 0.23);
+  // Middle dark overlay for text
+  const midGrad = createGradient(ctx, 0, h * 0.5, 0, h * 0.77, [
+    [0, "transparent"],
+    [1, "rgba(0,0,0,0.5)"],
+  ]);
+  ctx.fillStyle = midGrad;
+  ctx.fillRect(0, h * 0.5, w, h * 0.27);
+  // Logo top bar
+  drawLogo(ctx, data.channelLogo, 40, h * 0.03, 150, 55);
+  ctx.font = `700 20px 'Montserrat', sans-serif`;
+  ctx.fillStyle = accent;
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  ctx.fillText(data.category, w - 40, h * 0.08);
+  // Bottom bar content
+  ctx.font = `800 62px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const bY = h * 0.855;
+  wrapText(ctx, data.headline, w / 2, bY - 30, w - 100, 72, "center");
+  // Accent line
+  ctx.fillStyle = accent;
+  ctx.fillRect(w / 2 - 60, h * 0.775, 120, 4);
+  ctx.font = `500 22px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(data.viaText, w / 2, h - 15);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderPhotoMagazineCover(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const accent = data.highlightColor || "#e53935";
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 0, 0, w, h);
+  } else {
+    ctx.fillStyle = "#f5f5f5";
+    ctx.fillRect(0, 0, w, h);
+  }
+  // Top masthead
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, 0, w, 110);
+  drawLogo(ctx, data.channelLogo, 25, 10, 180, 90);
+  ctx.font = `900 42px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+  ctx.fillText("NEWS", w - 30, 55);
+  // Bottom white band
+  const bandH = h * 0.32;
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.fillRect(0, h - bandH, w, bandH);
+  // Category tag
+  ctx.fillStyle = accent;
+  ctx.fillRect(30, h - bandH + 20, 120, 34);
+  ctx.font = `800 18px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(data.category, 90, h - bandH + 37);
+  // Headline in white band
+  ctx.font = `800 52px ${bnFont(data)}`;
+  ctx.fillStyle = "#111111";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  wrapText(ctx, data.headline, 30, h - bandH + 68, w - 60, 64, "left");
+  ctx.font = `400 22px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "#666";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(data.viaText + "  |  otv.online", 30, h - 20);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderPhotoNewsCard(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const accent = data.highlightColor || "#1565C0";
+  // White card background
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, w, h);
+  // Top photo section
+  const photoH = h * 0.54;
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 0, 0, w, photoH);
+  } else {
+    ctx.fillStyle = "#e0e8f0";
+    ctx.fillRect(0, 0, w, photoH);
+    ctx.font = `300 32px 'Montserrat', sans-serif`;
+    ctx.fillStyle = "#bbb";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("PHOTO", w / 2, photoH / 2);
+  }
+  // Logo overlay on photo
+  drawLogo(ctx, data.channelLogo, 20, 20, 140, 50);
+  // Category badge on photo
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, photoH - 44, 180, 44);
+  ctx.font = `800 22px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(data.category, 90, photoH - 22);
+  // Text section
+  ctx.fillStyle = "#f8f9fa";
+  ctx.fillRect(0, photoH, w, h - photoH);
+  // Accent stripe
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, photoH, 5, h - photoH);
+  // Headline
+  ctx.font = `800 52px ${bnFont(data)}`;
+  ctx.fillStyle = "#1a1a1a";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  wrapText(ctx, data.headline, 35, photoH + 30, w - 70, 66, "left");
+  // Source line
+  ctx.font = `500 22px 'Montserrat', sans-serif`;
+  ctx.fillStyle = accent;
+  ctx.textBaseline = "bottom";
+  ctx.fillText(data.viaText + "  ·  otv.online", 35, h - 25);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderPhotoSplitGradient(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const accent = data.highlightColor || "#7c4dff";
+  // Dark left side
+  const bgGrad = createGradient(ctx, 0, 0, w, 0, [
+    [0, "#0a0a18"],
+    [0.55, "#0f0f22"],
+    [1, "#1a1a30"],
+  ]);
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+  drawNoiseOverlay(ctx, w, h, 0.015);
+  // Photo on right half (clipped)
+  if (data.mainPhoto) {
+    ctx.save();
+    const clipX = w * 0.48;
+    ctx.beginPath();
+    ctx.moveTo(clipX, 0);
+    ctx.lineTo(w, 0);
+    ctx.lineTo(w, h);
+    ctx.lineTo(clipX - 60, h);
+    ctx.closePath();
+    ctx.clip();
+    drawPhoto(ctx, data, clipX - 60, 0, w - clipX + 60, h);
+    // Blend gradient over photo edge
+    const photoBlend = createGradient(ctx, clipX - 60, 0, clipX + 80, 0, [
+      [0, "#0f0f22"],
+      [1, "transparent"],
+    ]);
+    ctx.fillStyle = photoBlend;
+    ctx.fillRect(clipX - 60, 0, 140, h);
+    ctx.restore();
+  }
+  // Accent vertical bar
+  ctx.fillStyle = accent;
+  ctx.fillRect(w * 0.48 - 3, 0, 3, h);
+  drawLogo(ctx, data.channelLogo, 35, 35, 160, 60);
+  // Category
+  ctx.font = `900 18px 'Montserrat', sans-serif`;
+  ctx.fillStyle = accent;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("▶  " + data.category, 35, 125);
+  // Headline
+  ctx.font = `800 58px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  const eY = wrapText(ctx, data.headline, 35, 165, w * 0.48, 74, "left");
+  // Sub
+  if (data.subheadline) {
+    ctx.font = `400 26px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    wrapText(ctx, data.subheadline, 35, eY + 18, w * 0.46, 38, "left");
+  }
+  // Bottom info
+  ctx.font = `500 20px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "rgba(255,255,255,0.35)";
+  ctx.textBaseline = "bottom";
+  ctx.textAlign = "left";
+  ctx.fillText(data.viaText, 35, h - 35);
+  drawAccentBar(ctx, 0, h - 6, w, 6, accent, true);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderPhotoTopBanner(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const accent = data.highlightColor || "#00897b";
+  // Full width photo top section
+  const photoH = h * 0.48;
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 0, 0, w, photoH);
+  } else {
+    const phBg = createGradient(ctx, 0, 0, 0, photoH, [
+      [0, "#1a2838"],
+      [1, "#0a1628"],
+    ]);
+    ctx.fillStyle = phBg;
+    ctx.fillRect(0, 0, w, photoH);
+  }
+  // Photo overlay gradient
+  const phGrad = createGradient(ctx, 0, photoH * 0.4, 0, photoH, [
+    [0, "transparent"],
+    [1, "rgba(0,0,0,0.4)"],
+  ]);
+  ctx.fillStyle = phGrad;
+  ctx.fillRect(0, 0, w, photoH);
+  // Logo on photo
+  drawLogo(ctx, data.channelLogo, 30, 25, 150, 55);
+  // Category badge on photo
+  ctx.fillStyle = accent;
+  ctx.beginPath();
+  ctx.roundRect(w - 180, 25, 155, 46, 8);
+  ctx.fill();
+  ctx.font = `800 20px 'Montserrat', sans-serif`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(data.category, w - 102, 48);
+  // Bottom card section
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, photoH, w, h - photoH);
+  // Top border accent
+  ctx.fillStyle = accent;
+  ctx.fillRect(0, photoH, w, 5);
+  // Headline
+  ctx.font = `800 54px ${bnFont(data)}`;
+  ctx.fillStyle = "#111111";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  const eY2 = wrapText(ctx, data.headline, 40, photoH + 35, w - 80, 68, "left");
+  // Separator line
+  ctx.strokeStyle = `${accent}40`;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(40, eY2 + 20);
+  ctx.lineTo(w - 40, eY2 + 20);
+  ctx.stroke();
+  // Sub
+  if (data.subheadline) {
+    ctx.font = `400 26px ${bnFont(data)}`;
+    ctx.fillStyle = "#555555";
+    wrapText(ctx, data.subheadline, 40, eY2 + 35, w - 80, 38, "left");
+  }
+  // Source
+  ctx.font = `600 22px 'Montserrat', sans-serif`;
+  ctx.fillStyle = accent;
+  ctx.textBaseline = "bottom";
+  ctx.textAlign = "right";
+  ctx.fillText(data.viaText, w - 40, h - 25);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderPhotoVignetteText(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const accent = data.highlightColor || "#ffc107";
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 0, 0, w, h);
+  } else {
+    ctx.fillStyle = "#0a0a0a";
+    ctx.fillRect(0, 0, w, h);
+  }
+  // Vignette overlay
+  const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.2, w / 2, h / 2, h * 0.9);
+  vig.addColorStop(0, "transparent");
+  vig.addColorStop(1, "rgba(0,0,0,0.82)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+  // Top bar
+  const tGrad = createGradient(ctx, 0, 0, 0, h * 0.2, [
+    [0, "rgba(0,0,0,0.75)"],
+    [1, "transparent"],
+  ]);
+  ctx.fillStyle = tGrad;
+  ctx.fillRect(0, 0, w, h);
+  drawLogo(ctx, data.channelLogo, 40, 35, 150, 55);
+  drawViaText(ctx, data.viaText, w - 40, 58);
+  // Center badge
+  drawBadge(ctx, data.category, w / 2, h * 0.42, accent, "#000", undefined, 28);
+  // Center headline
+  ctx.font = `800 68px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.shadowColor = "rgba(0,0,0,0.8)";
+  ctx.shadowBlur = 15;
+  const lines2: string[] = [];
+  const words2 = data.headline.split(" ");
+  let line2 = "";
+  for (const w2 of words2) {
+    const test = line2 + w2 + " ";
+    if (ctx.measureText(test).width > w - 120 && line2) {
+      lines2.push(line2.trim()); line2 = w2 + " ";
+    } else { line2 = test; }
+  }
+  if (line2.trim()) lines2.push(line2.trim());
+  const startY = h * 0.5 - (lines2.length * 80) / 2;
+  lines2.forEach((ln, i) => ctx.fillText(ln, w / 2, startY + i * 80));
+  ctx.shadowBlur = 0;
+  // Bottom accent line
+  ctx.fillStyle = accent;
+  ctx.fillRect(w / 2 - 80, h * 0.5 + (lines2.length * 80) / 2 + 18, 160, 4);
+  drawOtvWatermark(ctx, data);
+}
+
 export const templates: TemplateConfig[] = [
   {
     id: "jamuna-dark",
@@ -3079,5 +3513,78 @@ export const templates: TemplateConfig[] = [
     accentColor: "#00e5ff",
     defaultCategory: "TECHNOLOGY",
     render: renderGlassAiPoster,
+  },
+  // ─── NEW PREMIUM PHOTO TEMPLATES ───────────────────────────
+  {
+    id: "photo-breaking-ticker",
+    name: "Breaking Ticker",
+    nameBn: "\u09AC\u09CD\u09B0\u09C7\u0995\u09BF\u0982 \u099F\u09BF\u0995\u09BE\u09B0",
+    previewColors: ["#111111", "#222222"],
+    accentColor: "#ff1744",
+    defaultCategory: "BREAKING",
+    render: renderPhotoBreakingTicker,
+  },
+  {
+    id: "photo-left-panel",
+    name: "Left Panel",
+    nameBn: "\u09AB\u099F\u09CB \u09AA\u09CD\u09AF\u09BE\u09A8\u09C5\u09B2",
+    previewColors: ["#0f1220", "#1a1a30"],
+    accentColor: "#ffc107",
+    defaultCategory: "NATIONAL",
+    render: renderPhotoLeftPanel,
+  },
+  {
+    id: "photo-cinematic-dark",
+    name: "Cinematic Dark",
+    nameBn: "\u09B8\u09BF\u09A8\u09C7\u09AE\u09BE\u099F\u09BF\u0995 \u09A1\u09BE\u09B0\u09CD\u0995",
+    previewColors: ["#111111", "#0a0a0a"],
+    accentColor: "#ffd700",
+    defaultCategory: "FEATURE",
+    render: renderPhotoCinematicDark,
+  },
+  {
+    id: "photo-magazine-cover",
+    name: "Magazine Cover",
+    nameBn: "\u09AE\u09CD\u09AF\u09BE\u0997\u09BE\u099C\u09BF\u09A8 \u0995\u09AD\u09BE\u09B0",
+    previewColors: ["#e53935", "#ffffff"],
+    accentColor: "#e53935",
+    defaultCategory: "FEATURE",
+    render: renderPhotoMagazineCover,
+  },
+  {
+    id: "photo-news-card",
+    name: "News Card",
+    nameBn: "\u09AB\u099F\u09CB \u09A8\u09BF\u0989\u099C \u0995\u09BE\u09B0\u09CD\u09A1",
+    previewColors: ["#ffffff", "#f8f9fa"],
+    accentColor: "#1565C0",
+    defaultCategory: "NATIONAL",
+    render: renderPhotoNewsCard,
+  },
+  {
+    id: "photo-split-gradient",
+    name: "Split Gradient",
+    nameBn: "\u09B8\u09CD\u09AA\u09CD\u09B2\u09BF\u099F \u0997\u09CD\u09B0\u09C7\u09A1\u09BF\u09AF\u09BC\u09C7\u09A8\u09CD\u099F",
+    previewColors: ["#0a0a18", "#1a1a30"],
+    accentColor: "#7c4dff",
+    defaultCategory: "TRENDING",
+    render: renderPhotoSplitGradient,
+  },
+  {
+    id: "photo-top-banner",
+    name: "Top Banner",
+    nameBn: "\u099F\u09AA \u09AC\u09CD\u09AF\u09BE\u09A8\u09BE\u09B0",
+    previewColors: ["#ffffff", "#f0f4f8"],
+    accentColor: "#00897b",
+    defaultCategory: "NATIONAL",
+    render: renderPhotoTopBanner,
+  },
+  {
+    id: "photo-vignette-text",
+    name: "Vignette Text",
+    nameBn: "\u09AD\u09BF\u0997\u09A8\u09C7\u099F \u09B9\u09C7\u09A1\u09B2\u09BE\u0987\u09A8",
+    previewColors: ["#111111", "#0a0a0a"],
+    accentColor: "#ffc107",
+    defaultCategory: "FEATURE",
+    render: renderPhotoVignetteText,
   },
 ];

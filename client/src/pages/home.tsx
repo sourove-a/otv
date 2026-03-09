@@ -205,31 +205,31 @@ const BN = "'Noto Sans Bengali', 'Hind Siliguri', sans-serif";
 const DUAL_TEMPLATES = ["dual-quote", "dual-quote-split"];
 
 const G = {
-  bg1: "#0c0f1e",
-  bg2: "#111630",
-  bg3: "#0a0e24",
-  panel: "rgba(110,140,240,0.10)",
-  panelBorder: "rgba(130,155,245,0.18)",
-  panelActive: "rgba(140,160,255,0.20)",
-  input: "rgba(110,140,240,0.10)",
-  inputBorder: "rgba(130,155,245,0.20)",
-  inputFocus: "rgba(170,155,255,0.32)",
-  gold: "#e8be3a",
-  goldLight: "#f0cc50",
-  goldDim: "rgba(220,180,55,0.18)",
-  blur: "blur(50px) saturate(240%)",
-  blurSm: "blur(30px) saturate(220%)",
-  r: "22px",
-  rSm: "16px",
-  rXl: "28px",
-  headerBg: "rgba(12,15,30,0.72)",
-  accent: "rgba(140,130,255,0.18)",
-  accentBorder: "rgba(155,145,255,0.30)",
-  glassGradient: "linear-gradient(135deg, rgba(130,140,255,0.12), rgba(210,170,255,0.09), rgba(110,190,255,0.06))",
-  glassHighlight: "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(255,255,255,0.03)",
-  iridescent: "linear-gradient(135deg, #e8be3a, #d49cff, #70b8ff, #e8be3a)",
-  iridescentHover: "linear-gradient(135deg, #f0cc50, #e0b4ff, #90ccff, #f0cc50)",
-  shimmer: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
+  bg1: "#080c1a",
+  bg2: "#0d1228",
+  bg3: "#070a18",
+  panel: "rgba(255,255,255,0.055)",
+  panelBorder: "rgba(255,255,255,0.10)",
+  panelActive: "rgba(255,255,255,0.10)",
+  input: "rgba(255,255,255,0.06)",
+  inputBorder: "rgba(255,255,255,0.12)",
+  inputFocus: "rgba(130,120,255,0.35)",
+  gold: "#f0c040",
+  goldLight: "#f8d060",
+  goldDim: "rgba(240,192,64,0.15)",
+  blur: "blur(40px) saturate(180%)",
+  blurSm: "blur(20px) saturate(160%)",
+  r: "18px",
+  rSm: "12px",
+  rXl: "24px",
+  headerBg: "rgba(8,12,26,0.85)",
+  accent: "rgba(120,100,255,0.15)",
+  accentBorder: "rgba(140,120,255,0.28)",
+  glassGradient: "linear-gradient(135deg, rgba(120,100,255,0.10), rgba(180,140,255,0.07), rgba(80,160,255,0.05))",
+  glassHighlight: "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(255,255,255,0.02)",
+  iridescent: "linear-gradient(135deg, #f0c040, #c080ff, #60a8ff, #f0c040)",
+  iridescentHover: "linear-gradient(135deg, #f8d060, #d090ff, #80bcff, #f8d060)",
+  shimmer: "linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent)",
 };
 
 const OTV_LOGO_DEFAULT_SIZE = 100;
@@ -237,7 +237,7 @@ const OTV_LOGO_DEFAULT_SIZE = 100;
 function getTemplateCategory(id: string): string {
   const darkIds = ["jamuna-dark", "national-dark", "world-report", "breaking-red", "sports-green", "opinion-blue", "investigation", "classic-formal", "crimson-dark", "midnight-blue", "forest-dark", "sunset-orange", "purple-haze", "neon-cyan", "rose-gold", "steel-gray", "emerald-night", "coral-dark"];
   const lightIds = ["quote-card", "clean-news", "minimal-light", "grid-highlight", "quote-highlight", "news-summary", "pastel-pink", "ivory-clean", "sage-green", "sky-blue", "lavender-light", "peach-warm", "mint-fresh", "cream-classic", "sand-warm", "snow-white"];
-  const photoIds = ["social-modern", "photo-full-overlay", "photo-blur-bg", "photo-cinematic", "photo-magazine", "photo-editorial", "photo-portrait", "photo-panorama", "photo-vignette", "photo-duotone", "photo-vintage"];
+  const photoIds = ["social-modern", "photo-full-overlay", "photo-blur-bg", "photo-cinematic", "photo-magazine", "photo-editorial", "photo-portrait", "photo-panorama", "photo-vignette", "photo-duotone", "photo-vintage", "photo-breaking-ticker", "photo-left-panel", "photo-cinematic-dark", "photo-magazine-cover", "photo-news-card", "photo-split-gradient", "photo-top-banner", "photo-vignette-text"];
   const themedIds = ["dual-quote", "dual-quote-split", "ramadan-green", "eid-gold", "victory-red", "independence-green", "election-blue", "weather-cyan", "health-green", "tech-blue", "economy-gold", "education-purple"];
   if (darkIds.includes(id)) return "dark";
   if (lightIds.includes(id)) return "light";
