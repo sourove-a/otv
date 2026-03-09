@@ -1,0 +1,395 @@
+Build an ultra-premium web app called “Liquid Glass Photo Card Studio” or “Premium Glass News Card Generator”.
+
+Goal:
+Create a high-end social media photo card / news card / quote card / editorial card generator with a stunning liquid glass aesthetic. The app should feel luxurious, futuristic, colorful, glossy, and visually rich. It must look premium enough to feel like a world-class design tool.
+
+Tech stack:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- HTML5 Canvas for final rendering/export
+- No backend required
+- Fully client-side
+- Modular architecture with reusable components
+
+Main design direction:
+Use an advanced premium visual language inspired by:
+- liquid glass
+- glassmorphism
+- frosted glass
+- glossy translucent layers
+- luxury gradient lighting
+- soft reflections
+- blurred colorful depth
+- premium modern editorial composition
+
+The result should feel like:
+- Apple-style liquid glass UI
+- premium AI design tool
+- futuristic social media graphics studio
+- elegant and beautiful, not childish
+- rich and colorful, but tasteful
+
+Main layout:
+- Left control panel
+- Right live preview panel
+- Premium top bar with branding
+- Elegant template switcher
+- Modern studio-style interface
+- Responsive layout
+
+Core features:
+1. Create premium square cards (1080x1080)
+2. Multiple templates for photo cards, quote cards, editorial cards, statement cards, and social media posters
+3. Live preview
+4. Upload photo
+5. Upload logo
+6. Add headline
+7. Add subheadline
+8. Add quote
+9. Add speaker name
+10. Add designation
+11. Add source/courtesy/date
+12. Add category label
+13. Add watermark
+14. Add decorative emoji/sticker elements
+15. Add glass UI overlays
+16. Add colorful light effects
+17. Add glow accents
+18. Add AI-style premium icon decorations
+19. Export as PNG
+20. High-resolution canvas output
+
+Critical visual requirement:
+The entire app and the generated cards must be centered around a premium LIQUID GLASS aesthetic.
+
+This means the templates should use:
+- translucent glass panels
+- blurred glass cards
+- frosted glass blocks
+- glossy highlights
+- liquid reflections
+- gradient glow behind glass panels
+- soft edge lighting
+- transparent layered UI
+- rich color bloom
+- premium shadow depth
+
+Glass styling requirements:
+Create multiple glass styles:
+1. Clear premium glass
+2. Frosted white glass
+3. Dark smoked glass
+4. Colorful neon glass
+5. Luxury gradient glass
+6. Soft pastel glass
+7. Editorial glass panel
+8. Crystal glass card
+
+Each glass panel should include:
+- background blur feel
+- semi-transparent fill
+- subtle white edge highlights
+- inner glow
+- soft outer shadow
+- glossy top reflection
+- rounded premium corners
+- realistic layered transparency
+
+Color system:
+Use a premium vibrant color palette.
+The interface and card output should feel colorful and luxurious.
+
+Color directions:
+- electric blue
+- cyan
+- rich purple
+- premium pink
+- gold
+- bright yellow
+- emerald green
+- sunset orange
+- luxury black
+- iridescent multicolor glow
+
+Need color presets like:
+- Aurora Glass
+- Neon Ice
+- Royal Purple
+- Sunset Glow
+- Premium Gold
+- Emerald Crystal
+- Candy Glass
+- Editorial Frost
+- Dark Luxe
+- Rainbow Prism
+
+Foreground/front styling:
+The front layers must be extremely beautiful.
+I want:
+- elegant glass headline bars
+- glowing label chips
+- premium category pills
+- glossy callout strips
+- bright text accents
+- floating decorative UI pieces
+- refined layout hierarchy
+
+Do not make the front look flat.
+All major front elements should feel luxurious and designed.
+
+Typography:
+- strong premium Bangla-friendly typography
+- bold, elegant headline hierarchy
+- large readable title blocks
+- well-spaced Bangla text rendering
+- use editorial balance and line wrapping
+- support multi-line text on canvas
+- allow white text, black text, gradient accent text, and highlighted text
+
+Text effects:
+- glass label behind category
+- soft shadow under headline if needed
+- premium highlight strips
+- optional glow for certain templates
+- gradient or vivid accent text for key phrases
+- bright and beautiful front text composition
+
+Decorative AI elements:
+I want the app to generate many premium decorative design elements automatically.
+
+Include a system for auto-generating decorative visual accents such as:
+- premium emoji clusters
+- reaction-style decorative icons
+- sparkle effects
+- stars
+- glossy stickers
+- gradient blobs
+- glass floating symbols
+- abstract AI accents
+- decorative circles
+- premium shape particles
+- soft neon dots
+- heart/fire/lightning/check/glow icons
+- floating visual ornaments
+
+Important:
+These decorative elements should feel premium and modern, not random childish emoji spam.
+They should be aesthetically placed and support a luxury social media design style.
+
+Add a feature:
+- “Auto Decorate”
+When enabled, the app automatically adds tasteful premium decorative AI-style elements to the card composition depending on the selected template and color palette.
+
+Emoji/sticker system:
+Create a premium emoji/sticker engine with:
+- floating emoji placement
+- sticker scale control
+- opacity control
+- glow control
+- auto layout
+- decorative cluster presets
+- premium visual style
+- optional glass bubble around icons
+
+Allow element presets like:
+- luxury sparkle set
+- breaking alert set
+- social hype set
+- cute premium set
+- bold editorial set
+- futuristic set
+- neon set
+- celebration set
+
+Templates to include:
+1. Liquid glass headline card
+2. Photo + glass overlay card
+3. Quote glass card
+4. Breaking alert glass card
+5. Portrait statement card
+6. Editorial crystal card
+7. Glow poster card
+8. Premium info card
+9. Neon social card
+10. Luxury gradient photo card
+11. Frosted quote poster
+12. AI decorative poster card
+
+Each template should:
+- use a distinct composition
+- include glassmorphism layers
+- support image/photo upload
+- support text
+- support source/meta
+- support logo
+- support decorative premium auto-elements
+- feel shareable and highly polished
+
+Image styling:
+Photos should feel premium and cinematic.
+Add:
+- rounded corners
+- glass frame overlays
+- image blur background support
+- image glow edge
+- color overlay options
+- portrait crop
+- circle crop
+- cinematic crop
+- framed glass image mode
+- floating photo card mode
+
+Background engine:
+The background must be visually rich and premium.
+Add layered backgrounds with:
+- gradient mesh
+- blurred light blobs
+- soft noise
+- subtle grain
+- soft reflections
+- glass refractions
+- dreamy lighting
+- abstract modern shapes
+- elegant depth
+
+Allow background presets:
+- aurora glow
+- crystal blue
+- luxury violet
+- sunset bloom
+- gold shine
+- emerald haze
+- midnight glass
+- rainbow prism
+- white frost
+- dark editorial glow
+
+Canvas rendering requirements:
+Use HTML5 Canvas for final render/export.
+Render layers in this order:
+1. base gradient background
+2. glow blobs
+3. grain/noise
+4. background reflections
+5. uploaded image or photo frame
+6. glass panels
+7. decorative accents
+8. emoji/sticker clusters
+9. headline and text
+10. source/meta
+11. logo
+12. watermark
+13. finishing glossy overlays
+
+The glass effect on canvas should simulate:
+- transparency
+- blur-like feel
+- reflective edge
+- highlight streak
+- soft lighting
+- layered depth
+
+UI requirements:
+The editor UI itself should also feel premium and glassy.
+
+Use:
+- frosted side panels
+- glass buttons
+- gradient borders
+- premium toggles
+- glowing active states
+- elegant sliders
+- soft shadows
+- beautiful color picker presentation
+- smooth animations
+- polished template preview cards
+
+Editor controls:
+- Template selector
+- Headline input
+- Subheadline input
+- Quote input
+- Category label
+- Name
+- Designation
+- Source
+- Date
+- Upload photo
+- Upload logo
+- Accent color preset
+- Background preset
+- Glass style preset
+- Decorative preset
+- Emoji density slider
+- Glow intensity slider
+- Blur intensity slider
+- Transparency slider
+- Grain intensity slider
+- Shadow depth slider
+- Rounded corner slider
+- Watermark toggle
+- Auto decorate toggle
+- Export PNG
+
+Auto generation features:
+Create smart defaults so the app can auto-build a beautiful premium card even if the user enters only:
+- headline
+- image
+- category
+
+The app should automatically:
+- choose matching glass colors
+- place glass elements well
+- add tasteful decorative accents
+- generate premium composition
+- align text elegantly
+- create a visually impressive card
+
+Need sample presets:
+Add 10 premium sample presets on first load with Bangla placeholder text and different luxury visual styles.
+
+Examples:
+- breaking premium
+- quote crystal
+- neon statement
+- aurora photo card
+- gold headline card
+- frosted editorial card
+- glass portrait card
+- social hype card
+- glow news card
+- rainbow luxury card
+
+Technical requirements:
+- clean reusable code
+- modular components
+- no broken controls
+- proper state management
+- exact live preview and export match
+- crisp export
+- fast performance
+- maintainable file structure
+
+Project structure:
+- src/components
+- src/components/editor
+- src/components/preview
+- src/templates
+- src/lib/canvas
+- src/lib/glass
+- src/lib/decor
+- src/lib/text
+- src/lib/export
+- src/data/presets
+- src/hooks
+
+Quality bar:
+Do not make this look generic.
+Do not make this look like a beginner demo.
+Do not make the glass effect weak or fake.
+Make it feel premium, luxurious, vibrant, colorful, glossy, and highly polished.
+
+Final expectation:
+This should feel like a premium world-class glass photo card generator where every output looks beautiful enough to post directly on social media.

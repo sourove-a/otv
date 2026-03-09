@@ -26,6 +26,10 @@ import {
 export interface CardData {
   headline: string;
   headline2: string;
+  subheadline: string;
+  bulletText: string;
+  quoteText: string;
+  dateText: string;
   category: string;
   viaText: string;
   mainPhoto: HTMLImageElement | null;
@@ -37,6 +41,7 @@ export interface CardData {
   personName2: string;
   personTitle2: string;
   highlightColor: string;
+  highlightWords: string;
   otvLogoX: number;
   otvLogoY: number;
   otvLogoSize: number;
@@ -45,6 +50,13 @@ export interface CardData {
   imageOffsetX?: number;
   imageOffsetY?: number;
   imageZoom?: number;
+  gridEnabled?: boolean;
+  grainEnabled?: boolean;
+  textureEnabled?: boolean;
+  gridIntensity?: number;
+  grainIntensity?: number;
+  textAlign?: "left" | "center" | "right";
+  exportSize?: number;
 }
 
 export interface TemplateConfig {
@@ -116,33 +128,114 @@ function drawHeadlineWithHighlight(
   highlightColor: string,
   lineHeight: number,
   align: "left" | "center" = "left",
-  fontOverride?: string
+  fontOverride?: string,
+  highlightWords?: string
 ): number {
   ctx.font = `900 ${fontSize}px ${fontOverride || HEADLINE_FONT}`;
   ctx.textBaseline = "top";
-  const lines = wrapTextLines(ctx, text.toUpperCase(), maxWidth);
+  const displayText = text.toUpperCase();
+  const lines = wrapTextLines(ctx, displayText, maxWidth);
   let currentY = y;
   ctx.textAlign = align;
 
+  const hwList = highlightWords
+    ? highlightWords.split(",").map(w => w.trim().toUpperCase()).filter(w => w.length > 0)
+    : [];
+
   for (let i = 0; i < lines.length; i++) {
     const words = lines[i].split(" ");
-    if (align === "left") {
-      let cx = x;
-      for (let j = 0; j < words.length; j++) {
-        const isHighlight = (i === lines.length - 2 && j >= Math.floor(words.length / 2)) ||
+    const wordWidths = words.map(w => ctx.measureText(w).width);
+    const spaceW = ctx.measureText(" ").width;
+    const totalLineW = wordWidths.reduce((a, b) => a + b, 0) + spaceW * (words.length - 1);
+
+    let startX = x;
+    if (align === "center") startX = x - totalLineW / 2;
+    else if (align === "right") startX = x + maxWidth - totalLineW;
+
+    let cx = startX;
+    for (let j = 0; j < words.length; j++) {
+      let isHighlight: boolean;
+      if (hwList.length > 0) {
+        isHighlight = hwList.some(hw => words[j].includes(hw));
+      } else {
+        isHighlight = (i === lines.length - 2 && j >= Math.floor(words.length / 2)) ||
           (i === lines.length - 1 && j < Math.ceil(words.length / 2));
-        ctx.fillStyle = isHighlight ? highlightColor : mainColor;
-        ctx.textAlign = "left";
-        ctx.fillText(words[j], cx, currentY);
-        cx += ctx.measureText(words[j] + " ").width;
       }
-    } else {
-      ctx.fillStyle = i >= lines.length - 1 ? highlightColor : mainColor;
-      ctx.fillText(lines[i], x, currentY);
+      if (isHighlight && hwList.length > 0) {
+        ctx.fillStyle = highlightColor + "30";
+        roundedRect(ctx, cx - 4, currentY - 2, wordWidths[j] + 8, fontSize + 6, 6);
+        ctx.fill();
+      }
+      ctx.fillStyle = isHighlight ? highlightColor : mainColor;
+      ctx.textAlign = "left";
+      ctx.fillText(words[j], cx, currentY);
+      cx += wordWidths[j] + spaceW;
     }
     currentY += lineHeight;
   }
   return currentY;
+}
+
+function drawUserTextures(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  if (data.gridEnabled) {
+    const intensity = data.gridIntensity ?? 0.5;
+    drawEditorialGrid(ctx, 0, 0, w, h * 0.6, 55, `rgba(255,255,255,${0.02 * intensity})`, "down");
+  }
+  if (data.grainEnabled) {
+    const intensity = data.grainIntensity ?? 0.5;
+    drawSandyGrain(ctx, w, h, intensity * 0.03);
+  }
+  if (data.textureEnabled) {
+    drawNoiseOverlay(ctx, w, h, 0.02);
+  }
+}
+
+function drawSubheadline(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, maxWidth: number, color: string): number {
+  if (!data.subheadline) return y;
+  ctx.font = `600 32px ${bnFont(data)}`;
+  ctx.fillStyle = color;
+  ctx.textBaseline = "top";
+  return wrapText(ctx, data.subheadline, x, y + 8, maxWidth, 42, data.textAlign || "left") + 12;
+}
+
+function drawBulletText(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, maxWidth: number, color: string, bulletColor: string): number {
+  if (!data.bulletText) return y;
+  const bullets = data.bulletText.split("\n").filter(b => b.trim());
+  ctx.textBaseline = "top";
+  let cy = y + 8;
+  for (const bullet of bullets) {
+    ctx.font = `700 28px ${bnFont(data)}`;
+    ctx.fillStyle = bulletColor;
+    ctx.fillText("●", x, cy + 2);
+    ctx.fillStyle = color;
+    cy = wrapText(ctx, bullet.trim(), x + 30, cy, maxWidth - 30, 38, data.textAlign || "left") + 8;
+  }
+  return cy;
+}
+
+function drawQuoteBlock(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, maxWidth: number, quoteColor: string, textColor: string): number {
+  if (!data.quoteText) return y;
+  ctx.font = `900 72px ${SANS_FONT}`;
+  ctx.fillStyle = quoteColor;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("\u201C", x - 8, y - 20);
+  ctx.font = `700 40px ${bnFont(data)}`;
+  ctx.fillStyle = textColor;
+  const endY = wrapText(ctx, data.quoteText, x + 20, y + 40, maxWidth - 40, 54, "left");
+  ctx.font = `900 72px ${SANS_FONT}`;
+  ctx.fillStyle = quoteColor;
+  ctx.fillText("\u201D", x + maxWidth - 50, endY - 10);
+  return endY + 20;
+}
+
+function drawDateLine(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, color: string) {
+  if (!data.dateText) return;
+  ctx.font = `600 24px ${SANS_FONT}`;
+  ctx.fillStyle = color;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText(data.dateText, x, y);
 }
 
 function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -168,9 +261,14 @@ function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: numb
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 32);
 
-  drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.22, w - 120, 68, "#ffffff", data.highlightColor || "#FFD700", 84, "left", hlFont(data)
+  const hlEnd = drawHeadlineWithHighlight(
+    ctx, data.headline, 60, h * 0.22, w - 120, 68, "#ffffff", data.highlightColor || "#FFD700", 84, "left", hlFont(data), data.highlightWords
   );
+
+  let contentY = drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.6)");
+  contentY = drawBulletText(ctx, data, 60, contentY, w - 120, "rgba(255,255,255,0.7)", data.highlightColor || "#FFD700");
+  drawDateLine(ctx, data, 60, h - 90, "rgba(255,255,255,0.3)");
+  drawUserTextures(ctx, data, w, h);
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
@@ -192,10 +290,11 @@ function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
 
   drawAccentBar(ctx, 60, 55, 50, 5, data.highlightColor || "#FFD700", true);
 
+  const quoteOrHeadline = data.quoteText || data.headline;
   ctx.font = `700 54px ${bnFont(data)}`;
   ctx.fillStyle = "#1a1a1a";
   ctx.textBaseline = "top";
-  const endY = wrapText(ctx, data.headline, 60, 80, w * 0.55, 72, "left");
+  const endY = wrapText(ctx, quoteOrHeadline, 60, 80, w * 0.55, 72, "left");
 
   drawAccentBar(ctx, 60, endY + 15, 80, 4, data.highlightColor || "#FFD700");
 
@@ -207,6 +306,7 @@ function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   ctx.font = `400 22px ${bnFont(data)}`;
   ctx.fillStyle = "#666";
   ctx.fillText(data.personTitle || data.viaText, 60, endY + 72);
+  drawDateLine(ctx, data, 60, endY + 100, "#999");
 
   if (data.mainPhoto) {
     drawPhoto(ctx, data, w * 0.3, h * 0.48, w * 0.7, h * 0.52, 8);
@@ -468,7 +568,8 @@ function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: num
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawBadge(ctx, data.category || "SPORTS", w / 2, h * 0.12, "#00c853", "#ffffff", undefined, 30);
-  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.17, w - 120, 60, "#ffffff", "#00e676", 76, "left", hlFont(data));
+  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.17, w - 120, 60, "#ffffff", "#00e676", 76, data.textAlign || "left", hlFont(data), data.highlightWords);
+  drawUserTextures(ctx, data, w, h);
   drawAccentBar(ctx, 0, h - 5, w, 5, "#00e676", true);
   drawOtvWatermark(ctx, data);
 }
@@ -563,7 +664,8 @@ function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: n
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawBadge(ctx, data.category || "INVESTIGATION", w / 2, h * 0.15, "#9c27b0", "#ffffff", undefined, 28);
-  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#e0c0ff", "#d580ff", 78, "left", hlFont(data));
+  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#e0c0ff", "#d580ff", 78, data.textAlign || "left", hlFont(data), data.highlightWords);
+  drawUserTextures(ctx, data, w, h);
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawAccentBar(ctx, 0, h - 5, w, 5, "#9c27b0", true);
   drawOtvWatermark(ctx, data);
@@ -885,7 +987,9 @@ function makeGradientCard(
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
     drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", accent, accent, 30);
-    drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", accent, 78, "left", hlFont(data));
+    const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", accent, 78, data.textAlign || "left", hlFont(data), data.highlightWords);
+    drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.5)");
+    drawUserTextures(ctx, data, w, h);
     drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
     drawOtvWatermark(ctx, data);
   };
@@ -934,12 +1038,15 @@ function makeLightCard(
     ctx.fillStyle = "#999";
     ctx.textAlign = "left";
     ctx.fillText(data.viaText, 50, endY + 70);
+    drawSubheadline(ctx, data, 50, endY + 95, w * 0.48, "#555");
+    drawDateLine(ctx, data, 50, h - 80, "#aaa");
     if (data.mainPhoto) {
       drawPhoto(ctx, data, w * 0.52, 0, w * 0.48, h);
       const edgeGrad = createGradient(ctx, w * 0.52, 0, w * 0.58, 0, [[0, bg1], [1, "transparent"]]);
       ctx.fillStyle = edgeGrad;
       ctx.fillRect(w * 0.52, 0, w * 0.06, h);
     }
+    drawUserTextures(ctx, data, w, h);
     drawAccentBar(ctx, 0, h - 4, w, 4, accent, true);
     drawOtvWatermark(ctx, data);
   };
@@ -962,7 +1069,8 @@ function makeThemedCard(
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
     drawBadge(ctx, data.category, w / 2, h * 0.14, accent, "#ffffff", undefined, 30);
-    drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, "#ffffff", accent, 76, "left", hlFont(data));
+    const hlEnd = drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, "#ffffff", accent, 76, data.textAlign || "left", hlFont(data), data.highlightWords);
+    drawSubheadline(ctx, data, 60, hlEnd, w - 120, "rgba(255,255,255,0.5)");
     if (data.mainPhoto) {
       ctx.save();
       ctx.shadowColor = `${accent}40`;
@@ -976,6 +1084,7 @@ function makeThemedCard(
       roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 8);
       ctx.stroke();
     }
+    drawUserTextures(ctx, data, w, h);
     drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
     drawOtvWatermark(ctx, data);
   };
@@ -1006,6 +1115,7 @@ function makePremiumCard(
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     const endY = wrapText(ctx, data.headline.toUpperCase(), w / 2, h * 0.23, w - 140, 76, "center");
+    drawSubheadline(ctx, data, w / 2, endY + 5, w - 160, "rgba(255,255,255,0.45)");
     drawAccentBar(ctx, w / 2 - 40, endY + 5, 80, 3, accent);
     if (data.mainPhoto) {
       const photoY = Math.max(endY + 20, h * 0.5);
@@ -1300,7 +1410,8 @@ function renderGradientMesh(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawBadge(ctx, data.category, w / 2, h * 0.15, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 28);
-  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78, "left", hlFont(data));
+  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78, data.textAlign || "left", hlFont(data), data.highlightWords);
+  drawUserTextures(ctx, data, w, h);
   drawAccentBar(ctx, 0, h - 5, w, 5, "#ff6ec7", true);
   drawOtvWatermark(ctx, data);
 }

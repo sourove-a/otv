@@ -1,7 +1,7 @@
 # OTV Card Maker
 
 ## Overview
-Premium Bangladeshi TV news-style photo card generator for otv.online. Features iOS 26 Liquid Glass green-toned dark UI, Bengali-first interface, 67 templates (across 5 categories), draggable OTV logo, image positioning, Canva background removal, and multi-format export.
+Premium Bangladeshi TV news-style photo card generator for otv.online. Features iOS 26 Liquid Glass green-toned dark UI, Bengali-first interface, 67 templates (across 5 categories), draggable OTV logo, image positioning, Canva background removal, multi-format export, highlight word system, demo presets, and collapsible UI sections.
 
 ## Architecture
 - **Frontend**: React + TypeScript + Tailwind CSS + Shadcn UI + Framer Motion
@@ -28,11 +28,17 @@ Premium Bangladeshi TV news-style photo card generator for otv.online. Features 
 - Grid view toggle for template gallery
 - Horizontal scroll gallery with left/right buttons
 - All border-radius uses G.r (22px) / G.rSm (16px) / G.rXl (28px)
+- Collapsible sections via `CollapsibleSection` component with chevron toggle + Framer Motion animation
 
 ## Key Features
 - 67 premium news card templates across 5 categories
 - Upload main photo + channel logo + second photo for dual templates
 - Bengali + English headline editing with dual headline support
+- **Subheadline**: secondary text below headline
+- **Bullet text**: multi-line bullet points rendered on card
+- **Quote text**: quote block rendered with accent bar
+- **Date text**: date line rendered on card
+- **Highlight words**: comma-separated words highlighted with colored background in headline
 - Category badge with Bengali labels (12 categories)
 - Via text customization
 - Person name/title for quote cards
@@ -44,6 +50,8 @@ Premium Bangladeshi TV news-style photo card generator for otv.online. Features 
 - **Image positioning**: drag-to-reposition photos on canvas, zoom in/out (0.5x-2x)
 - **Drag mode toggle**: switch between Logo Mode and Image Mode for canvas interaction
 - **Canva BG removal**: one-click background removal via Canva API
+- **Export size selector**: 1080x1080, 1200x1200, 2048x2048
+- **File naming**: export filename derived from headline text
 - Download PNG / JPG / PDF (A4) / Copy to Clipboard
 - Free/Pro toggle (watermark control)
 - Tab-based editor (কন্টেন্ট / স্টাইল / সেটিংস tabs)
@@ -54,6 +62,11 @@ Premium Bangladeshi TV news-style photo card generator for otv.online. Features 
 - Second headline field for dual/summary templates
 - Person Name 2 / Title 2 fields for dual quote cards
 - Framer Motion animations throughout
+- **8 Bengali demo presets** with Random Demo button
+- **Reset All button** to clear all fields
+- **Background effect toggles**: grid lines, sandy grain, noise texture with intensity sliders
+- **Text alignment**: left/center/right options
+- **Collapsible UI sections**: all control panels collapse with chevron toggle
 
 ## Premium Template Textures
 All templates now use premium texture utilities:
@@ -65,10 +78,21 @@ All templates now use premium texture utilities:
 - `drawImageCoverPositioned(ctx, img, x, y, w, h, offsetX, offsetY, zoom, radius)` — positioned image rendering
 - `drawPhoto(ctx, data, x, y, w, h, radius?)` — smart photo helper that uses offset/zoom from CardData
 
+## Template Helper Functions
+- `drawUserTextures(ctx, data, w, h)` — applies user-toggled grid/grain/texture effects based on CardData flags
+- `drawSubheadline(ctx, data, x, y, maxW, color)` — renders subheadline if present
+- `drawBulletText(ctx, data, x, y, maxW, color, bulletColor)` — renders multi-line bullets
+- `drawQuoteBlock(ctx, data, x, y, maxW, barColor, textColor)` — renders quote with accent bar
+- `drawDateLine(ctx, data, x, y, color)` — renders date text
+- `drawHeadlineWithHighlight(ctx, text, x, y, maxW, fontSize, textColor, hlColor, lineH, align, fontFamily, highlightWords)` — per-word highlighting
+
+## Demo Presets
+8 Bengali presets: বিচার সংবাদ (Justice), রাজনীতি (Politics), খেলা (Sports), মতামত (Opinion), ট্রেন্ডিং (Trending), অপরাধ (Crime), অর্থনীতি (National/Economy), সামাজিক (Social). Each includes headline, subheadline, category, via text, accent color, and template selection. Random Demo button loads a random preset.
+
 ## File Structure
-- `client/src/pages/home.tsx` - Main page with green glass premium UI
-- `client/src/lib/templates.ts` - 67 template render functions (17 original + 50 via factories)
-- `client/src/lib/canvas-utils.ts` - Canvas drawing utilities with premium textures
+- `client/src/pages/home.tsx` - Main page with green glass premium UI, collapsible sections, demo presets, all controls
+- `client/src/lib/templates.ts` - 67 template render functions (17 original + 50 via factories) + helper functions
+- `client/src/lib/canvas-utils.ts` - Canvas drawing utilities with premium textures + 16 Bengali fonts
 - `client/src/index.css` - Tailwind CSS with green glass scrollbar styling
 - `client/src/App.tsx` - Router setup
 - `client/public/images/otv-logo-transparent.png` - OTV logo (transparent)
@@ -98,7 +122,7 @@ All templates now use premium texture utilities:
 - Default: Noto Sans Bengali; Fallback: Hind Siliguri; Headlines: Montserrat + selected Bengali font
 
 ## CardData Interface
-headline, headline2, category, viaText, mainPhoto, secondPhoto, channelLogo, otvLogo, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX?, imageOffsetY?, imageZoom?, banglaFont?, headlineFont?
+headline, headline2, subheadline, bulletText, quoteText, dateText, category, viaText, mainPhoto, secondPhoto, channelLogo, otvLogo, personName, personTitle, personName2, personTitle2, highlightColor, highlightWords, otvLogoX, otvLogoY, otvLogoSize, banglaFont?, headlineFont?, imageOffsetX?, imageOffsetY?, imageZoom?, gridEnabled?, grainEnabled?, textureEnabled?, gridIntensity?, grainIntensity?, textAlign?, exportSize?
 
 ## Image Positioning System
 - `imageOffsetX/imageOffsetY` (pixels): offset the photo within its container
@@ -113,10 +137,12 @@ headline, headline2, category, viaText, mainPhoto, secondPhoto, channelLogo, otv
 - Uses CANVA_CLIENT_ID + CANVA_CLIENT_SECRET (OAuth2 client credentials)
 - Flow: upload → poll → edit (background_remove) → poll → download → return base64 PNG
 - UI: "BG Remove" button on photo preview, shows loading spinner during processing
+- Note: client_credentials grant type may not be supported by Canva — pre-existing auth issue
 
 ## drawOtvWatermark
 Signature: `(ctx, data: CardData)` - reads otvLogoX/Y/Size from data with `??` nullish coalescing defaults. Used in all 67 templates.
 
 ## Canvas
-- Size: 1200x1200px
+- Preview size: 1200x1200px
+- Export sizes: 1080x1080, 1200x1200, 2048x2048 (selectable in Settings tab)
 - Free tier diagonal watermark: "OTV.ONLINE" at 10% opacity

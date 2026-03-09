@@ -35,6 +35,7 @@ import {
   Layers,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Search,
   Grid3X3,
   SlidersHorizontal,
@@ -42,6 +43,16 @@ import {
   Palette,
   Eraser,
   Loader2,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Shuffle,
+  Trash2,
+  Quote,
+  List,
+  Calendar,
+  Highlighter,
+  Grid2X2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import otvLogoTransparent from "@assets/otv_1773042288152.jpg";
@@ -85,6 +96,60 @@ const TEMPLATE_CATEGORIES = [
   { id: "premium", bn: "\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE", en: "Premium" },
 ];
 
+const DEMO_PRESETS = [
+  {
+    headline: "\u09B8\u09C1\u09AA\u09CD\u09B0\u09BF\u09AE \u0995\u09CB\u09B0\u09CD\u099F\u09C7\u09B0 \u09B0\u09BE\u09AF\u09BC\u09C7 \u09A8\u09A4\u09C1\u09A8 \u09A8\u09BF\u09B0\u09CD\u09A6\u09C7\u09B6\u09A8\u09BE",
+    subheadline: "\u0986\u0987\u09A8\u09AE\u09A8\u09CD\u09A4\u09CD\u09B0\u09C0 \u099C\u09BE\u09A8\u09BE\u09B2\u09C7\u09A8 \u09A8\u09A4\u09C1\u09A8 \u09A8\u09C0\u09A4\u09BF\u09AE\u09BE\u09B2\u09BE \u09B6\u09C0\u0998\u09CD\u09B0\u0987 \u09AC\u09BE\u09B8\u09CD\u09A4\u09AC\u09BE\u09AF\u09BC\u09A8 \u09B9\u09AC\u09C7",
+    category: "JUSTICE", viaText: "Via | OTV", accentColor: "#ffc107", templateId: "jamuna-dark",
+    bn: "\u09AC\u09BF\u099A\u09BE\u09B0 \u09B8\u0982\u09AC\u09BE\u09A6",
+  },
+  {
+    headline: "\u09A2\u09BE\u0995\u09BE\u09AF\u09BC \u09AC\u09BF\u09B6\u09BE\u09B2 \u099C\u09A8\u09B8\u09AD\u09BE\u09AF\u09BC \u09A8\u09A4\u09C1\u09A8 \u09A6\u09B2 \u0998\u09CB\u09B7\u09A3\u09BE",
+    subheadline: "\u09B0\u09BE\u099C\u09A8\u09C8\u09A4\u09BF\u0995 \u09AA\u09B0\u09BF\u09B8\u09CD\u09A5\u09BF\u09A4\u09BF\u09A4\u09C7 \u09A8\u09A4\u09C1\u09A8 \u09AE\u09CB\u09DC \u09A8\u09C7\u09AF\u09BC\u09BE\u09B0 \u09AA\u09CD\u09B0\u09B8\u09CD\u09A4\u09C1\u09A4\u09BF",
+    category: "POLITICS", viaText: "Via | OTV", accentColor: "#ef4444", templateId: "breaking-red",
+    bn: "\u09B0\u09BE\u099C\u09A8\u09C0\u09A4\u09BF",
+  },
+  {
+    headline: "\u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6 \u0995\u09CD\u09B0\u09BF\u0995\u09C7\u099F \u09A6\u09B2 \u099F\u09C7\u09B8\u09CD\u099F \u09B8\u09BF\u09B0\u09BF\u099C\u09C7 \u09AC\u09DC \u099C\u09AF\u09BC",
+    subheadline: "\u09B8\u09BE\u0995\u09BF\u09AC \u09B0\u09B9\u09AE\u09BE\u09A8\u09C7\u09B0 \u0985\u09B8\u09BE\u09A7\u09BE\u09B0\u09A3 \u09B8\u09C7\u099E\u09CD\u099A\u09C1\u09B0\u09BF\u09A4\u09C7 \u099C\u09AF\u09BC",
+    category: "SPORTS", viaText: "Via | OTV", accentColor: "#22c55e", templateId: "sports-green",
+    bn: "\u0996\u09C7\u09B2\u09BE",
+  },
+  {
+    headline: "\u0997\u09A3\u09A4\u09A8\u09CD\u09A4\u09CD\u09B0\u09C7\u09B0 \u09AD\u09AC\u09BF\u09B7\u09CD\u09AF\u09CE \u09A8\u09BF\u09B0\u09CD\u09AD\u09B0 \u0995\u09B0\u09AC\u09C7 \u099C\u09A8\u0997\u09A3",
+    subheadline: "",
+    quoteText: "\u0986\u09AE\u09B0\u09BE \u099C\u09A8\u0997\u09A3\u09C7\u09B0 \u0985\u09A7\u09BF\u0995\u09BE\u09B0\u09C7 \u09AC\u09BF\u09B6\u09CD\u09AC\u09BE\u09B8 \u0995\u09B0\u09BF, \u099C\u09A8\u09AE\u09A4\u0987 \u09B6\u0995\u09CD\u09A4\u09BF",
+    personName: "\u09B0\u09BE\u099C\u09A8\u09C8\u09A4\u09BF\u0995 \u09AC\u09BF\u09B6\u09CD\u09B2\u09C7\u09B7\u0995",
+    personTitle: "\u09B0\u09BE\u099C\u09A8\u09C0\u09A4\u09BF \u09B8\u09AE\u09CD\u09AA\u09BE\u09A6\u0995",
+    category: "OPINION", viaText: "Via | OTV", accentColor: "#d4af37", templateId: "quote-card",
+    bn: "\u09AE\u09A4\u09BE\u09AE\u09A4",
+  },
+  {
+    headline: "\u0986\u0987\u099F\u09BF \u0996\u09BE\u09A4\u09C7 \u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6\u09C7\u09B0 \u09A8\u09A4\u09C1\u09A8 \u09B8\u09AB\u09B2\u09A4\u09BE",
+    subheadline: "\u09A1\u09BF\u099C\u09BF\u099F\u09BE\u09B2 \u09AC\u09BE\u0982\u09B2\u09BE\u09A6\u09C7\u09B6 \u09AA\u09CD\u09B0\u0995\u09B2\u09CD\u09AA\u09C7 \u09A8\u09A4\u09C1\u09A8 \u09AE\u09BE\u0987\u09B2\u09AB\u09B2\u0995",
+    category: "TRENDING", viaText: "Via | OTV", accentColor: "#3b82f6", templateId: "clean-news",
+    bn: "\u099F\u09CD\u09B0\u09C7\u09A8\u09CD\u09A1\u09BF\u0982",
+  },
+  {
+    headline: "\u09B0\u09BE\u099C\u09A7\u09BE\u09A8\u09C0\u09A4\u09C7 \u09A1\u09BE\u0995\u09BE\u09A4\u09BF \u09AE\u09BE\u09AE\u09B2\u09BE\u09AF\u09BC \u09E9 \u099C\u09A8 \u0997\u09CD\u09B0\u09C7\u09AA\u09CD\u09A4\u09BE\u09B0",
+    subheadline: "\u09A8\u09BF\u09B0\u09BE\u09AA\u09A4\u09CD\u09A4\u09BE \u09AC\u09BF\u09AD\u09BE\u0997 \u09A4\u09A6\u09A8\u09CD\u09A4 \u099A\u09BE\u09B2\u09BF\u09AF\u09BC\u09C7 \u09AF\u09BE\u099A\u09CD\u099B\u09C7",
+    category: "CRIME", viaText: "Via | OTV", accentColor: "#ef4444", templateId: "investigation",
+    bn: "\u0985\u09AA\u09B0\u09BE\u09A7",
+  },
+  {
+    headline: "\u0985\u09B0\u09CD\u09A5\u09A8\u09C0\u09A4\u09BF\u09A4\u09C7 \u09A8\u09A4\u09C1\u09A8 \u0997\u09A4\u09BF \u2014 \u099C\u09BF\u09A1\u09BF\u09AA\u09BF \u09AC\u09BE\u09DC\u099B\u09C7",
+    subheadline: "\u09AC\u09BF\u09B6\u09CD\u09AC\u09AC\u09CD\u09AF\u09BE\u0982\u0995\u09C7\u09B0 \u09AA\u09CD\u09B0\u09A4\u09BF\u09AC\u09C7\u09A6\u09A8\u09C7 \u09B8\u0995\u09BE\u09B0\u09BE\u09A4\u09CD\u09AE\u0995 \u09AA\u09B0\u09BF\u09AC\u09B0\u09CD\u09A4\u09A8",
+    category: "NATIONAL", viaText: "Via | OTV", accentColor: "#d4af37", templateId: "national-dark",
+    bn: "\u0985\u09B0\u09CD\u09A5\u09A8\u09C0\u09A4\u09BF",
+  },
+  {
+    headline: "\u09B8\u09BE\u09AE\u09BE\u099C\u09BF\u0995 \u09AE\u09BE\u09A7\u09CD\u09AF\u09AE\u09C7 \u09AD\u09C1\u09AF\u09BC\u09BE \u0996\u09AC\u09B0\u09C7\u09B0 \u09AC\u09BF\u09B0\u09C1\u09A6\u09CD\u09A7\u09C7 \u09B8\u099A\u09C7\u09A4\u09A8\u09A4\u09BE",
+    subheadline: "\u09B8\u09A0\u09BF\u0995 \u09A4\u09A5\u09CD\u09AF\u09C7\u09B0 \u0997\u09C1\u09B0\u09C1\u09A4\u09CD\u09AC \u09AC\u09CB\u099D\u09BE\u09A4\u09C7 \u09A8\u09A4\u09C1\u09A8 \u0995\u09CD\u09AF\u09BE\u09AE\u09CD\u09AA\u09C7\u0987\u09A8",
+    category: "TRENDING", viaText: "Via | OTV", accentColor: "#a855f7", templateId: "social-modern",
+    bn: "\u09B8\u09BE\u09AE\u09BE\u099C\u09BF\u0995",
+  },
+];
+
 const CANVAS_SIZE = 1200;
 const BN = "'Noto Sans Bengali', 'Hind Siliguri', sans-serif";
 const DUAL_TEMPLATES = ["dual-quote", "dual-quote-split"];
@@ -126,10 +191,40 @@ function getTemplateCategory(id: string): string {
   return "premium";
 }
 
+function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true }: { title: string; icon: any; children: React.ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3" data-testid={`section-toggle-${title}`}>
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
+            <Icon className="w-3.5 h-3.5 text-green-400/50" />
+          </div>
+          <span className="text-[10px] font-bold text-white/45">{title}</span>
+        </div>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+          <ChevronDown className="w-3.5 h-3.5 text-white/20" />
+        </motion.div>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+            <div className="px-4 pb-4">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Home() {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateConfig>(templates[0]);
   const [headline, setHeadline] = useState("\u099C\u09BE\u099F\u09CD\u09B0\u09BE\u09AC\u09BE\u09DC\u09C0\u09A4\u09C7 \u09E8\u09E6\u099F\u09BF \u0995\u09C1\u0995\u09C1\u09B0 \u09B9\u09A4\u09CD\u09AF\u09BE\u09B0 \u0998\u099F\u09A8\u09BE\u09AF\u09BC \u09E9 \u099C\u09A8\u09C7\u09B0 \u09E8.\u09EB \u09AC\u099B\u09B0\u09C7\u09B0 \u099C\u09C7\u09B2");
   const [headline2, setHeadline2] = useState("");
+  const [subheadline, setSubheadline] = useState("");
+  const [bulletText, setBulletText] = useState("");
+  const [quoteText, setQuoteText] = useState("");
+  const [dateText, setDateText] = useState("");
   const [category, setCategory] = useState("JUSTICE");
   const [viaText, setViaText] = useState("Via | OTV");
   const [personName, setPersonName] = useState("");
@@ -137,6 +232,7 @@ export default function Home() {
   const [personName2, setPersonName2] = useState("");
   const [personTitle2, setPersonTitle2] = useState("");
   const [highlightColor, setHighlightColor] = useState("#ffc107");
+  const [highlightWords, setHighlightWords] = useState("");
   const [mainPhotoSrc, setMainPhotoSrc] = useState<string | null>(null);
   const [mainPhotoImg, setMainPhotoImg] = useState<HTMLImageElement | null>(null);
   const [isRemovingBg, setIsRemovingBg] = useState(false);
@@ -162,9 +258,15 @@ export default function Home() {
   const dragStartRef = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
   const [templateFilter, setTemplateFilter] = useState("all");
   const [templateSearch, setTemplateSearch] = useState("");
-  const [headlineFontSize, setHeadlineFontSize] = useState(100);
   const [showTemplateGrid, setShowTemplateGrid] = useState(false);
-  const [selectedBanglaFont, setSelectedBanglaFont] = useState(BANGLA_FONT_OPTIONS[0]);
+  const [selectedBanglaFont, setSelectedBanglaFont] = useState<(typeof BANGLA_FONT_OPTIONS)[number]>(BANGLA_FONT_OPTIONS[0]);
+  const [textAlign, setTextAlign] = useState<"left" | "center" | "right">("left");
+  const [gridEnabled, setGridEnabled] = useState(false);
+  const [grainEnabled, setGrainEnabled] = useState(false);
+  const [textureEnabled, setTextureEnabled] = useState(false);
+  const [gridIntensity, setGridIntensity] = useState(0.5);
+  const [grainIntensity, setGrainIntensity] = useState(0.5);
+  const [exportSize, setExportSize] = useState(1200);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -284,14 +386,20 @@ export default function Home() {
     canvas.height = CANVAS_SIZE;
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     selectedTemplate.render(ctx, {
-      headline, headline2, category, viaText,
+      headline, headline2, subheadline, bulletText, quoteText, dateText,
+      category, viaText,
       mainPhoto: mainPhotoImg, secondPhoto: secondPhotoImg,
       channelLogo: logoImg, otvLogo: otvLogoImg,
       personName, personTitle, personName2, personTitle2, highlightColor,
+      highlightWords,
       otvLogoX, otvLogoY, otvLogoSize,
       imageOffsetX, imageOffsetY, imageZoom,
       banglaFont: selectedBanglaFont.family,
       headlineFont: `${selectedBanglaFont.family.split(",")[0]}, "Montserrat", "Noto Sans Bengali", "Hind Siliguri", sans-serif`,
+      gridEnabled, grainEnabled, textureEnabled,
+      gridIntensity, grainIntensity,
+      textAlign,
+      exportSize,
     }, CANVAS_SIZE, CANVAS_SIZE);
     if (!isPro) {
       ctx.save();
@@ -305,7 +413,7 @@ export default function Home() {
       ctx.fillText("OTV.ONLINE", 0, 0);
       ctx.restore();
     }
-  }, [headline, headline2, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX, imageOffsetY, imageZoom, selectedBanglaFont]);
+  }, [headline, headline2, subheadline, bulletText, quoteText, dateText, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, highlightWords, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX, imageOffsetY, imageZoom, selectedBanglaFont, gridEnabled, grainEnabled, textureEnabled, gridIntensity, grainIntensity, textAlign, exportSize]);
 
   const renderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -324,14 +432,38 @@ export default function Home() {
 
   const downloadPNG = useCallback(() => {
     const c = canvasRef.current; if (!c) return;
-    const a = document.createElement("a"); a.download = `otv-card-${Date.now()}.png`; a.href = c.toDataURL("image/png"); a.click();
-  }, []);
+    const slug = headline.replace(/[^\u0980-\u09FF\w\s]/g, "").trim().substring(0, 30).replace(/\s+/g, "-") || "card";
+    if (exportSize !== CANVAS_SIZE) {
+      const tmp = document.createElement("canvas");
+      tmp.width = exportSize; tmp.height = exportSize;
+      const tCtx = tmp.getContext("2d");
+      if (tCtx) { tCtx.drawImage(c, 0, 0, exportSize, exportSize); }
+      const a = document.createElement("a"); a.download = `otv-${slug}-${exportSize}.png`; a.href = tmp.toDataURL("image/png"); a.click();
+    } else {
+      const a = document.createElement("a"); a.download = `otv-${slug}.png`; a.href = c.toDataURL("image/png"); a.click();
+    }
+  }, [exportSize, headline]);
+
+  const getExportCanvas = useCallback(() => {
+    const c = canvasRef.current; if (!c) return null;
+    if (exportSize !== CANVAS_SIZE) {
+      const tmp = document.createElement("canvas");
+      tmp.width = exportSize; tmp.height = exportSize;
+      const tCtx = tmp.getContext("2d");
+      if (tCtx) tCtx.drawImage(c, 0, 0, exportSize, exportSize);
+      return tmp;
+    }
+    return c;
+  }, [exportSize]);
+
   const downloadJPG = useCallback(() => {
-    const c = canvasRef.current; if (!c) return;
-    const a = document.createElement("a"); a.download = `otv-card-${Date.now()}.jpg`; a.href = c.toDataURL("image/jpeg", 0.95); a.click();
-  }, []);
+    const c = getExportCanvas(); if (!c) return;
+    const slug = headline.replace(/[^\u0980-\u09FF\w\s]/g, "").trim().substring(0, 30).replace(/\s+/g, "-") || "card";
+    const a = document.createElement("a"); a.download = `otv-${slug}-${exportSize}.jpg`; a.href = c.toDataURL("image/jpeg", 0.95); a.click();
+  }, [headline, exportSize, getExportCanvas]);
+
   const downloadPDF = useCallback(async () => {
-    const c = canvasRef.current; if (!c) return;
+    const c = getExportCanvas(); if (!c) return;
     const { jsPDF } = await import("jspdf");
     const d = c.toDataURL("image/png");
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
@@ -339,7 +471,7 @@ export default function Home() {
     const s = Math.min(pw - 20, ph - 20);
     pdf.addImage(d, "PNG", (pw - s) / 2, (ph - s) / 2, s, s);
     pdf.save(`otv-card-${Date.now()}.pdf`);
-  }, []);
+  }, [getExportCanvas]);
 
   const copyToClipboard = useCallback(async () => {
     const c = canvasRef.current; if (!c) return;
@@ -348,6 +480,49 @@ export default function Home() {
       if (blob) await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
     } catch (_) {}
   }, []);
+
+  const resetAll = useCallback(() => {
+    setHeadline("");
+    setHeadline2("");
+    setSubheadline("");
+    setBulletText("");
+    setQuoteText("");
+    setDateText("");
+    setPersonName("");
+    setPersonTitle("");
+    setPersonName2("");
+    setPersonTitle2("");
+    setHighlightWords("");
+    setGridEnabled(false);
+    setGrainEnabled(false);
+    setTextureEnabled(false);
+    setImageOffsetX(0);
+    setImageOffsetY(0);
+    setImageZoom(1);
+    setOtvLogoX(CANVAS_SIZE / 2);
+    setOtvLogoY(CANVAS_SIZE - 60);
+    setOtvLogoSize(OTV_LOGO_DEFAULT_SIZE);
+    setIsGenerated(false);
+  }, []);
+
+  const loadPreset = useCallback((preset: typeof DEMO_PRESETS[0]) => {
+    setHeadline(preset.headline);
+    setSubheadline(preset.subheadline || "");
+    setCategory(preset.category);
+    setViaText(preset.viaText);
+    setHighlightColor(preset.accentColor);
+    if ((preset as any).quoteText) setQuoteText((preset as any).quoteText);
+    if ((preset as any).personName) setPersonName((preset as any).personName);
+    if ((preset as any).personTitle) setPersonTitle((preset as any).personTitle);
+    const tmpl = templates.find(t => t.id === preset.templateId);
+    if (tmpl) { setSelectedTemplate(tmpl); setCategory(tmpl.defaultCategory || preset.category); }
+    setIsGenerated(false);
+  }, []);
+
+  const loadRandomPreset = useCallback(() => {
+    const p = DEMO_PRESETS[Math.floor(Math.random() * DEMO_PRESETS.length)];
+    loadPreset(p);
+  }, [loadPreset]);
 
   const getCanvasCoords = useCallback((clientX: number, clientY: number) => {
     if (!previewRef.current) return null;
@@ -647,184 +822,270 @@ export default function Home() {
 
               <AnimatePresence mode="wait">
                 {activeSection === "content" && (
-                  <motion.div key="content" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-4">
-                    <div className="grid gap-3 grid-cols-2">
-                      <div>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E7" : "\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB"}</p>
-                        <input ref={mainPhotoInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" id="photo-upload" data-testid="input-main-photo" />
-                        <label htmlFor="photo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") mainPhotoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm, backdropFilter: G.blurSm }} data-testid="dropzone-main-photo">
-                          {mainPhotoSrc ? (
-                            <div className="relative">
-                              <img src={mainPhotoSrc} alt="Uploaded news photo" className="w-full h-28 object-cover" />
-                              <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${G.bg1}80 0%, transparent 60%)` }} />
-                              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (mainPhotoSrc) URL.revokeObjectURL(mainPhotoSrc); setMainPhotoSrc(null); setMainPhotoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-photo">
-                                <X className="w-3 h-3 text-white/80" />
-                              </button>
-                              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveBg(); }} disabled={isRemovingBg} className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all" style={{ background: isRemovingBg ? "rgba(80,160,80,0.3)" : "rgba(80,160,80,0.6)", backdropFilter: "blur(10px)", color: "white", border: `1px solid rgba(120,200,120,0.3)` }} data-testid="button-remove-bg">
-                                {isRemovingBg ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eraser className="w-3 h-3" />}
-                                {isRemovingBg ? "Processing..." : "BG Remove"}
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
-                              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                                <Upload className="w-4 h-4 text-green-400/40" />
+                  <motion.div key="content" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-3">
+
+                    <div className="flex gap-2 mb-1">
+                      <button onClick={loadRandomPreset} className="flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold transition-all hover:scale-[1.02]" style={{ background: G.accent, border: `1px solid ${G.accentBorder}`, borderRadius: G.rSm, color: "rgba(180,220,160,0.8)" }} data-testid="button-random-demo">
+                        <Shuffle className="w-3 h-3" />
+                        {"\u09A1\u09C7\u09AE\u09CB \u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"}
+                      </button>
+                      <button onClick={resetAll} className="flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold transition-all hover:scale-[1.02]" style={{ background: "rgba(200,50,50,0.08)", border: "1px solid rgba(200,50,50,0.15)", borderRadius: G.rSm, color: "rgba(255,120,120,0.6)" }} data-testid="button-reset-all">
+                        <Trash2 className="w-3 h-3" />
+                        {"\u09B0\u09BF\u09B8\u09C7\u099F"}
+                      </button>
+                    </div>
+
+                    <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+                      {DEMO_PRESETS.map((p, i) => (
+                        <button key={i} onClick={() => loadPreset(p)} className="flex-shrink-0 px-2.5 py-1.5 text-[8px] font-bold transition-all hover:opacity-80 whitespace-nowrap" style={{ background: `${p.accentColor}15`, border: `1px solid ${p.accentColor}30`, borderRadius: G.rSm, color: `${p.accentColor}cc` }} data-testid={`button-preset-${i}`}>
+                          {p.bn}
+                        </button>
+                      ))}
+                    </div>
+
+                    <CollapsibleSection title={"\u09AB\u099F\u09CB \u0993 \u09B2\u09CB\u0997\u09CB"} icon={ImageIcon}>
+                      <div className="grid gap-3 grid-cols-2">
+                        <div>
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E7" : "\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB"}</p>
+                          <input ref={mainPhotoInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" id="photo-upload" data-testid="input-main-photo" />
+                          <label htmlFor="photo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") mainPhotoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm, backdropFilter: G.blurSm }} data-testid="dropzone-main-photo">
+                            {mainPhotoSrc ? (
+                              <div className="relative">
+                                <img src={mainPhotoSrc} alt="Uploaded news photo" className="w-full h-28 object-cover" />
+                                <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${G.bg1}80 0%, transparent 60%)` }} />
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (mainPhotoSrc) URL.revokeObjectURL(mainPhotoSrc); setMainPhotoSrc(null); setMainPhotoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-photo">
+                                  <X className="w-3 h-3 text-white/80" />
+                                </button>
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveBg(); }} disabled={isRemovingBg} className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all" style={{ background: isRemovingBg ? "rgba(80,160,80,0.3)" : "rgba(80,160,80,0.6)", backdropFilter: "blur(10px)", color: "white", border: `1px solid rgba(120,200,120,0.3)` }} data-testid="button-remove-bg">
+                                  {isRemovingBg ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eraser className="w-3 h-3" />}
+                                  {isRemovingBg ? "Processing..." : "BG Remove"}
+                                </button>
                               </div>
-                              <p className="text-[10px] text-white/22 font-medium">{isDual ? "\u09AC\u09BE\u09AE \u09AB\u099F\u09CB" : "\u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
-                            </div>
+                            ) : (
+                              <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
+                                <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
+                                  <Upload className="w-4 h-4 text-green-400/40" />
+                                </div>
+                                <p className="text-[10px] text-white/22 font-medium">{isDual ? "\u09AC\u09BE\u09AE \u09AB\u099F\u09CB" : "\u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
+                              </div>
+                            )}
+                          </label>
+                        </div>
+
+                        <div>
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E8" : "\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
+                          {isDual ? (
+                            <>
+                              <input ref={secondPhotoInputRef} type="file" accept="image/*" onChange={handleSecondPhotoUpload} className="hidden" id="photo2-upload" data-testid="input-second-photo" />
+                              <label htmlFor="photo2-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") secondPhotoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm }} data-testid="dropzone-second-photo">
+                                {secondPhotoSrc ? (
+                                  <div className="relative">
+                                    <img src={secondPhotoSrc} alt="Second photo" className="w-full h-28 object-cover" />
+                                    <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${G.bg1}80 0%, transparent 60%)` }} />
+                                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (secondPhotoSrc) URL.revokeObjectURL(secondPhotoSrc); setSecondPhotoSrc(null); setSecondPhotoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-second-photo">
+                                      <X className="w-3 h-3 text-white/80" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
+                                    <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
+                                      <Users className="w-4 h-4 text-green-400/40" />
+                                    </div>
+                                    <p className="text-[10px] text-white/22 font-medium">{"\u09A1\u09BE\u09A8 \u09AB\u099F\u09CB"}</p>
+                                  </div>
+                                )}
+                              </label>
+                            </>
+                          ) : (
+                            <>
+                              <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" data-testid="input-logo" />
+                              <label htmlFor="logo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm }} data-testid="dropzone-logo">
+                                {logoSrc ? (
+                                  <div className="relative flex items-center justify-center py-5">
+                                    <img src={logoSrc} alt="Uploaded channel logo" className="h-16 object-contain" />
+                                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (logoSrc) URL.revokeObjectURL(logoSrc); setLogoSrc(null); setLogoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-logo">
+                                      <X className="w-3 h-3 text-white/80" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
+                                    <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
+                                      <ImageIcon className="w-4 h-4 text-green-400/40" />
+                                    </div>
+                                    <p className="text-[10px] text-white/22 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB"}</p>
+                                  </div>
+                                )}
+                              </label>
+                            </>
                           )}
-                        </label>
+                        </div>
                       </div>
 
-                      <div>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E8" : "\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
-                        {isDual ? (
-                          <>
-                            <input ref={secondPhotoInputRef} type="file" accept="image/*" onChange={handleSecondPhotoUpload} className="hidden" id="photo2-upload" data-testid="input-second-photo" />
-                            <label htmlFor="photo2-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") secondPhotoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm }} data-testid="dropzone-second-photo">
-                              {secondPhotoSrc ? (
-                                <div className="relative">
-                                  <img src={secondPhotoSrc} alt="Second photo" className="w-full h-28 object-cover" />
-                                  <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${G.bg1}80 0%, transparent 60%)` }} />
-                                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (secondPhotoSrc) URL.revokeObjectURL(secondPhotoSrc); setSecondPhotoSrc(null); setSecondPhotoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-second-photo">
-                                    <X className="w-3 h-3 text-white/80" />
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
-                                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                                    <Users className="w-4 h-4 text-green-400/40" />
-                                  </div>
-                                  <p className="text-[10px] text-white/22 font-medium">{"\u09A1\u09BE\u09A8 \u09AB\u099F\u09CB"}</p>
-                                </div>
-                              )}
-                            </label>
-                          </>
-                        ) : (
-                          <>
-                            <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" data-testid="input-logo" />
-                            <label htmlFor="logo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm }} data-testid="dropzone-logo">
-                              {logoSrc ? (
-                                <div className="relative flex items-center justify-center py-5">
-                                  <img src={logoSrc} alt="Uploaded channel logo" className="h-16 object-contain" />
-                                  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (logoSrc) URL.revokeObjectURL(logoSrc); setLogoSrc(null); setLogoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-logo">
-                                    <X className="w-3 h-3 text-white/80" />
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
-                                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                                    <ImageIcon className="w-4 h-4 text-green-400/40" />
-                                  </div>
-                                  <p className="text-[10px] text-white/22 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB"}</p>
-                                </div>
-                              )}
-                            </label>
-                          </>
+                      {isDual && (
+                        <div className="mt-3">
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
+                          <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload-dual" data-testid="input-logo-dual" />
+                          <label htmlFor="logo-upload-dual" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm }} data-testid="dropzone-logo-dual">
+                            {logoSrc ? (
+                              <div className="relative flex items-center justify-center py-4">
+                                <img src={logoSrc} alt="Logo" className="h-12 object-contain" />
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (logoSrc) URL.revokeObjectURL(logoSrc); setLogoSrc(null); setLogoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-logo-dual">
+                                  <X className="w-3 h-3 text-white/80" />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-center py-4 gap-2 group-hover:scale-105 transition-transform duration-500">
+                                <ImageIcon className="w-4 h-4 text-green-400/20" />
+                                <p className="text-[10px] text-white/15 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
+                              </div>
+                            )}
+                          </label>
+                        </div>
+                      )}
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u0993 \u099F\u09C7\u0995\u09CD\u09B8\u099F"} icon={Type}>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E7" : "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
+                          <Textarea
+                            value={headline}
+                            onChange={(e) => { setHeadline(e.target.value); setIsGenerated(false); }}
+                            placeholder={"\u09A8\u09BF\u0989\u099C \u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09B2\u09BF\u0996\u09C1\u09A8..."}
+                            className="border-0 text-white text-sm resize-none min-h-[72px] focus-visible:ring-1"
+                            style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}`, '--tw-ring-color': G.inputFocus } as React.CSSProperties}
+                            data-testid="textarea-headline"
+                          />
+                        </div>
+
+                        <div>
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09B8\u09BE\u09AC-\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
+                          <Input
+                            value={subheadline}
+                            onChange={(e) => { setSubheadline(e.target.value); setIsGenerated(false); }}
+                            placeholder={"\u09B8\u09BE\u09AC-\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09B2\u09BF\u0996\u09C1\u09A8..."}
+                            className="border-0 text-white text-xs h-10"
+                            style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }}
+                            data-testid="input-subheadline"
+                          />
+                        </div>
+
+                        {(isDual || selectedTemplate.id === "news-summary") && (
+                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E8" : "\u09AC\u09BF\u09B8\u09CD\u09A4\u09BE\u09B0\u09BF\u09A4 / \u09AC\u09C1\u09B2\u09C7\u099F"}</p>
+                            <Textarea
+                              value={headline2}
+                              onChange={(e) => { setHeadline2(e.target.value); setIsGenerated(false); }}
+                              placeholder={isDual ? "\u09A6\u09CD\u09AC\u09BF\u09A4\u09C0\u09AF\u09BC \u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE..." : "\u09AA\u09CD\u09B0\u09A4\u09BF\u099F\u09BF \u09B2\u09BE\u0987\u09A8\u09C7 \u09A8\u09A4\u09C1\u09A8 \u09AC\u09C1\u09B2\u09C7\u099F..."}
+                              className="border-0 text-white text-sm resize-none min-h-[72px] focus-visible:ring-1"
+                              style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }}
+                              data-testid="textarea-headline2"
+                            />
+                          </motion.div>
+                        )}
+
+                        <div>
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
+                            <Quote className="w-3 h-3 inline mr-1 opacity-50" />
+                            {"\u0989\u09A6\u09CD\u09A7\u09C3\u09A4\u09BF"}
+                          </p>
+                          <Textarea
+                            value={quoteText}
+                            onChange={(e) => { setQuoteText(e.target.value); setIsGenerated(false); }}
+                            placeholder={"\u0989\u09A6\u09CD\u09A7\u09C3\u09A4\u09BF \u09B2\u09BF\u0996\u09C1\u09A8... (\u0995\u09CB\u099F \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u09AC\u09CD\u09AF\u09AC\u09B9\u09C3\u09A4)"}
+                            className="border-0 text-white text-sm resize-none min-h-[60px] focus-visible:ring-1"
+                            style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }}
+                            data-testid="textarea-quote"
+                          />
+                        </div>
+
+                        <div>
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
+                            <List className="w-3 h-3 inline mr-1 opacity-50" />
+                            {"\u09AC\u09C1\u09B2\u09C7\u099F \u09AA\u09AF\u09BC\u09C7\u09A8\u09CD\u099F"}
+                          </p>
+                          <Textarea
+                            value={bulletText}
+                            onChange={(e) => { setBulletText(e.target.value); setIsGenerated(false); }}
+                            placeholder={"\u09AA\u09CD\u09B0\u09A4\u09BF \u09B2\u09BE\u0987\u09A8\u09C7 \u098F\u0995\u099F\u09BF \u09AC\u09C1\u09B2\u09C7\u099F \u09AA\u09AF\u09BC\u09C7\u09A8\u09CD\u099F..."}
+                            className="border-0 text-white text-sm resize-none min-h-[60px] focus-visible:ring-1"
+                            style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }}
+                            data-testid="textarea-bullets"
+                          />
+                        </div>
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u09AE\u09C7\u099F\u09BE \u09A4\u09A5\u09CD\u09AF"} icon={SlidersHorizontal} defaultOpen={false}>
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09CD\u09AF\u09BE\u099F\u09BE\u0997\u09B0\u09BF"}</p>
+                            <Select value={category} onValueChange={(v) => { setCategory(v); setIsGenerated(false); }}>
+                              <SelectTrigger className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, border: `1px solid ${G.inputBorder}` }} data-testid="select-category">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent className="border-0" style={{ background: "rgba(10,18,8,0.96)", backdropFilter: G.blur, borderRadius: G.rSm, border: `1px solid ${G.panelBorder}` }}>
+                                {CATEGORIES.map((c) => (
+                                  <SelectItem key={c.value} value={c.value} className="text-white/60 text-xs focus:bg-green-500/8 focus:text-white" style={{ borderRadius: "10px" }}>
+                                    {c.bn} &middot; {c.value}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>Via</p>
+                            <Input value={viaText} onChange={(e) => { setViaText(e.target.value); setIsGenerated(false); }} placeholder="Via | OTV" className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, border: `1px solid ${G.inputBorder}` }} data-testid="input-via-text" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
+                              <Calendar className="w-3 h-3 inline mr-1 opacity-50" />
+                              {"\u09A4\u09BE\u09B0\u09BF\u0996"}
+                            </p>
+                            <Input value={dateText} onChange={(e) => { setDateText(e.target.value); setIsGenerated(false); }} placeholder={"\u09E7\u09EB \u09AE\u09BE\u09B0\u09CD\u099A \u09E8\u09E6\u09E8\u09EC"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-date" />
+                          </div>
+                          <div>
+                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09B9\u09BE\u0987\u09B2\u09BE\u0987\u099F \u09B6\u09AC\u09CD\u09A6"}</p>
+                            <Input value={highlightWords} onChange={(e) => { setHighlightWords(e.target.value); setIsGenerated(false); }} placeholder={"\u09B6\u09AC\u09CD\u09A6\u09E7, \u09B6\u09AC\u09CD\u09A6\u09E8"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-highlight-words" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E7" : "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF\u09B0 \u09A8\u09BE\u09AE"}</p>
+                            <Input value={personName} onChange={(e) => setPersonName(e.target.value)} placeholder={"\u09A8\u09BE\u09AE"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-name" />
+                          </div>
+                          <div>
+                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0"}</p>
+                            <Input value={personTitle} onChange={(e) => setPersonTitle(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-title" />
+                          </div>
+                        </div>
+
+                        {isDual && (
+                          <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
+                            <div>
+                              <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E8"}</p>
+                              <Input value={personName2} onChange={(e) => setPersonName2(e.target.value)} placeholder={"\u09A8\u09BE\u09AE \u09E8"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-name2" />
+                            </div>
+                            <div>
+                              <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0 \u09E8"}</p>
+                              <Input value={personTitle2} onChange={(e) => setPersonTitle2(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0 \u09E8"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-title2" />
+                            </div>
+                          </motion.div>
                         )}
                       </div>
-                    </div>
-
-                    {isDual && (
-                      <div>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
-                        <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload-dual" data-testid="input-logo-dual" />
-                        <label htmlFor="logo-upload-dual" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm }} data-testid="dropzone-logo-dual">
-                          {logoSrc ? (
-                            <div className="relative flex items-center justify-center py-4">
-                              <img src={logoSrc} alt="Logo" className="h-12 object-contain" />
-                              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (logoSrc) URL.revokeObjectURL(logoSrc); setLogoSrc(null); setLogoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-logo-dual">
-                                <X className="w-3 h-3 text-white/80" />
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-center py-4 gap-2 group-hover:scale-105 transition-transform duration-500">
-                              <ImageIcon className="w-4 h-4 text-green-400/20" />
-                              <p className="text-[10px] text-white/15 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
-                            </div>
-                          )}
-                        </label>
-                      </div>
-                    )}
-
-                    <div>
-                      <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E7 (\u09AC\u09BE\u09AE)" : "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
-                      <Textarea
-                        value={headline}
-                        onChange={(e) => { setHeadline(e.target.value); setIsGenerated(false); }}
-                        placeholder={"\u09A8\u09BF\u0989\u099C \u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09B2\u09BF\u0996\u09C1\u09A8..."}
-                        className="border-0 text-white text-sm resize-none min-h-[72px] focus-visible:ring-1"
-                        style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}`, '--tw-ring-color': G.inputFocus } as React.CSSProperties}
-                        data-testid="textarea-headline"
-                      />
-                    </div>
-
-                    {(isDual || selectedTemplate.id === "news-summary") && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E8 (\u09A1\u09BE\u09A8)" : "\u09AC\u09BF\u09B8\u09CD\u09A4\u09BE\u09B0\u09BF\u09A4 / \u09AC\u09C1\u09B2\u09C7\u099F"}</p>
-                        <Textarea
-                          value={headline2}
-                          onChange={(e) => { setHeadline2(e.target.value); setIsGenerated(false); }}
-                          placeholder={isDual ? "\u09A6\u09CD\u09AC\u09BF\u09A4\u09C0\u09AF\u09BC \u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE..." : "\u09AA\u09CD\u09B0\u09A4\u09BF\u099F\u09BF \u09B2\u09BE\u0987\u09A8\u09C7 \u09A8\u09A4\u09C1\u09A8 \u09AC\u09C1\u09B2\u09C7\u099F..."}
-                          className="border-0 text-white text-sm resize-none min-h-[72px] focus-visible:ring-1"
-                          style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }}
-                          data-testid="textarea-headline2"
-                        />
-                      </motion.div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09CD\u09AF\u09BE\u099F\u09BE\u0997\u09B0\u09BF"}</p>
-                        <Select value={category} onValueChange={(v) => { setCategory(v); setIsGenerated(false); }}>
-                          <SelectTrigger className="border-0 text-white text-xs h-11" style={{ background: G.input, borderRadius: G.rSm, border: `1px solid ${G.inputBorder}` }} data-testid="select-category">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="border-0" style={{ background: "rgba(10,18,8,0.96)", backdropFilter: G.blur, borderRadius: G.rSm, border: `1px solid ${G.panelBorder}` }}>
-                            {CATEGORIES.map((c) => (
-                              <SelectItem key={c.value} value={c.value} className="text-white/60 text-xs focus:bg-green-500/8 focus:text-white" style={{ borderRadius: "10px" }}>
-                                {c.bn} &middot; {c.value}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>Via</p>
-                        <Input value={viaText} onChange={(e) => { setViaText(e.target.value); setIsGenerated(false); }} placeholder="Via | OTV" className="border-0 text-white text-xs h-11" style={{ background: G.input, borderRadius: G.rSm, border: `1px solid ${G.inputBorder}` }} data-testid="input-via-text" />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E7" : "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF\u09B0 \u09A8\u09BE\u09AE"}</p>
-                        <Input value={personName} onChange={(e) => setPersonName(e.target.value)} placeholder={"\u09A8\u09BE\u09AE"} className="border-0 text-white text-xs h-11" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-name" />
-                      </div>
-                      <div>
-                        <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0"}</p>
-                        <Input value={personTitle} onChange={(e) => setPersonTitle(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0"} className="border-0 text-white text-xs h-11" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-title" />
-                      </div>
-                    </div>
-
-                    {isDual && (
-                      <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
-                        <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E8"}</p>
-                          <Input value={personName2} onChange={(e) => setPersonName2(e.target.value)} placeholder={"\u09A8\u09BE\u09AE \u09E8"} className="border-0 text-white text-xs h-11" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-name2" />
-                        </div>
-                        <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0 \u09E8"}</p>
-                          <Input value={personTitle2} onChange={(e) => setPersonTitle2(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0 \u09E8"} className="border-0 text-white text-xs h-11" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-title2" />
-                        </div>
-                      </motion.div>
-                    )}
+                    </CollapsibleSection>
                   </motion.div>
                 )}
 
                 {activeSection === "style" && (
-                  <motion.div key="style" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-4">
-                    <div>
-                      <p className="text-[8px] font-bold text-white/15 uppercase mb-3 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u0985\u09CD\u09AF\u09BE\u0995\u09CD\u09B8\u09C7\u09A8\u09CD\u099F \u0995\u09BE\u09B2\u09BE\u09B0"}</p>
+                  <motion.div key="style" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-3">
+
+                    <CollapsibleSection title={"\u0985\u09CD\u09AF\u09BE\u0995\u09CD\u09B8\u09C7\u09A8\u09CD\u099F \u0995\u09BE\u09B2\u09BE\u09B0"} icon={Palette}>
                       <div className="grid grid-cols-5 gap-2">
                         {ACCENT_COLORS.map((c) => {
                           const isAct = highlightColor === c.color;
@@ -843,10 +1104,27 @@ export default function Home() {
                           );
                         })}
                       </div>
-                    </div>
+                    </CollapsibleSection>
 
-                    <div>
-                      <p className="text-[8px] font-bold text-white/15 uppercase mb-3 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09BE\u0982\u09B2\u09BE \u09AB\u09A8\u09CD\u099F"}</p>
+                    <CollapsibleSection title={"\u099F\u09C7\u0995\u09CD\u09B8\u099F \u0985\u09CD\u09AF\u09BE\u09B2\u09BE\u0987\u09A8\u09AE\u09C7\u09A8\u09CD\u099F"} icon={AlignLeft} defaultOpen={false}>
+                      <div className="flex gap-2">
+                        {([
+                          { value: "left" as const, icon: AlignLeft, bn: "\u09AC\u09BE\u09AE\u09C7" },
+                          { value: "center" as const, icon: AlignCenter, bn: "\u09AE\u09BE\u099D\u09C7" },
+                          { value: "right" as const, icon: AlignRight, bn: "\u09A1\u09BE\u09A8\u09C7" },
+                        ]).map((a) => {
+                          const isAct = textAlign === a.value;
+                          return (
+                            <button key={a.value} onClick={() => { setTextAlign(a.value); setIsGenerated(false); }} className="flex-1 flex items-center justify-center gap-2 py-3 transition-all" style={{ background: isAct ? G.accent : G.panel, border: `1px solid ${isAct ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm }} data-testid={`button-align-${a.value}`}>
+                              <a.icon className={`w-4 h-4 ${isAct ? "text-green-400/70" : "text-white/20"}`} />
+                              <span className={`text-[9px] font-bold ${isAct ? "text-green-300/80" : "text-white/20"}`}>{a.bn}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u09AC\u09BE\u0982\u09B2\u09BE \u09AB\u09A8\u09CD\u099F"} icon={Type} defaultOpen={false}>
                       <div className="grid grid-cols-2 gap-2">
                         {BANGLA_FONT_OPTIONS.map((f) => {
                           const isAct = selectedBanglaFont.id === f.id;
@@ -865,81 +1143,100 @@ export default function Home() {
                           );
                         })}
                       </div>
-                    </div>
+                    </CollapsibleSection>
 
-                    <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                            <Move className="w-4 h-4 text-green-400/50" />
+                    <CollapsibleSection title={"\u09AC\u09CD\u09AF\u09BE\u0995\u0997\u09CD\u09B0\u09BE\u0989\u09A8\u09CD\u09A1 \u0987\u09AB\u09C7\u0995\u09CD\u099F"} icon={Grid2X2} defaultOpen={false}>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] text-white/35 font-medium">{"\u0997\u09CD\u09B0\u09BF\u09A1 \u09B2\u09BE\u0987\u09A8"}</span>
+                          <Switch checked={gridEnabled} onCheckedChange={(v) => { setGridEnabled(v); setIsGenerated(false); }} data-testid="switch-grid" />
+                        </div>
+                        {gridEnabled && (
+                          <div className="flex items-center gap-3">
+                            <span className="text-[8px] text-white/20 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                            <input type="range" min="0.1" max="1" step="0.1" value={gridIntensity} onChange={(e) => { setGridIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-green-500 rounded-full" data-testid="slider-grid-intensity" />
+                            <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(gridIntensity * 100)}%</span>
                           </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] text-white/35 font-medium">{"\u09B8\u09CD\u09AF\u09BE\u09A8\u09CD\u09A1\u09BF \u0997\u09CD\u09B0\u09C7\u0987\u09A8"}</span>
+                          <Switch checked={grainEnabled} onCheckedChange={(v) => { setGrainEnabled(v); setIsGenerated(false); }} data-testid="switch-grain" />
+                        </div>
+                        {grainEnabled && (
+                          <div className="flex items-center gap-3">
+                            <span className="text-[8px] text-white/20 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                            <input type="range" min="0.1" max="1" step="0.1" value={grainIntensity} onChange={(e) => { setGrainIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-green-500 rounded-full" data-testid="slider-grain-intensity" />
+                            <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(grainIntensity * 100)}%</span>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] text-white/35 font-medium">{"\u09A8\u09AF\u09BC\u09C7\u099C \u099F\u09C7\u0995\u09CD\u09B8\u099A\u09BE\u09B0"}</span>
+                          <Switch checked={textureEnabled} onCheckedChange={(v) => { setTextureEnabled(v); setIsGenerated(false); }} data-testid="switch-texture" />
+                        </div>
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u09AA\u09CB\u099C\u09BF\u09B6\u09A8\u09BF\u0982"} icon={Move}>
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-[9px] font-bold text-white/35">OTV {"\u09B2\u09CB\u0997\u09CB"}</span>
+                            <button onClick={resetLogoPosition} className="p-1.5 rounded-lg transition-all hover:scale-105" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-reset-logo-pos">
+                              <RotateCcw className="w-3 h-3 text-white/25" />
+                            </button>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <button onClick={() => setOtvLogoSize(Math.max(40, otvLogoSize - 15))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-smaller">
+                              <ZoomOut className="w-3 h-3 text-white/25" />
+                            </button>
+                            <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(120,180,120,0.06)" }}>
+                              <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((otvLogoSize - 40) / 180) * 100}%`, background: "linear-gradient(90deg, rgba(80,160,80,0.25), rgba(120,200,120,0.4))" }} />
+                            </div>
+                            <button onClick={() => setOtvLogoSize(Math.min(220, otvLogoSize + 15))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-bigger">
+                              <ZoomIn className="w-3 h-3 text-white/25" />
+                            </button>
+                            <span className="text-[8px] text-white/15 font-mono w-7 text-right">{otvLogoSize}</span>
+                          </div>
+                        </div>
+
+                        {mainPhotoImg && (
                           <div>
-                            <span className="text-[10px] font-bold text-white/45">OTV {"\u09B2\u09CB\u0997\u09CB \u09AA\u09CB\u099C\u09BF\u09B6\u09A8"}</span>
-                            <p className="text-[7px] text-white/18">{"\u09AA\u09CD\u09B0\u09BF\u09AD\u09BF\u0989\u09A4\u09C7 \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997 \u0995\u09B0\u09C7 \u09B8\u09B0\u09BE\u09A8"}</p>
-                          </div>
-                        </div>
-                        <button onClick={resetLogoPosition} className="p-2 rounded-xl transition-all hover:scale-105" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-reset-logo-pos">
-                          <RotateCcw className="w-3.5 h-3.5 text-white/25" />
-                        </button>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button onClick={() => setOtvLogoSize(Math.max(40, otvLogoSize - 15))} className="p-2 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-smaller">
-                          <ZoomOut className="w-3.5 h-3.5 text-white/25" />
-                        </button>
-                        <div className="flex-1 relative h-2 rounded-full overflow-hidden" style={{ background: "rgba(120,180,120,0.06)" }}>
-                          <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((otvLogoSize - 40) / 180) * 100}%`, background: "linear-gradient(90deg, rgba(80,160,80,0.25), rgba(120,200,120,0.4))" }} />
-                        </div>
-                        <button onClick={() => setOtvLogoSize(Math.min(220, otvLogoSize + 15))} className="p-2 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-bigger">
-                          <ZoomIn className="w-3.5 h-3.5 text-white/25" />
-                        </button>
-                        <span className="text-[9px] text-white/18 font-mono w-8 text-right">{otvLogoSize}</span>
-                      </div>
-                    </div>
-
-                    {mainPhotoImg && (
-                      <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                              <ImageIcon className="w-4 h-4 text-green-400/50" />
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-[9px] font-bold text-white/35">{"\u099B\u09AC\u09BF \u09AA\u09CB\u099C\u09BF\u09B6\u09A8"}</span>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  onClick={() => setDragMode(dragMode === "image" ? "logo" : "image")}
+                                  className="px-2 py-1 rounded-lg text-[8px] font-bold transition-all"
+                                  style={{
+                                    background: dragMode === "image" ? "rgba(80,160,80,0.2)" : G.panel,
+                                    border: `1px solid ${dragMode === "image" ? "rgba(80,160,80,0.4)" : G.panelBorder}`,
+                                    color: dragMode === "image" ? "rgba(120,200,120,0.8)" : "rgba(255,255,255,0.25)",
+                                  }}
+                                  data-testid="button-toggle-drag-mode"
+                                >
+                                  {dragMode === "image" ? "\u099B\u09AC\u09BF \u09AE\u09CB\u09A1" : "\u09B2\u09CB\u0997\u09CB \u09AE\u09CB\u09A1"}
+                                </button>
+                                <button onClick={resetImagePosition} className="p-1.5 rounded-lg transition-all hover:scale-105" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-reset-image-pos">
+                                  <RotateCcw className="w-3 h-3 text-white/25" />
+                                </button>
+                              </div>
                             </div>
-                            <div>
-                              <span className="text-[10px] font-bold text-white/45">{"\u099B\u09AC\u09BF \u09AA\u09CB\u099C\u09BF\u09B6\u09A8"}</span>
-                              <p className="text-[7px] text-white/18">{"\u09AA\u09CD\u09B0\u09BF\u09AD\u09BF\u0989\u09A4\u09C7 \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997 \u0995\u09B0\u09C7 \u099B\u09AC\u09BF \u09B8\u09B0\u09BE\u09A8"}</p>
+                            <div className="flex items-center gap-3">
+                              <button onClick={() => setImageZoom(Math.max(0.5, imageZoom - 0.1))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-out">
+                                <ZoomOut className="w-3 h-3 text-white/25" />
+                              </button>
+                              <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(120,180,120,0.06)" }}>
+                                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((imageZoom - 0.5) / 1.5) * 100}%`, background: "linear-gradient(90deg, rgba(80,160,80,0.25), rgba(120,200,120,0.4))" }} />
+                              </div>
+                              <button onClick={() => setImageZoom(Math.min(2, imageZoom + 0.1))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-in">
+                                <ZoomIn className="w-3 h-3 text-white/25" />
+                              </button>
+                              <span className="text-[8px] text-white/15 font-mono w-8 text-right">{Math.round(imageZoom * 100)}%</span>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => setDragMode(dragMode === "image" ? "logo" : "image")}
-                              className="px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all"
-                              style={{
-                                background: dragMode === "image" ? "rgba(80,160,80,0.2)" : G.panel,
-                                border: `1px solid ${dragMode === "image" ? "rgba(80,160,80,0.4)" : G.panelBorder}`,
-                                color: dragMode === "image" ? "rgba(120,200,120,0.8)" : "rgba(255,255,255,0.25)",
-                              }}
-                              data-testid="button-toggle-drag-mode"
-                            >
-                              {dragMode === "image" ? "\u099B\u09AC\u09BF \u09AE\u09CB\u09A1" : "\u09B2\u09CB\u0997\u09CB \u09AE\u09CB\u09A1"}
-                            </button>
-                            <button onClick={resetImagePosition} className="p-2 rounded-xl transition-all hover:scale-105" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-reset-image-pos">
-                              <RotateCcw className="w-3.5 h-3.5 text-white/25" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <button onClick={() => setImageZoom(Math.max(0.5, imageZoom - 0.1))} className="p-2 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-out">
-                            <ZoomOut className="w-3.5 h-3.5 text-white/25" />
-                          </button>
-                          <div className="flex-1 relative h-2 rounded-full overflow-hidden" style={{ background: "rgba(120,180,120,0.06)" }}>
-                            <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((imageZoom - 0.5) / 1.5) * 100}%`, background: "linear-gradient(90deg, rgba(80,160,80,0.25), rgba(120,200,120,0.4))" }} />
-                          </div>
-                          <button onClick={() => setImageZoom(Math.min(2, imageZoom + 0.1))} className="p-2 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-in">
-                            <ZoomIn className="w-3.5 h-3.5 text-white/25" />
-                          </button>
-                          <span className="text-[9px] text-white/18 font-mono w-10 text-right">{Math.round(imageZoom * 100)}%</span>
-                        </div>
+                        )}
                       </div>
-                    )}
+                    </CollapsibleSection>
 
                     <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r }}>
                       <div className="flex items-center gap-2.5 mb-2">
@@ -968,7 +1265,23 @@ export default function Home() {
                 )}
 
                 {activeSection === "settings" && (
-                  <motion.div key="settings" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-4">
+                  <motion.div key="settings" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-3">
+
+                    <CollapsibleSection title={"\u098F\u0995\u09CD\u09B8\u09AA\u09CB\u09B0\u09CD\u099F \u09B8\u09C7\u099F\u09BF\u0982\u09B8"} icon={Download}>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09BE\u09B0\u09CD\u09A1 \u09B8\u09BE\u0987\u099C"}</p>
+                          <div className="flex gap-2">
+                            {[1080, 1200, 2048].map(s => (
+                              <button key={s} onClick={() => { setExportSize(s); setIsGenerated(false); }} className="flex-1 py-2 text-[9px] font-bold transition-all" style={{ background: exportSize === s ? G.accent : G.panel, border: `1px solid ${exportSize === s ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm, color: exportSize === s ? "rgba(180,220,160,0.9)" : "rgba(255,255,255,0.2)" }} data-testid={`button-size-${s}`}>
+                                {s}x{s}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleSection>
+
                     <div className="p-5" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
                       <p className="text-[8px] font-bold text-white/15 uppercase mb-3" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09CD\u09AF\u09AC\u09B9\u09BE\u09B0 \u09AC\u09BF\u09A7\u09BF"}</p>
                       <div className="space-y-2.5">
@@ -977,12 +1290,12 @@ export default function Home() {
                           "\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1 \u0995\u09B0\u09C1\u09A8",
                           "\u09A1\u09C1\u09AF\u09BC\u09BE\u09B2 \u099F\u09C7\u09AE\u09CD\u09AA\u09B2\u09C7\u099F\u09C7 \u09E8\u099F\u09BF \u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1",
                           "OTV \u09B2\u09CB\u0997\u09CB \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997 \u0995\u09B0\u09C7 \u09B8\u09B0\u09BE\u09A8",
-                          "\u09B2\u09CB\u0997\u09CB \u09B8\u09BE\u0987\u099C \u09AC\u09BE\u09DC\u09BE\u09A8/\u0995\u09AE\u09BE\u09A8",
-                          "\u0995\u09CD\u09AF\u09BE\u099F\u09BE\u0997\u09B0\u09BF \u09AB\u09BF\u09B2\u09CD\u099F\u09BE\u09B0 \u0993 \u09B8\u09BE\u09B0\u09CD\u099A",
-                          "\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u0995\u09BE\u09B0\u09CD\u09A1 \u09A4\u09C8\u09B0\u09BF",
+                          "\u09AC\u09CD\u09AF\u09BE\u0995\u0997\u09CD\u09B0\u09BE\u0989\u09A8\u09CD\u09A1 \u0987\u09AB\u09C7\u0995\u09CD\u099F: \u0997\u09CD\u09B0\u09BF\u09A1, \u0997\u09CD\u09B0\u09C7\u0987\u09A8, \u099F\u09C7\u0995\u09CD\u09B8\u099A\u09BE\u09B0",
+                          "\u09B9\u09BE\u0987\u09B2\u09BE\u0987\u099F \u09B6\u09AC\u09CD\u09A6 \u09B8\u09BF\u09B2\u09C7\u0995\u09CD\u099F \u0995\u09B0\u09C1\u09A8",
+                          "\u09A1\u09C7\u09AE\u09CB \u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F \u09A6\u09BF\u09AF\u09BC\u09C7 \u09B6\u09C1\u09B0\u09C1",
                           "PNG / JPG / PDF \u09A1\u09BE\u0989\u09A8\u09B2\u09CB\u09A1",
                           "\u0995\u09CD\u09B2\u09BF\u09AA\u09AC\u09CB\u09B0\u09CD\u09A1\u09C7 \u0995\u09AA\u09BF",
-                          "\u0997\u09CD\u09B0\u09BF\u09A1/\u09B2\u09BF\u09B8\u09CD\u099F \u09AD\u09BF\u0989 \u099F\u0997\u09B2",
+                          "\u098F\u0995\u09CD\u09B8\u09AA\u09CB\u09B0\u09CD\u099F \u09B0\u09C7\u099C\u09B2\u09CD\u09AF\u09C1\u09B6\u09A8: 1080/1200/2048",
                         ].map((step, i) => (
                           <div key={i} className="flex items-start gap-2.5">
                             <div className="w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
@@ -996,7 +1309,7 @@ export default function Home() {
 
                     <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r }}>
                       <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AD\u09BE\u09B0\u09CD\u09B6\u09A8"}</p>
-                      <p className="text-[10px] text-white/20">OTV Card Maker v3.0 &middot; {templates.length} Templates</p>
+                      <p className="text-[10px] text-white/20">OTV Card Maker v4.0 &middot; {templates.length} Templates</p>
                       <p className="text-[8px] text-white/10 mt-1">Premium Glass UI &middot; otv.online</p>
                     </div>
                   </motion.div>
@@ -1113,7 +1426,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between px-2.5 mt-2.5">
-                  <span className="text-[7px] text-white/6 font-mono">1200 &times; 1200</span>
+                  <span className="text-[7px] text-white/6 font-mono">{exportSize} &times; {exportSize}</span>
                   <div className="flex items-center gap-1.5">
                     <img src={otvLogoPath} alt="" className="w-3.5 h-3.5 rounded-md object-contain" style={{ background: "rgba(120,180,120,0.06)", padding: "1px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
                     <span className="text-[7px] text-white/6" style={{ fontFamily: "'Montserrat', sans-serif" }}>otv.online</span>
@@ -1130,7 +1443,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain opacity-20" style={{ background: "rgba(120,180,120,0.04)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
-            <span className="text-[9px] text-white/6 font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>OTV Card Maker v3.0 &middot; {templates.length} Templates &middot; otv.online</span>
+            <span className="text-[9px] text-white/6 font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>OTV Card Maker v4.0 &middot; {templates.length} Templates &middot; otv.online</span>
           </div>
           <p className="text-[8px] text-white/4">{"\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB \u0995\u09BE\u09B0\u09CD\u09A1 \u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F\u09B0"}</p>
         </div>
