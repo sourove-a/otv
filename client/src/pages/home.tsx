@@ -196,6 +196,8 @@ const DECOR_PRESET_OPTIONS = [
   { id: "futuristic", name: "Futuristic", nameBn: "\u09AB\u09BF\u0989\u099A\u09BE\u09B0\u09BF\u09B8\u09CD\u099F\u09BF\u0995" },
   { id: "neon", name: "Neon", nameBn: "\u09A8\u09BF\u09AF\u09BC\u09A8" },
   { id: "celebration", name: "Celebration", nameBn: "\u0989\u09CE\u09B8\u09AC" },
+  { id: "royal", name: "Royal", nameBn: "\u09B0\u09AF\u09BC\u09C7\u09B2" },
+  { id: "love", name: "Love", nameBn: "\u09B2\u09BE\u09AD" },
 ];
 
 const CANVAS_SIZE = 1200;
@@ -203,31 +205,31 @@ const BN = "'Noto Sans Bengali', 'Hind Siliguri', sans-serif";
 const DUAL_TEMPLATES = ["dual-quote", "dual-quote-split"];
 
 const G = {
-  bg1: "#080a14",
-  bg2: "#0c1022",
-  bg3: "#06081a",
-  panel: "rgba(100,130,220,0.06)",
-  panelBorder: "rgba(120,140,220,0.10)",
-  panelActive: "rgba(120,140,220,0.12)",
-  input: "rgba(100,130,220,0.07)",
-  inputBorder: "rgba(120,140,220,0.12)",
-  inputFocus: "rgba(160,140,255,0.20)",
-  gold: "#d4a830",
-  goldLight: "#e0b840",
-  goldDim: "rgba(200,168,50,0.15)",
-  blur: "blur(50px) saturate(220%)",
-  blurSm: "blur(30px) saturate(200%)",
+  bg1: "#0c0f1e",
+  bg2: "#111630",
+  bg3: "#0a0e24",
+  panel: "rgba(110,140,240,0.10)",
+  panelBorder: "rgba(130,155,245,0.18)",
+  panelActive: "rgba(140,160,255,0.20)",
+  input: "rgba(110,140,240,0.10)",
+  inputBorder: "rgba(130,155,245,0.20)",
+  inputFocus: "rgba(170,155,255,0.32)",
+  gold: "#e8be3a",
+  goldLight: "#f0cc50",
+  goldDim: "rgba(220,180,55,0.18)",
+  blur: "blur(50px) saturate(240%)",
+  blurSm: "blur(30px) saturate(220%)",
   r: "22px",
   rSm: "16px",
   rXl: "28px",
-  headerBg: "rgba(8,10,20,0.65)",
-  accent: "rgba(130,120,255,0.14)",
-  accentBorder: "rgba(140,130,255,0.22)",
-  glassGradient: "linear-gradient(135deg, rgba(120,130,255,0.08), rgba(200,160,255,0.06), rgba(100,180,255,0.04))",
-  glassHighlight: "inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(255,255,255,0.02)",
-  iridescent: "linear-gradient(135deg, #d4a830, #c084fc, #60a5fa, #d4a830)",
-  iridescentHover: "linear-gradient(135deg, #e0b840, #d8a8ff, #7cb8ff, #e0b840)",
-  shimmer: "linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)",
+  headerBg: "rgba(12,15,30,0.72)",
+  accent: "rgba(140,130,255,0.18)",
+  accentBorder: "rgba(155,145,255,0.30)",
+  glassGradient: "linear-gradient(135deg, rgba(130,140,255,0.12), rgba(210,170,255,0.09), rgba(110,190,255,0.06))",
+  glassHighlight: "inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(255,255,255,0.03)",
+  iridescent: "linear-gradient(135deg, #e8be3a, #d49cff, #70b8ff, #e8be3a)",
+  iridescentHover: "linear-gradient(135deg, #f0cc50, #e0b4ff, #90ccff, #f0cc50)",
+  shimmer: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
 };
 
 const OTV_LOGO_DEFAULT_SIZE = 100;
@@ -247,22 +249,22 @@ function getTemplateCategory(id: string): string {
 function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true }: { title: string; icon: any; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3" data-testid={`section-toggle-${title}`}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-            <Icon className="w-3.5 h-3.5 text-indigo-400/60" />
+    <div style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm, boxShadow: "0 2px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.04)" }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-5 py-4" data-testid={`section-toggle-${title}`}>
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(140,130,255,0.25), rgba(100,170,255,0.18))", border: `1px solid ${G.accentBorder}`, boxShadow: "0 2px 8px rgba(120,110,255,0.15)" }}>
+            <Icon className="w-5 h-5 text-indigo-300" />
           </div>
-          <span className="text-[10px] font-bold text-white/45">{title}</span>
+          <span className="text-base font-bold text-white/85">{title}</span>
         </div>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown className="w-3.5 h-3.5 text-white/20" />
+          <ChevronDown className="w-5 h-5 text-white/55" />
         </motion.div>
       </button>
       <AnimatePresence initial={false}>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-            <div className="px-4 pb-4">{children}</div>
+            <div className="px-5 pb-5">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -330,6 +332,12 @@ export default function Home() {
   const [blurIntensity, setBlurIntensity] = useState(0.5);
   const [transparencyLevel, setTransparencyLevel] = useState(0.5);
   const [cornerRadius, setCornerRadius] = useState(20);
+  const [headlineColor, setHeadlineColor] = useState("#ffffff");
+  const [subheadlineColor, setSubheadlineColor] = useState("#cccccc");
+  const [labelColor, setLabelColor] = useState("#ffffff");
+  const [sourceTextColor, setSourceTextColor] = useState("#aaaaaa");
+  const [badgeColor, setBadgeColor] = useState("#ffffff");
+  const [glassTintColor, setGlassTintColor] = useState("rgba(255,255,255,0.08)");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -473,6 +481,12 @@ export default function Home() {
       blurIntensity,
       transparencyLevel,
       cornerRadius,
+      headlineColor: headlineColor !== "#ffffff" ? headlineColor : undefined,
+      subheadlineColor: subheadlineColor !== "#cccccc" ? subheadlineColor : undefined,
+      labelColor: labelColor !== "#ffffff" ? labelColor : undefined,
+      sourceTextColor: sourceTextColor !== "#aaaaaa" ? sourceTextColor : undefined,
+      badgeColor: badgeColor !== "#ffffff" ? badgeColor : undefined,
+      glassTintColor: glassTintColor !== "rgba(255,255,255,0.08)" ? glassTintColor : undefined,
     }, CANVAS_SIZE, CANVAS_SIZE);
     if (!isPro) {
       ctx.save();
@@ -486,7 +500,7 @@ export default function Home() {
       ctx.fillText("OTV.ONLINE", 0, 0);
       ctx.restore();
     }
-  }, [headline, headline2, subheadline, bulletText, quoteText, dateText, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, highlightWords, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX, imageOffsetY, imageZoom, selectedBanglaFont, gridEnabled, grainEnabled, textureEnabled, gridIntensity, grainIntensity, textAlign, exportSize, selectedColorPreset, selectedBgPreset, selectedGlassStyle, autoDecorate, decorPreset, emojiDensity, glowIntensity, blurIntensity, transparencyLevel, cornerRadius]);
+  }, [headline, headline2, subheadline, bulletText, quoteText, dateText, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, highlightWords, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX, imageOffsetY, imageZoom, selectedBanglaFont, gridEnabled, grainEnabled, textureEnabled, gridIntensity, grainIntensity, textAlign, exportSize, selectedColorPreset, selectedBgPreset, selectedGlassStyle, autoDecorate, decorPreset, emojiDensity, glowIntensity, blurIntensity, transparencyLevel, cornerRadius, headlineColor, subheadlineColor, labelColor, sourceTextColor, badgeColor, glassTintColor]);
 
   const renderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -711,74 +725,75 @@ export default function Home() {
   return (
     <div className="min-h-screen text-white relative" style={{ fontFamily: BN, background: `linear-gradient(165deg, ${G.bg1} 0%, ${G.bg2} 35%, ${G.bg3} 65%, ${G.bg1} 100%)` }} data-testid="home-page">
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <motion.div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full" style={{ background: "radial-gradient(circle, rgba(100,80,220,0.08) 0%, rgba(80,60,180,0.04) 40%, transparent 70%)" }} animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.div className="absolute top-1/3 -left-32 w-[500px] h-[500px] rounded-full" style={{ background: "radial-gradient(circle, rgba(200,140,255,0.05) 0%, transparent 70%)" }} animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }} />
-        <motion.div className="absolute bottom-20 right-1/4 w-[400px] h-[300px]" style={{ background: "radial-gradient(ellipse, rgba(60,130,255,0.04) 0%, transparent 70%)" }} animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 5 }} />
-        <motion.div className="absolute top-2/3 left-1/3 w-[350px] h-[350px] rounded-full" style={{ background: "radial-gradient(circle, rgba(212,168,48,0.04) 0%, transparent 70%)" }} animate={{ scale: [1, 1.12, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 7 }} />
-        <div className="absolute inset-0" style={{ background: "repeating-conic-gradient(rgba(100,120,200,0.008) 0% 25%, transparent 0% 50%) 0 0 / 80px 80px" }} />
+        <motion.div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full" style={{ background: "radial-gradient(circle, rgba(120,100,255,0.14) 0%, rgba(90,70,210,0.07) 40%, transparent 70%)" }} animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.div className="absolute top-1/3 -left-32 w-[500px] h-[500px] rounded-full" style={{ background: "radial-gradient(circle, rgba(210,155,255,0.10) 0%, transparent 70%)" }} animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.85, 0.4] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }} />
+        <motion.div className="absolute bottom-20 right-1/4 w-[400px] h-[300px]" style={{ background: "radial-gradient(ellipse, rgba(70,145,255,0.09) 0%, transparent 70%)" }} animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 5 }} />
+        <motion.div className="absolute top-2/3 left-1/3 w-[350px] h-[350px] rounded-full" style={{ background: "radial-gradient(circle, rgba(232,190,58,0.08) 0%, transparent 70%)" }} animate={{ scale: [1, 1.12, 1], opacity: [0.4, 0.75, 0.4] }} transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 7 }} />
+        <motion.div className="absolute top-10 left-1/2 w-[300px] h-[300px] rounded-full" style={{ background: "radial-gradient(circle, rgba(0,210,255,0.06) 0%, transparent 70%)" }} animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 9 }} />
+        <div className="absolute inset-0" style={{ background: "repeating-conic-gradient(rgba(110,130,220,0.012) 0% 25%, transparent 0% 50%) 0 0 / 80px 80px" }} />
       </div>
 
-      <header className="relative z-50 sticky top-0 glass-header-shimmer" style={{ background: G.headerBg, backdropFilter: G.blur, WebkitBackdropFilter: G.blur, borderBottom: `1px solid ${G.panelBorder}`, boxShadow: "0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)" }}>
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <header className="relative z-50 sticky top-0 glass-header-shimmer" style={{ background: G.headerBg, backdropFilter: G.blur, WebkitBackdropFilter: G.blur, borderBottom: `1px solid ${G.panelBorder}`, boxShadow: "0 4px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.07)" }}>
+        <div className="max-w-[1700px] mx-auto px-6 py-4 flex items-center justify-between">
           <motion.div className="flex items-center gap-3" initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, type: "spring" }}>
             <div className="relative">
-              <img src={otvLogoPath} alt="OTV" className="w-10 h-10 rounded-2xl object-contain" style={{ background: "rgba(100,120,220,0.10)", padding: "3px", border: `1px solid ${G.panelBorder}` }} data-testid="img-otv-logo" onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-indigo-400 border-2" style={{ borderColor: G.bg1 }} />
+              <img src={otvLogoPath} alt="OTV" className="w-12 h-12 rounded-2xl object-contain" style={{ background: "rgba(100,120,220,0.10)", padding: "3px", border: `1px solid ${G.panelBorder}` }} data-testid="img-otv-logo" onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-indigo-400 border-2" style={{ borderColor: G.bg1 }} />
             </div>
             <div>
-              <h1 className="text-[15px] font-bold text-white/90 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }} data-testid="text-app-title">OTV Card Maker</h1>
-              <p className="text-[7px] font-bold glass-text-shimmer" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.25em", color: G.gold, opacity: 0.6 }}>LIQUID GLASS STUDIO</p>
+              <h1 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }} data-testid="text-app-title">OTV Card Maker</h1>
+              <p className="text-xs font-bold glass-text-shimmer" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.20em", color: G.gold }}>LIQUID GLASS STUDIO</p>
             </div>
           </motion.div>
           <motion.div className="flex items-center gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
             <div className="flex items-center gap-2 px-3 py-1.5" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
-              <span className="text-[8px] text-white/20 font-bold" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em" }}>FREE</span>
+              <span className="text-[12px] text-white/50 font-bold" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em" }}>FREE</span>
               <Switch checked={isPro} onCheckedChange={setIsPro} data-testid="switch-pro-toggle" />
-              <Crown className={`w-3.5 h-3.5 transition-colors duration-500 ${isPro ? "text-amber-400" : "text-white/15"}`} />
+              <Crown className={`w-3.5 h-3.5 transition-colors duration-500 ${isPro ? "text-amber-400" : "text-white/45"}`} />
             </div>
           </motion.div>
         </div>
       </header>
 
       <div className="relative z-10">
-        <div className="max-w-7xl mx-auto px-4 pt-5 pb-3">
+        <div className="max-w-[1700px] mx-auto px-6 pt-6 pb-3">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.4 }}>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Layers className="w-3.5 h-3.5" style={{ color: G.gold, opacity: 0.4 }} />
-                <span className="text-[9px] font-bold text-white/12 uppercase" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.2em" }}>{templates.length} Templates</span>
+                <Layers className="w-4 h-4" style={{ color: G.gold }} />
+                <span className="text-sm font-bold text-white/70 uppercase" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.15em" }}>{templates.length} Templates</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-white/15" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
                   <input
                     type="text"
                     value={templateSearch}
                     onChange={(e) => setTemplateSearch(e.target.value)}
-                    placeholder="Search..."
-                    className="h-7 pl-7 pr-3 text-[9px] text-white/50 placeholder:text-white/12 border-0 outline-none focus:ring-1"
-                    style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.rSm, width: "120px", fontFamily: "'Montserrat', sans-serif", '--tw-ring-color': G.inputFocus } as React.CSSProperties}
+                    placeholder="খুঁজুন..."
+                    className="h-9 pl-9 pr-4 text-sm text-white/70 placeholder:text-white/35 border-0 outline-none focus:ring-1"
+                    style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.rSm, width: "160px", fontFamily: BN, '--tw-ring-color': G.inputFocus } as React.CSSProperties}
                     data-testid="input-template-search"
                   />
                 </div>
-                <button onClick={() => setShowTemplateGrid(!showTemplateGrid)} className="p-1.5 transition-all" style={{ background: showTemplateGrid ? G.accent : "transparent", border: `1px solid ${showTemplateGrid ? G.accentBorder : "transparent"}`, borderRadius: G.rSm }} data-testid="button-toggle-grid">
-                  <Grid3X3 className="w-3.5 h-3.5 text-white/25" />
+                <button onClick={() => setShowTemplateGrid(!showTemplateGrid)} className="p-2 transition-all" style={{ background: showTemplateGrid ? G.accent : "transparent", border: `1px solid ${showTemplateGrid ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm }} data-testid="button-toggle-grid">
+                  <Grid3X3 className="w-4 h-4 text-white/65" />
                 </button>
               </div>
             </div>
 
-            <div className="flex gap-1.5 mb-3 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+            <div className="flex gap-2 mb-4 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
               {TEMPLATE_CATEGORIES.map(cat => (
                 <button
                   key={cat.id}
                   onClick={() => setTemplateFilter(cat.id)}
-                  className="flex-shrink-0 px-3 py-1.5 text-[9px] font-bold transition-all duration-300 whitespace-nowrap"
+                  className="flex-shrink-0 px-4 py-2 text-sm font-bold transition-all duration-300 whitespace-nowrap"
                   style={{
                     borderRadius: G.rSm,
                     background: templateFilter === cat.id ? G.accent : "transparent",
-                    border: `1px solid ${templateFilter === cat.id ? G.accentBorder : "transparent"}`,
-                    color: templateFilter === cat.id ? "rgba(180,175,255,0.9)" : "rgba(255,255,255,0.2)",
-                    boxShadow: templateFilter === cat.id ? "inset 0 1px 0 rgba(255,255,255,0.04)" : "none",
+                    border: `1px solid ${templateFilter === cat.id ? G.accentBorder : G.panelBorder}`,
+                    color: templateFilter === cat.id ? "rgba(210,205,255,1)" : "rgba(255,255,255,0.55)",
+                    boxShadow: templateFilter === cat.id ? "0 2px 12px rgba(120,110,255,0.15), inset 0 1px 0 rgba(255,255,255,0.06)" : "none",
                   }}
                   data-testid={`button-filter-${cat.id}`}
                 >
@@ -802,21 +817,21 @@ export default function Home() {
                       className="group relative"
                       data-testid={`button-template-${t.id}`}
                     >
-                      <div className={`overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, border: isActive ? `2px solid rgba(130,120,255,0.5)` : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 4px 20px rgba(100,90,255,0.15), inset 0 1px 0 rgba(255,255,255,0.06)" : "none" }}>
+                      <div className={`overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-50 hover:opacity-80"}`} style={{ borderRadius: G.rSm, border: isActive ? `2px solid rgba(140,130,255,0.6)` : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 4px 20px rgba(110,100,255,0.20), inset 0 1px 0 rgba(255,255,255,0.08)" : "0 2px 6px rgba(0,0,0,0.12)" }}>
                         <div className="h-[52px] relative" style={isSplit ? { background: `linear-gradient(90deg, ${t.previewColors[0]} 50%, ${t.previewColors[1]} 50%)` } : { background: `linear-gradient(135deg, ${t.previewColors[0]}, ${t.previewColors[1]})` }}>
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
                           <div className="absolute bottom-1 left-1.5 space-y-[1px]">
-                            <div className="h-[2px] w-4 rounded-full" style={{ backgroundColor: t.accentColor }} />
-                            <div className="h-[1.5px] w-[50%] bg-white/15 rounded-full" />
+                            <div className="h-[2px] w-4 rounded-full" style={{ backgroundColor: t.accentColor, boxShadow: `0 0 4px ${t.accentColor}50` }} />
+                            <div className="h-[1.5px] w-[50%] bg-white/20 rounded-full" />
                           </div>
                           {isActive && (
-                            <motion.div className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} layoutId="tmpl-active" transition={{ type: "spring", stiffness: 300, damping: 25 }}>
+                            <motion.div className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(120,110,255,0.95)", boxShadow: "0 2px 10px rgba(120,110,255,0.5)" }} layoutId="tmpl-active" transition={{ type: "spring", stiffness: 300, damping: 25 }}>
                               <Check className="w-2.5 h-2.5 text-white" />
                             </motion.div>
                           )}
                         </div>
                         <div className="px-1.5 py-1" style={{ background: G.panel }}>
-                          <p className="text-[7px] font-bold text-white/55 truncate">{t.nameBn}</p>
+                          <p className="text-sm font-bold text-white/65 truncate">{t.nameBn}</p>
                         </div>
                       </div>
                     </motion.button>
@@ -846,22 +861,22 @@ export default function Home() {
                         className="flex-shrink-0 snap-center group relative"
                         data-testid={`button-template-${t.id}`}
                       >
-                        <div className={`w-[95px] overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, border: isActive ? "2px solid rgba(130,120,255,0.5)" : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 6px 24px rgba(100,90,255,0.15), inset 0 1px 0 rgba(255,255,255,0.06)" : "none" }}>
+                        <div className={`w-[95px] overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-50 hover:opacity-80"}`} style={{ borderRadius: G.rSm, border: isActive ? "2px solid rgba(140,130,255,0.6)" : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 6px 24px rgba(110,100,255,0.20), inset 0 1px 0 rgba(255,255,255,0.08)" : "0 2px 8px rgba(0,0,0,0.15)" }}>
                           <div className="h-[62px] relative" style={isSplit ? { background: `linear-gradient(90deg, ${t.previewColors[0]} 50%, ${t.previewColors[1]} 50%)` } : { background: `linear-gradient(135deg, ${t.previewColors[0]}, ${t.previewColors[1]})` }}>
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                             <div className="absolute bottom-1.5 left-2 space-y-[2px]">
-                              <div className="h-[2.5px] w-5 rounded-full" style={{ backgroundColor: t.accentColor }} />
-                              <div className="h-[1.5px] w-[50%] bg-white/15 rounded-full" />
+                              <div className="h-[2.5px] w-5 rounded-full" style={{ backgroundColor: t.accentColor, boxShadow: `0 0 6px ${t.accentColor}60` }} />
+                              <div className="h-[1.5px] w-[50%] bg-white/20 rounded-full" />
                             </div>
                             {isActive && (
-                              <motion.div layoutId="tmpl-active-h" className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} transition={{ type: "spring", stiffness: 300, damping: 25 }}>
+                              <motion.div layoutId="tmpl-active-h" className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(120,110,255,0.95)", boxShadow: "0 2px 10px rgba(120,110,255,0.5)" }} transition={{ type: "spring", stiffness: 300, damping: 25 }}>
                                 <Check className="w-2.5 h-2.5 text-white" />
                               </motion.div>
                             )}
                           </div>
                           <div className="px-2 py-1.5" style={{ background: G.panel }}>
-                            <p className="text-[8px] font-bold text-white/55 truncate leading-tight">{t.nameBn}</p>
-                            <p className="text-[6px] text-white/15 truncate mt-0.5" style={{ fontFamily: "'Montserrat', sans-serif" }}>{t.name}</p>
+                            <p className="text-[12px] font-bold text-white/65 truncate leading-tight">{t.nameBn}</p>
+                            <p className="text-sm text-white/55 truncate mt-0.5" style={{ fontFamily: "'Montserrat', sans-serif" }}>{t.name}</p>
                           </div>
                         </div>
                       </motion.button>
@@ -873,24 +888,24 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 pb-10">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_460px] xl:grid-cols-[1fr_500px] gap-6 items-start">
+        <div className="max-w-[1700px] mx-auto px-6 pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_540px] xl:grid-cols-[1fr_600px] gap-6 items-start">
 
             <motion.div className="order-2 lg:order-1 space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.5 }}>
-              <div className="flex gap-0.5 p-1" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
+              <div className="flex gap-1 p-1.5" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm, boxShadow: "0 2px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
                 {sectionTabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveSection(tab.id)}
-                    className={`flex-1 flex items-center justify-center gap-2 py-3 text-[11px] font-bold transition-all duration-400 relative ${activeSection === tab.id ? "text-white" : "text-white/18 hover:text-white/30"}`}
+                    className={`flex-1 flex items-center justify-center gap-2.5 py-3.5 text-base font-bold transition-all duration-400 relative ${activeSection === tab.id ? "text-white" : "text-white/55 hover:text-white/75"}`}
                     style={{ borderRadius: G.rSm }}
                     data-testid={`tab-${tab.id}`}
                   >
                     {activeSection === tab.id && (
-                      <motion.div layoutId="tab-glass" className="absolute inset-0" style={{ borderRadius: G.rSm, background: "linear-gradient(135deg, rgba(130,120,255,0.16), rgba(100,160,255,0.10))", border: `1px solid ${G.accentBorder}`, boxShadow: "0 4px 20px rgba(100,100,255,0.08), inset 0 1px 0 rgba(255,255,255,0.05)" }} transition={{ type: "spring", stiffness: 350, damping: 30 }} />
+                      <motion.div layoutId="tab-glass" className="absolute inset-0" style={{ borderRadius: G.rSm, background: "linear-gradient(135deg, rgba(140,130,255,0.25), rgba(110,170,255,0.18))", border: `1px solid rgba(155,145,255,0.40)`, boxShadow: "0 4px 24px rgba(110,100,255,0.18), inset 0 1px 0 rgba(255,255,255,0.10)" }} transition={{ type: "spring", stiffness: 350, damping: 30 }} />
                     )}
-                    <span className="relative z-10 flex items-center gap-2">
-                      <tab.icon className="w-3.5 h-3.5" />
+                    <span className="relative z-10 flex items-center gap-2.5">
+                      <tab.icon className="w-5 h-5" />
                       {tab.label}
                     </span>
                   </button>
@@ -902,11 +917,11 @@ export default function Home() {
                   <motion.div key="content" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-3">
 
                     <div className="flex gap-2 mb-1">
-                      <button onClick={loadRandomPreset} className="flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold transition-all hover:scale-[1.02]" style={{ background: G.accent, border: `1px solid ${G.accentBorder}`, borderRadius: G.rSm, color: "rgba(180,175,255,0.8)" }} data-testid="button-random-demo">
+                      <button onClick={loadRandomPreset} className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold transition-all hover:scale-[1.02]" style={{ background: G.accent, border: `1px solid ${G.accentBorder}`, borderRadius: G.rSm, color: "rgba(180,175,255,0.8)" }} data-testid="button-random-demo">
                         <Shuffle className="w-3 h-3" />
                         {"\u09A1\u09C7\u09AE\u09CB \u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"}
                       </button>
-                      <button onClick={resetAll} className="flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold transition-all hover:scale-[1.02]" style={{ background: "rgba(200,50,50,0.08)", border: "1px solid rgba(200,50,50,0.15)", borderRadius: G.rSm, color: "rgba(255,120,120,0.6)" }} data-testid="button-reset-all">
+                      <button onClick={resetAll} className="flex items-center gap-2 px-4 py-2.5 text-sm font-bold transition-all hover:scale-[1.02]" style={{ background: "rgba(200,50,50,0.08)", border: "1px solid rgba(200,50,50,0.15)", borderRadius: G.rSm, color: "rgba(255,120,120,0.6)" }} data-testid="button-reset-all">
                         <Trash2 className="w-3 h-3" />
                         {"\u09B0\u09BF\u09B8\u09C7\u099F"}
                       </button>
@@ -914,7 +929,7 @@ export default function Home() {
 
                     <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
                       {DEMO_PRESETS.map((p, i) => (
-                        <button key={i} onClick={() => loadPreset(p)} className="flex-shrink-0 px-2.5 py-1.5 text-[8px] font-bold transition-all hover:opacity-80 whitespace-nowrap" style={{ background: `${p.accentColor}15`, border: `1px solid ${p.accentColor}30`, borderRadius: G.rSm, color: `${p.accentColor}cc` }} data-testid={`button-preset-${i}`}>
+                        <button key={i} onClick={() => loadPreset(p)} className="flex-shrink-0 px-2.5 py-1.5 text-[12px] font-bold transition-all hover:opacity-80 whitespace-nowrap" style={{ background: `${p.accentColor}15`, border: `1px solid ${p.accentColor}30`, borderRadius: G.rSm, color: `${p.accentColor}cc` }} data-testid={`button-preset-${i}`}>
                           {p.bn}
                         </button>
                       ))}
@@ -923,7 +938,7 @@ export default function Home() {
                     <CollapsibleSection title={"\u09AB\u099F\u09CB \u0993 \u09B2\u09CB\u0997\u09CB"} icon={ImageIcon}>
                       <div className="grid gap-3 grid-cols-2">
                         <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E7" : "\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB"}</p>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E7" : "\u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB"}</p>
                           <input ref={mainPhotoInputRef} type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" id="photo-upload" data-testid="input-main-photo" />
                           <label htmlFor="photo-upload" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") mainPhotoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm, backdropFilter: G.blurSm }} data-testid="dropzone-main-photo">
                             {mainPhotoSrc ? (
@@ -933,7 +948,7 @@ export default function Home() {
                                 <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (mainPhotoSrc) URL.revokeObjectURL(mainPhotoSrc); setMainPhotoSrc(null); setMainPhotoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-photo">
                                   <X className="w-3 h-3 text-white/80" />
                                 </button>
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveBg(); }} disabled={isRemovingBg} className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all" style={{ background: isRemovingBg ? "rgba(100,90,220,0.3)" : "rgba(100,90,220,0.6)", backdropFilter: "blur(10px)", color: "white", border: `1px solid rgba(130,120,255,0.3)` }} data-testid="button-remove-bg">
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveBg(); }} disabled={isRemovingBg} className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[13px] font-bold transition-all" style={{ background: isRemovingBg ? "rgba(100,90,220,0.3)" : "rgba(100,90,220,0.6)", backdropFilter: "blur(10px)", color: "white", border: `1px solid rgba(130,120,255,0.3)` }} data-testid="button-remove-bg">
                                   {isRemovingBg ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eraser className="w-3 h-3" />}
                                   {isRemovingBg ? "Processing..." : "BG Remove"}
                                 </button>
@@ -943,14 +958,14 @@ export default function Home() {
                                 <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
                                   <Upload className="w-4 h-4 text-indigo-400/40" />
                                 </div>
-                                <p className="text-[10px] text-white/22 font-medium">{isDual ? "\u09AC\u09BE\u09AE \u09AB\u099F\u09CB" : "\u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
+                                <p className="text-sm text-white/35 font-medium">{isDual ? "\u09AC\u09BE\u09AE \u09AB\u099F\u09CB" : "\u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
                               </div>
                             )}
                           </label>
                         </div>
 
                         <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E8" : "\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AB\u099F\u09CB \u09E8" : "\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
                           {isDual ? (
                             <>
                               <input ref={secondPhotoInputRef} type="file" accept="image/*" onChange={handleSecondPhotoUpload} className="hidden" id="photo2-upload" data-testid="input-second-photo" />
@@ -968,7 +983,7 @@ export default function Home() {
                                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
                                       <Users className="w-4 h-4 text-indigo-400/40" />
                                     </div>
-                                    <p className="text-[10px] text-white/22 font-medium">{"\u09A1\u09BE\u09A8 \u09AB\u099F\u09CB"}</p>
+                                    <p className="text-sm text-white/35 font-medium">{"\u09A1\u09BE\u09A8 \u09AB\u099F\u09CB"}</p>
                                   </div>
                                 )}
                               </label>
@@ -989,7 +1004,7 @@ export default function Home() {
                                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
                                       <ImageIcon className="w-4 h-4 text-indigo-400/40" />
                                     </div>
-                                    <p className="text-[10px] text-white/22 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB"}</p>
+                                    <p className="text-sm text-white/35 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB"}</p>
                                   </div>
                                 )}
                               </label>
@@ -1000,7 +1015,7 @@ export default function Home() {
 
                       {isDual && (
                         <div className="mt-3">
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u099A\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u09B2\u09CB\u0997\u09CB"}</p>
                           <input ref={logoInputRef} type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload-dual" data-testid="input-logo-dual" />
                           <label htmlFor="logo-upload-dual" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") logoInputRef.current?.click(); }} className="block cursor-pointer transition-all duration-400 overflow-hidden group" style={{ background: G.panel, border: `1.5px dashed ${G.inputBorder}`, borderRadius: G.rSm }} data-testid="dropzone-logo-dual">
                             {logoSrc ? (
@@ -1013,7 +1028,7 @@ export default function Home() {
                             ) : (
                               <div className="flex items-center justify-center py-4 gap-2 group-hover:scale-105 transition-transform duration-500">
                                 <ImageIcon className="w-4 h-4 text-indigo-400/20" />
-                                <p className="text-[10px] text-white/15 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
+                                <p className="text-sm text-white/45 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
                               </div>
                             )}
                           </label>
@@ -1024,7 +1039,7 @@ export default function Home() {
                     <CollapsibleSection title={"\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u0993 \u099F\u09C7\u0995\u09CD\u09B8\u099F"} icon={Type}>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E7" : "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E7" : "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
                           <Textarea
                             value={headline}
                             onChange={(e) => { setHeadline(e.target.value); setIsGenerated(false); }}
@@ -1036,7 +1051,7 @@ export default function Home() {
                         </div>
 
                         <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09B8\u09BE\u09AC-\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09B8\u09BE\u09AC-\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE"}</p>
                           <Input
                             value={subheadline}
                             onChange={(e) => { setSubheadline(e.target.value); setIsGenerated(false); }}
@@ -1049,7 +1064,7 @@ export default function Home() {
 
                         {(isDual || selectedTemplate.id === "news-summary") && (
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E8" : "\u09AC\u09BF\u09B8\u09CD\u09A4\u09BE\u09B0\u09BF\u09A4 / \u09AC\u09C1\u09B2\u09C7\u099F"}</p>
+                            <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09B6\u09BF\u09B0\u09CB\u09A8\u09BE\u09AE \u09E8" : "\u09AC\u09BF\u09B8\u09CD\u09A4\u09BE\u09B0\u09BF\u09A4 / \u09AC\u09C1\u09B2\u09C7\u099F"}</p>
                             <Textarea
                               value={headline2}
                               onChange={(e) => { setHeadline2(e.target.value); setIsGenerated(false); }}
@@ -1062,7 +1077,7 @@ export default function Home() {
                         )}
 
                         <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
                             <Quote className="w-3 h-3 inline mr-1 opacity-50" />
                             {"\u0989\u09A6\u09CD\u09A7\u09C3\u09A4\u09BF"}
                           </p>
@@ -1077,7 +1092,7 @@ export default function Home() {
                         </div>
 
                         <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
                             <List className="w-3 h-3 inline mr-1 opacity-50" />
                             {"\u09AC\u09C1\u09B2\u09C7\u099F \u09AA\u09AF\u09BC\u09C7\u09A8\u09CD\u099F"}
                           </p>
@@ -1097,14 +1112,14 @@ export default function Home() {
                       <div className="space-y-3">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09CD\u09AF\u09BE\u099F\u09BE\u0997\u09B0\u09BF"}</p>
+                            <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09CD\u09AF\u09BE\u099F\u09BE\u0997\u09B0\u09BF"}</p>
                             <Select value={category} onValueChange={(v) => { setCategory(v); setIsGenerated(false); }}>
                               <SelectTrigger className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, border: `1px solid ${G.inputBorder}` }} data-testid="select-category">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent className="border-0" style={{ background: "rgba(8,10,20,0.96)", backdropFilter: G.blur, borderRadius: G.rSm, border: `1px solid ${G.panelBorder}` }}>
                                 {CATEGORIES.map((c) => (
-                                  <SelectItem key={c.value} value={c.value} className="text-white/60 text-xs focus:bg-indigo-500/8 focus:text-white" style={{ borderRadius: "10px" }}>
+                                  <SelectItem key={c.value} value={c.value} className="text-white/75 text-xs focus:bg-indigo-500/8 focus:text-white" style={{ borderRadius: "10px" }}>
                                     {c.bn} &middot; {c.value}
                                   </SelectItem>
                                 ))}
@@ -1112,32 +1127,32 @@ export default function Home() {
                             </Select>
                           </div>
                           <div>
-                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>Via</p>
+                            <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>Via</p>
                             <Input value={viaText} onChange={(e) => { setViaText(e.target.value); setIsGenerated(false); }} placeholder="Via | OTV" className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, border: `1px solid ${G.inputBorder}` }} data-testid="input-via-text" />
                           </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
+                            <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>
                               <Calendar className="w-3 h-3 inline mr-1 opacity-50" />
                               {"\u09A4\u09BE\u09B0\u09BF\u0996"}
                             </p>
                             <Input value={dateText} onChange={(e) => { setDateText(e.target.value); setIsGenerated(false); }} placeholder={"\u09E7\u09EB \u09AE\u09BE\u09B0\u09CD\u099A \u09E8\u09E6\u09E8\u09EC"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-date" />
                           </div>
                           <div>
-                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09B9\u09BE\u0987\u09B2\u09BE\u0987\u099F \u09B6\u09AC\u09CD\u09A6"}</p>
+                            <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09B9\u09BE\u0987\u09B2\u09BE\u0987\u099F \u09B6\u09AC\u09CD\u09A6"}</p>
                             <Input value={highlightWords} onChange={(e) => { setHighlightWords(e.target.value); setIsGenerated(false); }} placeholder={"\u09B6\u09AC\u09CD\u09A6\u09E7, \u09B6\u09AC\u09CD\u09A6\u09E8"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-highlight-words" />
                           </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E7" : "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF\u09B0 \u09A8\u09BE\u09AE"}</p>
+                            <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{isDual ? "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E7" : "\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF\u09B0 \u09A8\u09BE\u09AE"}</p>
                             <Input value={personName} onChange={(e) => setPersonName(e.target.value)} placeholder={"\u09A8\u09BE\u09AE"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-name" />
                           </div>
                           <div>
-                            <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0"}</p>
+                            <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0"}</p>
                             <Input value={personTitle} onChange={(e) => setPersonTitle(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-title" />
                           </div>
                         </div>
@@ -1145,11 +1160,11 @@ export default function Home() {
                         {isDual && (
                           <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}>
                             <div>
-                              <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E8"}</p>
+                              <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09CD\u09AF\u0995\u09CD\u09A4\u09BF \u09E8"}</p>
                               <Input value={personName2} onChange={(e) => setPersonName2(e.target.value)} placeholder={"\u09A8\u09BE\u09AE \u09E8"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-name2" />
                             </div>
                             <div>
-                              <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0 \u09E8"}</p>
+                              <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09A6\u09AC\u09C0 \u09E8"}</p>
                               <Input value={personTitle2} onChange={(e) => setPersonTitle2(e.target.value)} placeholder={"\u09AA\u09A6\u09AC\u09C0 \u09E8"} className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, fontFamily: BN, border: `1px solid ${G.inputBorder}` }} data-testid="input-person-title2" />
                             </div>
                           </motion.div>
@@ -1170,7 +1185,7 @@ export default function Home() {
                             <button key={c.color} onClick={() => { setHighlightColor(c.color); setIsGenerated(false); }} className="group" data-testid={`button-color-${c.color.replace("#", "")}`}>
                               <div className={`relative p-3 flex flex-col items-center gap-1.5 transition-all duration-400 ${isAct ? "scale-[1.06]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? `${c.color}08` : G.panel, border: isAct ? `2px solid ${c.color}30` : `1px solid ${G.panelBorder}`, boxShadow: isAct ? `0 4px 20px ${c.color}15, inset 0 1px 0 rgba(255,255,255,0.02)` : "none" }}>
                                 <div className={`w-8 h-8 rounded-xl transition-all ${isAct ? "scale-110" : ""}`} style={{ backgroundColor: c.color, boxShadow: isAct ? `0 4px 20px ${c.color}35` : "none" }} />
-                                <span className="text-[7px] font-bold text-white/30">{c.bn}</span>
+                                <span className="text-sm font-bold text-white/75">{c.bn}</span>
                                 {isAct && (
                                   <motion.div layoutId="color-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: c.color, boxShadow: `0 2px 8px ${c.color}40` }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
                                     <Check className="w-2.5 h-2.5 text-white" />
@@ -1180,6 +1195,67 @@ export default function Home() {
                             </button>
                           );
                         })}
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u099F\u09C7\u0995\u09CD\u09B8\u099F \u0995\u09BE\u09B2\u09BE\u09B0"} icon={Palette} defaultOpen={false}>
+                      <div className="space-y-3">
+                        {([
+                          { label: "\u09B9\u09C7\u09A1\u09B2\u09BE\u0987\u09A8 \u0995\u09BE\u09B2\u09BE\u09B0", value: headlineColor, setter: setHeadlineColor, defaultVal: "#ffffff", testId: "headline-color" },
+                          { label: "\u09B8\u09BE\u09AC-\u09B9\u09C7\u09A1\u09B2\u09BE\u0987\u09A8 \u0995\u09BE\u09B2\u09BE\u09B0", value: subheadlineColor, setter: setSubheadlineColor, defaultVal: "#cccccc", testId: "subheadline-color" },
+                          { label: "\u09B2\u09C7\u09AC\u09C7\u09B2 \u0995\u09BE\u09B2\u09BE\u09B0", value: labelColor, setter: setLabelColor, defaultVal: "#ffffff", testId: "label-color" },
+                          { label: "\u09B8\u09CB\u09B0\u09CD\u09B8 \u099F\u09C7\u0995\u09CD\u09B8\u099F \u0995\u09BE\u09B2\u09BE\u09B0", value: sourceTextColor, setter: setSourceTextColor, defaultVal: "#aaaaaa", testId: "source-text-color" },
+                          { label: "\u09AC\u09CD\u09AF\u09BE\u099C \u0995\u09BE\u09B2\u09BE\u09B0", value: badgeColor, setter: setBadgeColor, defaultVal: "#ffffff", testId: "badge-color" },
+                        ]).map((item) => (
+                          <div key={item.testId} className="flex items-center justify-between gap-3">
+                            <span className="text-[13px] text-white/35 font-medium flex-1">{item.label}</span>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="color"
+                                value={item.value}
+                                onChange={(e) => { item.setter(e.target.value); setIsGenerated(false); }}
+                                className="w-7 h-7 rounded-lg border-0 cursor-pointer"
+                                style={{ background: G.panel, padding: "2px" }}
+                                data-testid={`input-${item.testId}`}
+                              />
+                              <span className="text-sm text-white/45 font-mono w-14 text-right">{item.value}</span>
+                              {item.value !== item.defaultVal && (
+                                <button
+                                  onClick={() => { item.setter(item.defaultVal); setIsGenerated(false); }}
+                                  className="p-1 rounded-md"
+                                  style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }}
+                                  data-testid={`button-reset-${item.testId}`}
+                                >
+                                  <RotateCcw className="w-2.5 h-2.5 text-white/55" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-[13px] text-white/35 font-medium flex-1">{"\u0997\u09CD\u09B2\u09BE\u09B8 \u09AA\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2 \u099F\u09BF\u09A8\u09CD\u099F"}</span>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={glassTintColor.startsWith("rgba") ? "#ffffff" : glassTintColor}
+                              onChange={(e) => { setGlassTintColor(e.target.value + "14"); setIsGenerated(false); }}
+                              className="w-7 h-7 rounded-lg border-0 cursor-pointer"
+                              style={{ background: G.panel, padding: "2px" }}
+                              data-testid="input-glass-tint-color"
+                            />
+                            <span className="text-sm text-white/45 font-mono w-14 text-right truncate">{glassTintColor.substring(0, 12)}</span>
+                            {glassTintColor !== "rgba(255,255,255,0.08)" && (
+                              <button
+                                onClick={() => { setGlassTintColor("rgba(255,255,255,0.08)"); setIsGenerated(false); }}
+                                className="p-1 rounded-md"
+                                style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }}
+                                data-testid="button-reset-glass-tint-color"
+                              >
+                                <RotateCcw className="w-2.5 h-2.5 text-white/55" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </CollapsibleSection>
 
@@ -1195,7 +1271,7 @@ export default function Home() {
                                     <div key={ci} className="flex-1 h-full" style={{ backgroundColor: c }} />
                                   ))}
                                 </div>
-                                <span className="text-[6px] font-bold text-white/30 text-center leading-tight">{p.nameBn}</span>
+                                <span className="text-sm font-bold text-white/75 text-center leading-tight">{p.nameBn}</span>
                                 {isAct && (
                                   <motion.div layoutId="color-preset-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: p.accent, boxShadow: `0 2px 8px ${p.accent}40` }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
                                     <Check className="w-2.5 h-2.5 text-white" />
@@ -1217,7 +1293,7 @@ export default function Home() {
                             <button key={p.id} onClick={() => { setSelectedBgPreset(isAct ? null : p); setIsGenerated(false); }} className="group" data-testid={`button-bg-preset-${p.id}`}>
                               <div className={`relative p-2.5 flex flex-col items-center gap-1.5 transition-all duration-400 ${isAct ? "scale-[1.06]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(100,100,220,0.08)" : G.panel, border: isAct ? "2px solid rgba(130,120,255,0.3)" : `1px solid ${G.panelBorder}`, boxShadow: isAct ? "0 4px 16px rgba(110,100,255,0.12)" : "none" }}>
                                 <div className="w-8 h-8 rounded-xl" style={{ background: bgGrad, boxShadow: isAct ? "0 2px 12px rgba(0,0,0,0.3)" : "none" }} />
-                                <span className="text-[6px] font-bold text-white/30 text-center leading-tight">{p.nameBn}</span>
+                                <span className="text-sm font-bold text-white/75 text-center leading-tight">{p.nameBn}</span>
                                 {isAct && (
                                   <motion.div layoutId="bg-preset-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
                                     <Check className="w-2.5 h-2.5 text-white" />
@@ -1238,7 +1314,7 @@ export default function Home() {
                             <button key={s.id} onClick={() => { setSelectedGlassStyle(isAct ? null : s); setIsGenerated(false); }} className="group" data-testid={`button-glass-style-${s.id}`}>
                               <div className={`relative p-3 flex flex-col items-center gap-1.5 transition-all duration-400 ${isAct ? "scale-[1.04]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(100,100,220,0.1)" : G.panel, border: isAct ? "2px solid rgba(130,120,255,0.3)" : `1px solid ${G.panelBorder}`, boxShadow: isAct ? "0 4px 16px rgba(110,100,255,0.1)" : "none" }}>
                                 <div className="w-10 h-6 rounded-lg" style={{ background: `rgba(255,255,255,${s.bgOpacity})`, border: `1px solid ${s.edgeColor}`, backdropFilter: `blur(${s.blurLevel}px)`, boxShadow: isAct ? `0 0 8px ${s.edgeColor}` : "none" }} />
-                                <span className="text-[6px] font-bold text-white/30 text-center leading-tight">{s.nameBn}</span>
+                                <span className="text-sm font-bold text-white/75 text-center leading-tight">{s.nameBn}</span>
                                 {isAct && (
                                   <motion.div layoutId="glass-style-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
                                     <Check className="w-2.5 h-2.5 text-white" />
@@ -1254,20 +1330,20 @@ export default function Home() {
                     <CollapsibleSection title={"\u0985\u099F\u09CB \u09A1\u09C7\u0995\u09CB\u09B0\u09C7\u099F"} icon={Wand2} defaultOpen={false}>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-[9px] text-white/35 font-medium">{"\u0985\u099F\u09CB \u09A1\u09C7\u0995\u09CB\u09B0\u09C7\u099F"}</span>
+                          <span className="text-[13px] text-white/35 font-medium">{"\u0985\u099F\u09CB \u09A1\u09C7\u0995\u09CB\u09B0\u09C7\u099F"}</span>
                           <Switch checked={autoDecorate} onCheckedChange={(v) => { setAutoDecorate(v); setIsGenerated(false); }} data-testid="switch-auto-decorate" />
                         </div>
                         {autoDecorate && (
                           <>
                             <div>
-                              <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"}</p>
+                              <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"}</p>
                               <div className="grid grid-cols-4 gap-1.5">
                                 {DECOR_PRESET_OPTIONS.map((p) => {
                                   const isAct = decorPreset === p.id;
                                   return (
                                     <button key={p.id} onClick={() => { setDecorPreset(p.id); setIsGenerated(false); }} data-testid={`button-decor-preset-${p.id}`}>
                                       <div className={`p-2 text-center transition-all duration-300 ${isAct ? "scale-[1.04]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? G.accent : G.panel, border: `1px solid ${isAct ? G.accentBorder : G.panelBorder}` }}>
-                                        <span className={`text-[7px] font-bold ${isAct ? "text-indigo-300/80" : "text-white/30"}`}>{p.nameBn}</span>
+                                        <span className={`text-sm font-bold ${isAct ? "text-indigo-300/80" : "text-white/75"}`}>{p.nameBn}</span>
                                       </div>
                                     </button>
                                   );
@@ -1275,9 +1351,9 @@ export default function Home() {
                               </div>
                             </div>
                             <div className="flex items-center gap-3">
-                              <span className="text-[8px] text-white/20 w-16">{"\u0987\u09AE\u09CB\u099C\u09BF \u0998\u09A8\u09A4\u09CD\u09AC"}</span>
+                              <span className="text-[12px] text-white/35 w-16">{"\u0987\u09AE\u09CB\u099C\u09BF \u0998\u09A8\u09A4\u09CD\u09AC"}</span>
                               <input type="range" min="0" max="1" step="0.05" value={emojiDensity} onChange={(e) => { setEmojiDensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-emoji-density" />
-                              <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(emojiDensity * 100)}%</span>
+                              <span className="text-[12px] text-white/55 font-mono w-6 text-right">{Math.round(emojiDensity * 100)}%</span>
                             </div>
                           </>
                         )}
@@ -1287,24 +1363,24 @@ export default function Home() {
                     <CollapsibleSection title={"\u0997\u09CD\u09B2\u09BE\u09B8 \u0987\u09AB\u09C7\u0995\u09CD\u099F"} icon={Sparkles} defaultOpen={false}>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <span className="text-[8px] text-white/20 w-16">{"\u0997\u09CD\u09B2\u09CB \u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                          <span className="text-[12px] text-white/35 w-16">{"\u0997\u09CD\u09B2\u09CB \u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
                           <input type="range" min="0" max="1" step="0.05" value={glowIntensity} onChange={(e) => { setGlowIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-glow-intensity" />
-                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(glowIntensity * 100)}%</span>
+                          <span className="text-[12px] text-white/55 font-mono w-6 text-right">{Math.round(glowIntensity * 100)}%</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-[8px] text-white/20 w-16">{"\u09AC\u09CD\u09B2\u09BE\u09B0 \u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                          <span className="text-[12px] text-white/35 w-16">{"\u09AC\u09CD\u09B2\u09BE\u09B0 \u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
                           <input type="range" min="0" max="1" step="0.05" value={blurIntensity} onChange={(e) => { setBlurIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-blur-intensity" />
-                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(blurIntensity * 100)}%</span>
+                          <span className="text-[12px] text-white/55 font-mono w-6 text-right">{Math.round(blurIntensity * 100)}%</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-[8px] text-white/20 w-16">{"\u09B8\u09CD\u09AC\u099A\u09CD\u099B\u09A4\u09BE"}</span>
+                          <span className="text-[12px] text-white/35 w-16">{"\u09B8\u09CD\u09AC\u099A\u09CD\u099B\u09A4\u09BE"}</span>
                           <input type="range" min="0" max="1" step="0.05" value={transparencyLevel} onChange={(e) => { setTransparencyLevel(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-transparency" />
-                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(transparencyLevel * 100)}%</span>
+                          <span className="text-[12px] text-white/55 font-mono w-6 text-right">{Math.round(transparencyLevel * 100)}%</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-[8px] text-white/20 w-16">{"\u0995\u09B0\u09CD\u09A8\u09BE\u09B0 \u09B0\u09C7\u09A1\u09BF\u09AF\u09BC\u09BE\u09B8"}</span>
+                          <span className="text-[12px] text-white/35 w-16">{"\u0995\u09B0\u09CD\u09A8\u09BE\u09B0 \u09B0\u09C7\u09A1\u09BF\u09AF\u09BC\u09BE\u09B8"}</span>
                           <input type="range" min="0" max="60" step="2" value={cornerRadius} onChange={(e) => { setCornerRadius(parseInt(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-corner-radius" />
-                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{cornerRadius}px</span>
+                          <span className="text-[12px] text-white/55 font-mono w-6 text-right">{cornerRadius}px</span>
                         </div>
                       </div>
                     </CollapsibleSection>
@@ -1319,8 +1395,8 @@ export default function Home() {
                           const isAct = textAlign === a.value;
                           return (
                             <button key={a.value} onClick={() => { setTextAlign(a.value); setIsGenerated(false); }} className="flex-1 flex items-center justify-center gap-2 py-3 transition-all" style={{ background: isAct ? G.accent : G.panel, border: `1px solid ${isAct ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm }} data-testid={`button-align-${a.value}`}>
-                              <a.icon className={`w-4 h-4 ${isAct ? "text-indigo-400/70" : "text-white/20"}`} />
-                              <span className={`text-[9px] font-bold ${isAct ? "text-indigo-300/80" : "text-white/20"}`}>{a.bn}</span>
+                              <a.icon className={`w-4 h-4 ${isAct ? "text-indigo-400/70" : "text-white/50"}`} />
+                              <span className={`text-[13px] font-bold ${isAct ? "text-indigo-300/80" : "text-white/50"}`}>{a.bn}</span>
                             </button>
                           );
                         })}
@@ -1334,8 +1410,8 @@ export default function Home() {
                           return (
                             <button key={f.id} onClick={() => { setSelectedBanglaFont(f); setIsGenerated(false); }} className="group text-left" data-testid={`button-font-${f.id}`}>
                               <div className={`relative p-3 transition-all duration-300 ${isAct ? "scale-[1.02]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(100,100,220,0.08)" : G.panel, border: isAct ? "2px solid rgba(130,120,255,0.2)" : `1px solid ${G.panelBorder}` }}>
-                                <span className="block text-[15px] text-white/80 leading-tight mb-1" style={{ fontFamily: f.family }}>{f.bn}</span>
-                                <span className="text-[8px] font-bold text-white/25">{f.name}</span>
+                                <span className="block text-xl text-white/80 leading-tight mb-1" style={{ fontFamily: f.family }}>{f.bn}</span>
+                                <span className="text-[12px] font-bold text-white/55">{f.name}</span>
                                 {isAct && (
                                   <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.3)" }}>
                                     <Check className="w-2 h-2 text-indigo-400" />
@@ -1351,29 +1427,29 @@ export default function Home() {
                     <CollapsibleSection title={"\u09AC\u09CD\u09AF\u09BE\u0995\u0997\u09CD\u09B0\u09BE\u0989\u09A8\u09CD\u09A1 \u0987\u09AB\u09C7\u0995\u09CD\u099F"} icon={Grid2X2} defaultOpen={false}>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-[9px] text-white/35 font-medium">{"\u0997\u09CD\u09B0\u09BF\u09A1 \u09B2\u09BE\u0987\u09A8"}</span>
+                          <span className="text-[13px] text-white/35 font-medium">{"\u0997\u09CD\u09B0\u09BF\u09A1 \u09B2\u09BE\u0987\u09A8"}</span>
                           <Switch checked={gridEnabled} onCheckedChange={(v) => { setGridEnabled(v); setIsGenerated(false); }} data-testid="switch-grid" />
                         </div>
                         {gridEnabled && (
                           <div className="flex items-center gap-3">
-                            <span className="text-[8px] text-white/20 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                            <span className="text-[12px] text-white/35 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
                             <input type="range" min="0.1" max="1" step="0.1" value={gridIntensity} onChange={(e) => { setGridIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-grid-intensity" />
-                            <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(gridIntensity * 100)}%</span>
+                            <span className="text-[12px] text-white/55 font-mono w-6 text-right">{Math.round(gridIntensity * 100)}%</span>
                           </div>
                         )}
                         <div className="flex items-center justify-between">
-                          <span className="text-[9px] text-white/35 font-medium">{"\u09B8\u09CD\u09AF\u09BE\u09A8\u09CD\u09A1\u09BF \u0997\u09CD\u09B0\u09C7\u0987\u09A8"}</span>
+                          <span className="text-[13px] text-white/35 font-medium">{"\u09B8\u09CD\u09AF\u09BE\u09A8\u09CD\u09A1\u09BF \u0997\u09CD\u09B0\u09C7\u0987\u09A8"}</span>
                           <Switch checked={grainEnabled} onCheckedChange={(v) => { setGrainEnabled(v); setIsGenerated(false); }} data-testid="switch-grain" />
                         </div>
                         {grainEnabled && (
                           <div className="flex items-center gap-3">
-                            <span className="text-[8px] text-white/20 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                            <span className="text-[12px] text-white/35 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
                             <input type="range" min="0.1" max="1" step="0.1" value={grainIntensity} onChange={(e) => { setGrainIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-grain-intensity" />
-                            <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(grainIntensity * 100)}%</span>
+                            <span className="text-[12px] text-white/55 font-mono w-6 text-right">{Math.round(grainIntensity * 100)}%</span>
                           </div>
                         )}
                         <div className="flex items-center justify-between">
-                          <span className="text-[9px] text-white/35 font-medium">{"\u09A8\u09AF\u09BC\u09C7\u099C \u099F\u09C7\u0995\u09CD\u09B8\u099A\u09BE\u09B0"}</span>
+                          <span className="text-[13px] text-white/35 font-medium">{"\u09A8\u09AF\u09BC\u09C7\u099C \u099F\u09C7\u0995\u09CD\u09B8\u099A\u09BE\u09B0"}</span>
                           <Switch checked={textureEnabled} onCheckedChange={(v) => { setTextureEnabled(v); setIsGenerated(false); }} data-testid="switch-texture" />
                         </div>
                       </div>
@@ -1383,33 +1459,33 @@ export default function Home() {
                       <div className="space-y-4">
                         <div>
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-[9px] font-bold text-white/35">OTV {"\u09B2\u09CB\u0997\u09CB"}</span>
+                            <span className="text-[13px] font-bold text-white/35">OTV {"\u09B2\u09CB\u0997\u09CB"}</span>
                             <button onClick={resetLogoPosition} className="p-1.5 rounded-lg transition-all hover:scale-105" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-reset-logo-pos">
-                              <RotateCcw className="w-3 h-3 text-white/25" />
+                              <RotateCcw className="w-3 h-3 text-white/55" />
                             </button>
                           </div>
                           <div className="flex items-center gap-3">
                             <button onClick={() => setOtvLogoSize(Math.max(40, otvLogoSize - 15))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-smaller">
-                              <ZoomOut className="w-3 h-3 text-white/25" />
+                              <ZoomOut className="w-3 h-3 text-white/55" />
                             </button>
                             <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(100,100,220,0.06)" }}>
                               <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((otvLogoSize - 40) / 180) * 100}%`, background: "linear-gradient(90deg, rgba(100,90,220,0.25), rgba(130,120,255,0.4))" }} />
                             </div>
                             <button onClick={() => setOtvLogoSize(Math.min(220, otvLogoSize + 15))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-bigger">
-                              <ZoomIn className="w-3 h-3 text-white/25" />
+                              <ZoomIn className="w-3 h-3 text-white/55" />
                             </button>
-                            <span className="text-[8px] text-white/15 font-mono w-7 text-right">{otvLogoSize}</span>
+                            <span className="text-[12px] text-white/45 font-mono w-7 text-right">{otvLogoSize}</span>
                           </div>
                         </div>
 
                         {mainPhotoImg && (
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-[9px] font-bold text-white/35">{"\u099B\u09AC\u09BF \u09AA\u09CB\u099C\u09BF\u09B6\u09A8"}</span>
+                              <span className="text-[13px] font-bold text-white/35">{"\u099B\u09AC\u09BF \u09AA\u09CB\u099C\u09BF\u09B6\u09A8"}</span>
                               <div className="flex items-center gap-1.5">
                                 <button
                                   onClick={() => setDragMode(dragMode === "image" ? "logo" : "image")}
-                                  className="px-2 py-1 rounded-lg text-[8px] font-bold transition-all"
+                                  className="px-2 py-1 rounded-lg text-[12px] font-bold transition-all"
                                   style={{
                                     background: dragMode === "image" ? "rgba(100,90,220,0.2)" : G.panel,
                                     border: `1px solid ${dragMode === "image" ? "rgba(100,90,220,0.4)" : G.panelBorder}`,
@@ -1420,21 +1496,21 @@ export default function Home() {
                                   {dragMode === "image" ? "\u099B\u09AC\u09BF \u09AE\u09CB\u09A1" : "\u09B2\u09CB\u0997\u09CB \u09AE\u09CB\u09A1"}
                                 </button>
                                 <button onClick={resetImagePosition} className="p-1.5 rounded-lg transition-all hover:scale-105" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-reset-image-pos">
-                                  <RotateCcw className="w-3 h-3 text-white/25" />
+                                  <RotateCcw className="w-3 h-3 text-white/55" />
                                 </button>
                               </div>
                             </div>
                             <div className="flex items-center gap-3">
                               <button onClick={() => setImageZoom(Math.max(0.5, imageZoom - 0.1))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-out">
-                                <ZoomOut className="w-3 h-3 text-white/25" />
+                                <ZoomOut className="w-3 h-3 text-white/55" />
                               </button>
                               <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(100,100,220,0.06)" }}>
                                 <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((imageZoom - 0.5) / 1.5) * 100}%`, background: "linear-gradient(90deg, rgba(100,90,220,0.25), rgba(130,120,255,0.4))" }} />
                               </div>
                               <button onClick={() => setImageZoom(Math.min(2, imageZoom + 0.1))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-in">
-                                <ZoomIn className="w-3 h-3 text-white/25" />
+                                <ZoomIn className="w-3 h-3 text-white/55" />
                               </button>
-                              <span className="text-[8px] text-white/15 font-mono w-8 text-right">{Math.round(imageZoom * 100)}%</span>
+                              <span className="text-[12px] text-white/45 font-mono w-8 text-right">{Math.round(imageZoom * 100)}%</span>
                             </div>
                           </div>
                         )}
@@ -1444,9 +1520,9 @@ export default function Home() {
                     <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r }}>
                       <div className="flex items-center gap-2.5 mb-2">
                         <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain" style={{ background: "rgba(100,110,200,0.08)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
-                        <span className="text-[10px] font-bold text-white/35">OTV {"\u09B2\u09CB\u0997\u09CB \u09B8\u09AC \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u09B8\u09CD\u09AC\u09AF\u09BC\u0982\u0995\u09CD\u09B0\u09BF\u09AF\u09BC"}</span>
+                        <span className="text-sm font-bold text-white/35">OTV {"\u09B2\u09CB\u0997\u09CB \u09B8\u09AC \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u09B8\u09CD\u09AC\u09AF\u09BC\u0982\u0995\u09CD\u09B0\u09BF\u09AF\u09BC"}</span>
                       </div>
-                      <p className="text-[8px] text-white/15 leading-relaxed">{"\u0993\u099F\u09BF\u09AD\u09BF \u09B2\u09CB\u0997\u09CB \u09AA\u09CD\u09B0\u09A4\u09BF\u099F\u09BF \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u0985\u099F\u09CB\u09AE\u09CD\u09AF\u09BE\u099F\u09BF\u0995 \u09AF\u09CB\u0997 \u09B9\u09AF\u09BC \u2022 \u099F\u09CD\u09B0\u09BE\u09A8\u09CD\u09B8\u09AA\u09CD\u09AF\u09BE\u09B0\u09C7\u09A8\u09CD\u099F \u09AC\u09CD\u09AF\u09BE\u0995\u0997\u09CD\u09B0\u09BE\u0989\u09A8\u09CD\u09A1"}</p>
+                      <p className="text-[12px] text-white/45 leading-relaxed">{"\u0993\u099F\u09BF\u09AD\u09BF \u09B2\u09CB\u0997\u09CB \u09AA\u09CD\u09B0\u09A4\u09BF\u099F\u09BF \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u0985\u099F\u09CB\u09AE\u09CD\u09AF\u09BE\u099F\u09BF\u0995 \u09AF\u09CB\u0997 \u09B9\u09AF\u09BC \u2022 \u099F\u09CD\u09B0\u09BE\u09A8\u09CD\u09B8\u09AA\u09CD\u09AF\u09BE\u09B0\u09C7\u09A8\u09CD\u099F \u09AC\u09CD\u09AF\u09BE\u0995\u0997\u09CD\u09B0\u09BE\u0989\u09A8\u09CD\u09A1"}</p>
                     </div>
 
                     {!isPro && (
@@ -1457,8 +1533,8 @@ export default function Home() {
                             <Crown className="w-5 h-5 text-amber-400" />
                             <span className="text-[13px] font-bold text-amber-300">{"\u09AA\u09CD\u09B0\u09CB \u0986\u09AA\u0997\u09CD\u09B0\u09C7\u09A1"}</span>
                           </div>
-                          <p className="text-[10px] text-white/20 mb-3 leading-relaxed">{"\u0993\u09AF\u09BC\u09BE\u099F\u09BE\u09B0\u09AE\u09BE\u09B0\u09CD\u0995 \u099B\u09BE\u09DC\u09BE \u0986\u09A8\u09B2\u09BF\u09AE\u09BF\u099F\u09C7\u09A1 \u0995\u09BE\u09B0\u09CD\u09A1 \u09A4\u09C8\u09B0\u09BF \u0995\u09B0\u09C1\u09A8"}</p>
-                          <Button onClick={() => setIsPro(true)} size="sm" className="no-default-hover-elevate no-default-active-elevate text-[10px] font-bold" style={{ background: `linear-gradient(135deg, ${G.gold}, #b8922a)`, color: "#000", borderRadius: G.rSm }} data-testid="button-upgrade-pro">
+                          <p className="text-sm text-white/50 mb-3 leading-relaxed">{"\u0993\u09AF\u09BC\u09BE\u099F\u09BE\u09B0\u09AE\u09BE\u09B0\u09CD\u0995 \u099B\u09BE\u09DC\u09BE \u0986\u09A8\u09B2\u09BF\u09AE\u09BF\u099F\u09C7\u09A1 \u0995\u09BE\u09B0\u09CD\u09A1 \u09A4\u09C8\u09B0\u09BF \u0995\u09B0\u09C1\u09A8"}</p>
+                          <Button onClick={() => setIsPro(true)} size="sm" className="no-default-hover-elevate no-default-active-elevate text-sm font-bold" style={{ background: `linear-gradient(135deg, ${G.gold}, #b8922a)`, color: "#000", borderRadius: G.rSm }} data-testid="button-upgrade-pro">
                             <Crown className="w-3.5 h-3.5 mr-1.5" /> {"\u0985\u09CD\u09AF\u09BE\u0995\u09CD\u099F\u09BF\u09AD\u09C7\u099F"}
                           </Button>
                         </div>
@@ -1473,10 +1549,10 @@ export default function Home() {
                     <CollapsibleSection title={"\u098F\u0995\u09CD\u09B8\u09AA\u09CB\u09B0\u09CD\u099F \u09B8\u09C7\u099F\u09BF\u0982\u09B8"} icon={Download}>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09BE\u09B0\u09CD\u09A1 \u09B8\u09BE\u0987\u099C"}</p>
+                          <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09BE\u09B0\u09CD\u09A1 \u09B8\u09BE\u0987\u099C"}</p>
                           <div className="flex gap-2">
                             {[1080, 1200, 2048].map(s => (
-                              <button key={s} onClick={() => { setExportSize(s); setIsGenerated(false); }} className="flex-1 py-2 text-[9px] font-bold transition-all" style={{ background: exportSize === s ? G.accent : G.panel, border: `1px solid ${exportSize === s ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm, color: exportSize === s ? "rgba(180,175,255,0.9)" : "rgba(255,255,255,0.2)" }} data-testid={`button-size-${s}`}>
+                              <button key={s} onClick={() => { setExportSize(s); setIsGenerated(false); }} className="flex-1 py-2 text-[13px] font-bold transition-all" style={{ background: exportSize === s ? G.accent : G.panel, border: `1px solid ${exportSize === s ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm, color: exportSize === s ? "rgba(180,175,255,0.9)" : "rgba(255,255,255,0.2)" }} data-testid={`button-size-${s}`}>
                                 {s}x{s}
                               </button>
                             ))}
@@ -1486,7 +1562,7 @@ export default function Home() {
                     </CollapsibleSection>
 
                     <div className="p-5" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
-                      <p className="text-[8px] font-bold text-white/15 uppercase mb-3" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09CD\u09AF\u09AC\u09B9\u09BE\u09B0 \u09AC\u09BF\u09A7\u09BF"}</p>
+                      <p className="text-[12px] font-bold text-white/45 uppercase mb-3" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09CD\u09AF\u09AC\u09B9\u09BE\u09B0 \u09AC\u09BF\u09A7\u09BF"}</p>
                       <div className="space-y-2.5">
                         {[
                           "\u099F\u09C7\u09AE\u09CD\u09AA\u09B2\u09C7\u099F \u09B8\u09BF\u09B2\u09C7\u0995\u09CD\u099F \u0995\u09B0\u09C1\u09A8 (67+ \u099F\u09C7\u09AE\u09CD\u09AA\u09B2\u09C7\u099F)",
@@ -1502,18 +1578,18 @@ export default function Home() {
                         ].map((step, i) => (
                           <div key={i} className="flex items-start gap-2.5">
                             <div className="w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                              <span className="text-[7px] text-indigo-400 font-bold">{i + 1}</span>
+                              <span className="text-sm text-indigo-400 font-bold">{i + 1}</span>
                             </div>
-                            <p className="text-[10px] text-white/20 leading-relaxed">{step}</p>
+                            <p className="text-sm text-white/50 leading-relaxed">{step}</p>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r }}>
-                      <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AD\u09BE\u09B0\u09CD\u09B6\u09A8"}</p>
-                      <p className="text-[10px] text-white/20">OTV Card Maker v4.0 &middot; {templates.length} Templates</p>
-                      <p className="text-[8px] text-white/10 mt-1">Liquid Glass Studio &middot; otv.online</p>
+                      <p className="text-[12px] font-bold text-white/75 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AD\u09BE\u09B0\u09CD\u09B6\u09A8"}</p>
+                      <p className="text-sm text-white/50">OTV Card Maker v4.0 &middot; {templates.length} Templates</p>
+                      <p className="text-[12px] text-white/10 mt-1">Liquid Glass Studio &middot; otv.online</p>
                     </div>
                   </motion.div>
                 )}
@@ -1524,14 +1600,14 @@ export default function Home() {
                   onClick={generatePremiumCard}
                   disabled={isGenerating}
                   className="w-full relative overflow-hidden group disabled:opacity-50 transition-all duration-500"
-                  style={{ height: 56, borderRadius: G.r }}
+                  style={{ height: 58, borderRadius: G.r }}
                   data-testid="button-generate-card"
                 >
                   <div className="absolute inset-0 transition-all duration-500" style={{ background: G.iridescent }} />
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: G.iridescentHover }} />
-                  <div className="absolute inset-[1px] opacity-20" style={{ borderRadius: "20px", background: "linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%)" }} />
-                  <div className="absolute -inset-2 rounded-3xl opacity-25 group-hover:opacity-45 blur-2xl transition-all" style={{ background: "linear-gradient(135deg, rgba(212,168,48,0.4), rgba(192,132,252,0.3), rgba(96,165,250,0.3))" }} />
-                  <span className="relative z-10 flex items-center justify-center gap-2.5 text-black font-bold text-[13px]">
+                  <div className="absolute inset-[1px] opacity-25" style={{ borderRadius: "20px", background: "linear-gradient(180deg, rgba(255,255,255,0.20) 0%, transparent 50%)" }} />
+                  <div className="absolute -inset-3 rounded-3xl opacity-35 group-hover:opacity-55 blur-2xl transition-all" style={{ background: "linear-gradient(135deg, rgba(232,190,58,0.45), rgba(212,156,255,0.35), rgba(112,184,255,0.35))" }} />
+                  <span className="relative z-10 flex items-center justify-center gap-2.5 text-black font-bold text-[14px]" style={{ textShadow: "0 1px 0 rgba(255,255,255,0.15)" }}>
                     {isGenerating ? (
                       <>
                         <motion.span className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full" animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
@@ -1564,7 +1640,7 @@ export default function Home() {
                         { fn: copyToClipboard, icon: Copy, label: "\u0995\u09AA\u09BF", color: "from-violet-600 to-purple-700", tid: "button-copy-clipboard" },
                       ].map((dl, i) => (
                         <motion.div key={dl.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 * i }}>
-                          <button onClick={dl.fn} className={`w-full py-3 text-white font-bold text-[10px] flex items-center justify-center gap-1.5 bg-gradient-to-br ${dl.color} transition-all hover:scale-[1.03] active:scale-[0.97]`} style={{ borderRadius: G.rSm }} data-testid={dl.tid}>
+                          <button onClick={dl.fn} className={`w-full py-3 text-white font-bold text-sm flex items-center justify-center gap-1.5 bg-gradient-to-br ${dl.color} transition-all hover:scale-[1.03] active:scale-[0.97]`} style={{ borderRadius: G.rSm }} data-testid={dl.tid}>
                             <dl.icon className="w-3.5 h-3.5" />
                             {dl.label}
                           </button>
@@ -1577,21 +1653,21 @@ export default function Home() {
             </motion.div>
 
             <motion.div className="order-1 lg:order-2 lg:sticky lg:top-[64px] lg:self-start" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.08, type: "spring" }}>
-              <div className="p-3 relative" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.rXl, backdropFilter: G.blurSm, boxShadow: "0 12px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(100,110,220,0.05)" }}>
+              <div className="p-3 relative" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.rXl, backdropFilter: G.blurSm, boxShadow: "0 12px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(130,140,255,0.06), inset 0 1px 0 rgba(255,255,255,0.06)" }}>
                 <div className="flex items-center justify-between px-2 mb-2.5">
                   <div className="flex items-center gap-2">
                     <motion.div className="w-2 h-2 rounded-full" style={{ background: "linear-gradient(135deg, #818cf8, #6366f1)" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-                    <span className="text-[7px] font-bold text-white/10 uppercase" style={{ letterSpacing: "0.2em" }}>{"\u09B2\u09BE\u0987\u09AD \u09AA\u09CD\u09B0\u09BF\u09AD\u09BF\u0989"}</span>
+                    <span className="text-sm font-bold text-white/50 uppercase" style={{ letterSpacing: "0.2em" }}>{"\u09B2\u09BE\u0987\u09AD \u09AA\u09CD\u09B0\u09BF\u09AD\u09BF\u0989"}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[7px] text-white/8 px-2 py-1 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }}>{selectedTemplate.nameBn}</span>
+                    <span className="text-sm text-white/45 px-2 py-1 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }}>{selectedTemplate.nameBn}</span>
                     {(isDraggingLogo || isDraggingImage) && (
-                      <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-[7px] text-indigo-400/50 px-2 py-1 rounded-xl" style={{ background: G.accent }}>
+                      <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-sm text-indigo-400/50 px-2 py-1 rounded-xl" style={{ background: G.accent }}>
                         <Move className="w-3 h-3 inline mr-0.5" />{isDraggingImage ? "\u099B\u09AC\u09BF \u09B8\u09B0\u09BE\u09A8\u09CB..." : "\u09B8\u09B0\u09BE\u09A8\u09CB..."}
                       </motion.span>
                     )}
                     {dragMode === "image" && mainPhotoImg && !isDraggingImage && (
-                      <span className="text-[7px] text-amber-400/50 px-2 py-1 rounded-xl" style={{ background: "rgba(200,168,50,0.08)" }}>
+                      <span className="text-sm text-amber-400/50 px-2 py-1 rounded-xl" style={{ background: "rgba(200,168,50,0.08)" }}>
                         <ImageIcon className="w-3 h-3 inline mr-0.5" />{"\u099B\u09AC\u09BF \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997 \u09AE\u09CB\u09A1"}
                       </span>
                     )}
@@ -1616,23 +1692,23 @@ export default function Home() {
                       <motion.div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(8,10,20,0.6)", backdropFilter: "blur(12px)" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <div className="flex flex-col items-center gap-4">
                           <motion.div className="w-10 h-10 rounded-full" style={{ border: "3px solid rgba(110,100,255,0.15)", borderTopColor: "#818cf8" }} animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
-                          <span className="text-[10px] text-indigo-300 font-semibold">{"\u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F \u09B9\u099A\u09CD\u099B\u09C7..."}</span>
+                          <span className="text-sm text-indigo-300 font-semibold">{"\u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F \u09B9\u099A\u09CD\u099B\u09C7..."}</span>
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none">
                     <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl pointer-events-auto" style={{ background: "rgba(0,0,0,0.3)", backdropFilter: "blur(12px)", border: `1px solid ${G.panelBorder}` }}>
-                      <GripVertical className="w-3 h-3 text-white/20" />
-                      <span className="text-[7px] text-white/25 font-medium">{"\u09B2\u09CB\u0997\u09CB \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997"}</span>
+                      <GripVertical className="w-3 h-3 text-white/50" />
+                      <span className="text-sm text-white/55 font-medium">{"\u09B2\u09CB\u0997\u09CB \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997"}</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between px-2.5 mt-2.5">
-                  <span className="text-[7px] text-white/6 font-mono">{exportSize} &times; {exportSize}</span>
+                  <span className="text-sm text-white/45 font-mono">{exportSize} &times; {exportSize}</span>
                   <div className="flex items-center gap-1.5">
                     <img src={otvLogoPath} alt="" className="w-3.5 h-3.5 rounded-md object-contain" style={{ background: "rgba(100,100,220,0.06)", padding: "1px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
-                    <span className="text-[7px] text-white/6" style={{ fontFamily: "'Montserrat', sans-serif" }}>otv.online</span>
+                    <span className="text-sm text-white/45" style={{ fontFamily: "'Montserrat', sans-serif" }}>otv.online</span>
                   </div>
                 </div>
               </div>
@@ -1642,13 +1718,13 @@ export default function Home() {
         </div>
       </div>
 
-      <footer className="relative z-10 py-8 mt-6" style={{ borderTop: `1px solid ${G.panelBorder}` }}>
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain opacity-20" style={{ background: "rgba(100,110,200,0.04)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
-            <span className="text-[9px] text-white/6 font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>OTV Card Maker v4.0 &middot; {templates.length} Templates &middot; otv.online</span>
+      <footer className="relative z-10 py-6 mt-8" style={{ borderTop: `1px solid ${G.panelBorder}`, background: "rgba(8,10,20,0.5)", backdropFilter: "blur(20px)" }}>
+        <div className="max-w-[1700px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <img src={otvLogoPath} alt="OTV" className="w-8 h-8 rounded-xl object-contain opacity-60" style={{ background: "rgba(100,110,200,0.08)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
+            <span className="text-sm text-white/60 font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>OTV Card Maker v4.0 &middot; {templates.length} Templates &middot; otv.online</span>
           </div>
-          <p className="text-[8px] text-white/4">{"\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB \u0995\u09BE\u09B0\u09CD\u09A1 \u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F\u09B0"}</p>
+          <p className="text-sm text-white/50">{"\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB \u0995\u09BE\u09B0\u09CD\u09A1 \u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F\u09B0"}</p>
         </div>
       </footer>
     </div>
