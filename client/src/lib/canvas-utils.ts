@@ -329,6 +329,167 @@ export function drawCircularImage(
   }
 }
 
+export function drawPaperTexture(
+  ctx: CanvasRenderingContext2D,
+  w: number, h: number,
+  baseColor: string = "#f5f0e8",
+  intensity: number = 0.035
+) {
+  ctx.fillStyle = baseColor;
+  ctx.fillRect(0, 0, w, h);
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const noise = (Math.random() - 0.5) * 255 * intensity;
+    data[i] = Math.min(255, Math.max(0, data[i] + noise));
+    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise * 0.95));
+    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise * 0.85));
+  }
+  ctx.putImageData(imageData, 0, 0);
+}
+
+export function drawSandyGrain(
+  ctx: CanvasRenderingContext2D,
+  w: number, h: number,
+  intensity: number = 0.06,
+  warm: boolean = true
+) {
+  ctx.save();
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 16) {
+    const grain = (Math.random() - 0.5) * 255 * intensity;
+    for (let j = 0; j < 16 && i + j + 3 < data.length; j += 4) {
+      data[i + j] = Math.min(255, Math.max(0, data[i + j] + grain + (warm ? 3 : 0)));
+      data[i + j + 1] = Math.min(255, Math.max(0, data[i + j + 1] + grain + (warm ? 1 : 0)));
+      data[i + j + 2] = Math.min(255, Math.max(0, data[i + j + 2] + grain));
+    }
+  }
+  ctx.putImageData(imageData, 0, 0);
+  ctx.restore();
+}
+
+export function drawEditorialGrid(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  w: number, h: number,
+  spacing: number = 50,
+  color: string = "rgba(80,80,80,0.06)",
+  fadeDir: "down" | "up" | "none" = "down"
+) {
+  ctx.save();
+  for (let i = x; i <= x + w; i += spacing) {
+    const progress = (i - x) / w;
+    let alpha = 1;
+    if (fadeDir === "down") alpha = 1 - (progress * 0.7);
+    else if (fadeDir === "up") alpha = 0.3 + (progress * 0.7);
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(i, y);
+    ctx.lineTo(i, y + h);
+    ctx.stroke();
+  }
+  for (let i = y; i <= y + h; i += spacing) {
+    const progress = (i - y) / h;
+    let alpha = 1;
+    if (fadeDir === "down") alpha = 1 - (progress * 0.8);
+    else if (fadeDir === "up") alpha = 0.2 + (progress * 0.8);
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(x, i);
+    ctx.lineTo(x + w, i);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+export function drawNoiseOverlay(
+  ctx: CanvasRenderingContext2D,
+  w: number, h: number,
+  opacity: number = 0.02
+) {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  const imageData = ctx.createImageData(w, h);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const v = Math.random() * 255;
+    data[i] = v;
+    data[i + 1] = v;
+    data[i + 2] = v;
+    data[i + 3] = Math.random() * 40;
+  }
+  ctx.putImageData(imageData, 0, 0);
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+export function drawAccentBar(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  w: number, h: number,
+  color: string,
+  glow: boolean = false
+) {
+  if (glow) {
+    ctx.save();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, w, h);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, w, h);
+  }
+}
+
+export function drawImageCoverPositioned(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number, y: number,
+  w: number, h: number,
+  offsetX: number = 0,
+  offsetY: number = 0,
+  zoom: number = 1,
+  radius?: number
+) {
+  const imgRatio = img.naturalWidth / img.naturalHeight;
+  const targetRatio = w / h;
+  let sw: number, sh: number;
+
+  if (imgRatio > targetRatio) {
+    sh = img.naturalHeight / zoom;
+    sw = sh * targetRatio;
+  } else {
+    sw = img.naturalWidth / zoom;
+    sh = sw / targetRatio;
+  }
+
+  const scaleToSource = img.naturalWidth / w;
+  const srcOffX = -offsetX * scaleToSource;
+  const srcOffY = -offsetY * scaleToSource;
+  const centerX = (img.naturalWidth - sw) / 2;
+  const centerY = (img.naturalHeight - sh) / 2;
+  const sx = Math.max(0, Math.min(img.naturalWidth - sw, centerX + srcOffX));
+  const sy = Math.max(0, Math.min(img.naturalHeight - sh, centerY + srcOffY));
+
+  if (radius) {
+    ctx.save();
+    roundedRect(ctx, x, y, w, h, radius);
+    ctx.clip();
+    ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+    ctx.restore();
+  } else {
+    ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+  }
+}
+
 export const BENGALI_FONT = '"Noto Sans Bengali", "Hind Siliguri", sans-serif';
 export const HEADLINE_FONT = '"Montserrat", "Noto Sans Bengali", "Hind Siliguri", sans-serif';
 export const SANS_FONT = '"Montserrat", sans-serif';

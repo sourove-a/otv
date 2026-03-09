@@ -1,0 +1,282 @@
+Improve the entire UI and visual quality. The current result feels too basic. Redesign the app so it looks like a premium card design studio.
+
+Requirements:
+- More polished dark-green premium dashboard
+- Better spacing and alignment
+- Better typography hierarchy
+- Better card shadows and borders
+- Better template chips
+- Better live preview framing
+- Better input styling
+- More elegant modern aesthetic
+- Softer gradients and glows
+- Premium micro-interactions
+- Visually richer panels without clutter
+
+Do not change the app structure too much. Focus on making it more premium, cleaner, and closer to a production-ready SaaS design tool.
+
+
+Upgrade the card backgrounds significantly.
+
+I want the card templates to have premium editorial backgrounds with:
+- subtle top grid lines
+- elegant thin vertical and horizontal line patterns
+- sandy dusty grain effect
+- paper texture feel
+- printed newspaper-like softness
+- soft noise overlay
+- visual richness without becoming messy
+
+Add background style presets such as:
+- Editorial Paper
+- Sandy Grid
+- Soft Newsprint
+- Dark Grain
+- Bright Minimal Paper
+
+Create the texture procedurally using canvas where possible:
+- grain/noise
+- fine grid lines
+- subtle paper tint variation
+- top header line pattern
+
+The background must never feel plain. It should look premium and aesthetic.
+
+Improve the foreground color system.
+
+I want brighter and more attractive accent colors for the templates, especially:
+- vivid yellow highlights
+- rich green banner blocks
+- strong editorial blue
+- warm orange accent
+- bold black typography
+
+Make the foreground feel more punchy, modern, and eye-catching while keeping the design elegant.
+
+Add a curated color preset system:
+- Justice Yellow
+- Editorial Green
+- News Blue
+- Alert Orange
+- Minimal Black
+- Premium Gold
+
+Use these colors across:
+- highlight blocks
+- category labels
+- accent lines
+- buttons
+- footer labels
+- badges
+
+Do not make the app neon. Make it bright but tasteful.
+
+Add a professional template library to the app.
+
+Create at least 12 polished Bangla news card templates:
+1. Simple headline card
+2. Headline with top banner
+3. Headline with side portrait
+4. Quote card with image
+5. Breaking news flash card
+6. Two-column editorial card
+7. Bullet point infographic card
+8. Minimal newspaper card
+9. Dark grain alert card
+10. Courtesy/news source card
+11. Full image overlay card
+12. Portrait statement card
+
+Each template should:
+- have a distinct structure
+- support Bangla text wrapping
+- look premium and shareable
+- use balanced spacing
+- support highlight text
+- support logo and footer meta
+- support source and date lines if relevant
+
+Also create template thumbnail previews so users can switch easily.
+
+Improve Bangla typography support throughout the app.
+
+Requirements:
+- Better Bangla line breaking
+- Better line height defaults
+- Better headline wrapping
+- Better visual balance for Bangla text blocks
+- Avoid awkward clipping or overlapping
+- Support multi-line highlighted text
+- Make headline rendering look more editorial and readable
+
+Add typography presets:
+- Bold Headline
+- Editorial Headline
+- Quote Style
+- Info Text
+- Footer Meta
+
+Ensure Bangla text on canvas looks crisp and well-spaced.
+
+Improve image upload and image rendering tools.
+
+Features needed:
+- upload main image
+- drag to reposition image inside frame
+- zoom slider
+- rounded corner slider
+- circle crop option
+- rectangular crop option
+- portrait framing mode
+- overlay gradient option
+- shadow under image
+- image border accent option
+
+Image-based templates should feel premium and editorial, similar to modern news social cards.
+
+Improve the highlighted text rendering system.
+
+I want selected words or phrases to appear with bright editorial highlight strips behind them.
+
+Requirements:
+- highlight specific words from headline
+- highlight full line or phrase
+- support multiple highlights
+- yellow highlight by default
+- rounded rectangle highlight style
+- padding around text
+- align nicely under wrapped Bangla text
+- avoid misalignment across lines
+
+The highlighted text should look like professional news graphic emphasis, not random marker pen.
+
+Build a premium quote card engine.
+
+Requirements:
+- oversized quote marks
+- large Bangla quote text
+- optional highlighted segments
+- speaker image on side or bottom
+- speaker name and role box
+- muted background texture
+- editorial-style composition
+- balanced spacing and hierarchy
+
+The quote card should feel suitable for politician statements, editorial opinions, or official remarks.
+
+Improve the export pipeline.
+
+Requirements:
+- export final card as crisp PNG
+- true 1080x1080 resolution
+- optional 1200x1200 or 2048x2048 export
+- sharper text rendering
+- better scaling for high resolution export
+- preserve all textures and highlights in final PNG
+- export button should work reliably
+
+Also add:
+- loading state during export
+- file naming based on headline or template name
+
+Add built-in Bangla demo presets so the app looks complete on first load.
+
+Need at least 8 demo presets with:
+- sample headline
+- sample subheadline
+- sample quote
+- sample source
+- sample courtesy line
+- sample category
+- matching accent color
+- matching template selection
+
+These presets should be realistic and styled like actual editorial social cards.
+
+
+Improve usability and editing experience.
+
+Add:
+- collapsible control sections
+- template search or filter
+- quick reset button
+- duplicate current card button
+- random demo button
+- undo-friendly state handling
+- sticky live preview
+- better responsive layout
+- clearer labels in Bangla or bilingual UI
+
+Make the app faster and easier to use for frequent social media card generation.
+
+The app UI is decent, but the generated cards still do not look premium enough.
+
+Focus specifically on the final card output:
+- better spacing inside cards
+- better hierarchy between label, headline, highlight, source, and image
+- better accent placement
+- stronger composition
+- more realistic editorial styling
+- cleaner visual rhythm
+- more believable social media share design
+
+Do not make it generic. Make the card outputs feel polished and ready to post.
+
+Do a full production cleanup across the project.
+
+Tasks:
+- remove dead code
+- fix TypeScript issues
+- fix layout bugs
+- fix canvas rendering bugs
+- fix export issues
+- fix state synchronization issues
+- improve file organization
+- improve naming consistency
+- ensure all controls actually work
+- ensure templates render correctly
+- ensure image uploads work
+- ensure logo uploads work
+- ensure no console errors remain
+
+Make the project stable and production-ready.
+
+Now perform a final premium polish pass on the whole app.
+
+Goal:
+This should feel like a high-end Bangla editorial card generator product.
+
+Final expectations:
+- premium UI
+- premium templates
+- textured editorial backgrounds
+- subtle grid lines
+- sandy grain effect
+- bright tasteful accent colors
+- polished Bangla typography
+- sharp PNG export
+- elegant spacing
+- real shareable card output
+- production-level finish
+
+Focus on refinement, aesthetics, and reliability. Do not rebuild from scratch unless necessary. Improve what exists and make it excellent.
+
+Now perform a final premium polish pass on the whole app.
+
+Goal:
+This should feel like a high-end Bangla editorial card generator product.
+
+Final expectations:
+- premium UI
+- premium templates
+- textured editorial backgrounds
+- subtle grid lines
+- sandy grain effect
+- bright tasteful accent colors
+- polished Bangla typography
+- sharp PNG export
+- elegant spacing
+- real shareable card output
+- production-level finish
+
+Focus on refinement, aesthetics, and reliability. Do not rebuild from scratch unless necessary. Improve what exists and make it excellent.

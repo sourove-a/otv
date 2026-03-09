@@ -3,6 +3,7 @@ import {
   wrapTextLines,
   roundedRect,
   drawImageCover,
+  drawImageCoverPositioned,
   createGradient,
   drawBadge,
   drawLogo,
@@ -12,6 +13,11 @@ import {
   drawGridLines,
   drawHighlightedText,
   drawCircularImage,
+  drawPaperTexture,
+  drawSandyGrain,
+  drawEditorialGrid,
+  drawNoiseOverlay,
+  drawAccentBar,
   HEADLINE_FONT,
   SANS_FONT,
   BENGALI_FONT,
@@ -36,6 +42,9 @@ export interface CardData {
   otvLogoSize: number;
   banglaFont?: string;
   headlineFont?: string;
+  imageOffsetX?: number;
+  imageOffsetY?: number;
+  imageZoom?: number;
 }
 
 export interface TemplateConfig {
@@ -54,6 +63,18 @@ function bnFont(data: CardData): string {
 
 function hlFont(data: CardData): string {
   return data.headlineFont || HEADLINE_FONT;
+}
+
+function drawPhoto(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, w: number, h: number, radius?: number) {
+  if (!data.mainPhoto) return;
+  const ox = data.imageOffsetX ?? 0;
+  const oy = data.imageOffsetY ?? 0;
+  const zoom = data.imageZoom ?? 1;
+  if (ox !== 0 || oy !== 0 || zoom !== 1) {
+    drawImageCoverPositioned(ctx, data.mainPhoto, x, y, w, h, ox, oy, zoom, radius);
+  } else {
+    drawImageCover(ctx, data.mainPhoto, x, y, w, h, radius);
+  }
 }
 
 function drawDarkBg(ctx: CanvasRenderingContext2D, w: number, h: number, c1: string, c2: string) {
@@ -127,89 +148,87 @@ function drawHeadlineWithHighlight(
 function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   drawDarkBg(ctx, w, h, "#0a0e1f", "#000814");
   drawPurpleGlow(ctx, w, h);
-
-  const gridGrad = ctx.createLinearGradient(0, 0, 0, h * 0.5);
-  gridGrad.addColorStop(0, "rgba(100, 100, 150, 0.05)");
-  gridGrad.addColorStop(1, "transparent");
-  ctx.fillStyle = gridGrad;
-  for (let i = 0; i < w; i += 60) {
-    ctx.fillRect(i, 0, 1, h * 0.5);
-  }
-  for (let i = 0; i < h * 0.5; i += 60) {
-    ctx.fillRect(0, i, w, 1);
-  }
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.5, 55, "rgba(100,120,180,0.04)", "down");
+  drawNoiseOverlay(ctx, w, h, 0.015);
 
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.4, w, h * 0.6);
-    const overlay = createGradient(ctx, 0, h * 0.35, 0, h * 0.65, [
+    drawPhoto(ctx, data, 0, h * 0.4, w, h * 0.6);
+    const overlay = createGradient(ctx, 0, h * 0.32, 0, h * 0.7, [
       [0, "rgba(10, 14, 31, 1)"],
-      [0.4, "rgba(10, 14, 31, 0.6)"],
+      [0.35, "rgba(10, 14, 31, 0.85)"],
+      [0.7, "rgba(10, 14, 31, 0.3)"],
       [1, "transparent"],
     ]);
     ctx.fillStyle = overlay;
-    ctx.fillRect(0, h * 0.35, w, h * 0.3);
+    ctx.fillRect(0, h * 0.32, w, h * 0.38);
   }
 
+  drawAccentBar(ctx, 60, h * 0.15, 50, 4, data.highlightColor || "#FFD700", true);
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-
-  drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", "#ffc107", "#ffc107", 32);
+  drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 32);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.22, w - 120, 68, "#ffffff", "#ffc107", 82, "left", hlFont(data)
+    ctx, data.headline, 60, h * 0.22, w - 120, 68, "#ffffff", data.highlightColor || "#FFD700", 84, "left", hlFont(data)
   );
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
-  drawBottomTicker(ctx, w, h);
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
-  ctx.fillStyle = "#f5f0e8";
-  ctx.fillRect(0, 0, w, h);
+  drawPaperTexture(ctx, w, h, "#f8f3eb", 0.03);
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.5, 45, "rgba(60,50,30,0.035)", "down");
+  drawSandyGrain(ctx, w, h, 0.025, true);
 
-  const textGrad = createGradient(ctx, 0, 0, 0, h * 0.55, [
-    [0, "#faf7f0"],
-    [1, "#f0ebe0"],
-  ]);
-  ctx.fillStyle = textGrad;
-  ctx.fillRect(0, 0, w, h * 0.58);
+  ctx.save();
+  ctx.font = `300 280px Georgia, serif`;
+  ctx.fillStyle = "rgba(200,168,50,0.08)";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("\u201C", 30, -30);
+  ctx.restore();
 
-  ctx.font = `700 52px ${bnFont(data)}`;
+  drawAccentBar(ctx, 60, 55, 50, 5, data.highlightColor || "#FFD700", true);
+
+  ctx.font = `700 54px ${bnFont(data)}`;
   ctx.fillStyle = "#1a1a1a";
   ctx.textBaseline = "top";
-  const endY = wrapText(ctx, data.headline, 60, 60, w - 120, 68, "left");
+  const endY = wrapText(ctx, data.headline, 60, 80, w * 0.55, 72, "left");
 
-  ctx.fillStyle = "#ffc107";
-  ctx.fillRect(60, endY + 10, 80, 4);
+  drawAccentBar(ctx, 60, endY + 15, 80, 4, data.highlightColor || "#FFD700");
 
-  ctx.font = `700 32px ${bnFont(data)}`;
+  ctx.font = `700 30px ${bnFont(data)}`;
   ctx.fillStyle = "#1a1a1a";
   ctx.textAlign = "left";
-  ctx.fillText(data.personName || data.category, 60, endY + 30);
+  ctx.fillText(data.personName || data.category, 60, endY + 35);
 
   ctx.font = `400 22px ${bnFont(data)}`;
-  ctx.fillStyle = "#555";
-  ctx.fillText(data.personTitle || data.viaText, 60, endY + 70);
+  ctx.fillStyle = "#666";
+  ctx.fillText(data.personTitle || data.viaText, 60, endY + 72);
 
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, w * 0.3, h * 0.5, w * 0.7, h * 0.5);
+    drawPhoto(ctx, data, w * 0.3, h * 0.48, w * 0.7, h * 0.52, 8);
+    const fadeGrad = createGradient(ctx, w * 0.3, h * 0.48, w * 0.42, h * 0.48, [
+      [0, "#f8f3eb"], [1, "transparent"]
+    ]);
+    ctx.fillStyle = fadeGrad;
+    ctx.fillRect(w * 0.3, h * 0.48, w * 0.12, h * 0.52);
   }
 
   drawLogo(ctx, data.channelLogo, 50, h - 80, 140, 55);
-  drawBottomTicker(ctx, w, h, "#ffc107");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
-  ctx.fillStyle = "#f0f0f0";
-  ctx.fillRect(0, 0, w, h);
+  drawPaperTexture(ctx, w, h, "#f4f2ee", 0.025);
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.52, 50, "rgba(50,50,50,0.03)", "down");
+  drawSandyGrain(ctx, w, h * 0.52, 0.02, false);
 
-  ctx.fillStyle = "#e8e8e8";
-  ctx.fillRect(0, 0, w, h * 0.52);
-
-  ctx.fillStyle = data.highlightColor || "#ff6600";
-  ctx.fillRect(60, 60, 40, 40);
+  const accentColor = data.highlightColor || "#FF6D00";
+  drawAccentBar(ctx, 60, 55, 6, 50, accentColor, true);
 
   if (data.channelLogo) {
     drawLogo(ctx, data.channelLogo, w - 120, 40, 70, 70);
@@ -218,16 +237,23 @@ function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   ctx.font = `800 58px ${bnFont(data)}`;
   ctx.fillStyle = "#111111";
   ctx.textBaseline = "top";
-  const endY = wrapText(ctx, data.headline, 60, 130, w - 120, 72, "left");
+  const endY = wrapText(ctx, data.headline, 80, 120, w - 140, 74, "left");
 
+  drawAccentBar(ctx, 80, endY + 10, 60, 3, accentColor);
   ctx.font = `400 22px ${SANS_FONT}`;
-  ctx.fillStyle = "#666";
+  ctx.fillStyle = "#888";
   ctx.textAlign = "left";
-  ctx.fillText(`Courtesy: ${data.viaText} | ${data.category}`, 60, endY + 10);
+  ctx.fillText(`${data.viaText} | ${data.category}`, 80, endY + 25);
 
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.52, w, h * 0.48);
+    drawPhoto(ctx, data, 0, h * 0.52, w, h * 0.48);
+    const fadeTop = createGradient(ctx, 0, h * 0.52, 0, h * 0.56, [
+      [0, "#f4f2ee"], [1, "transparent"]
+    ]);
+    ctx.fillStyle = fadeTop;
+    ctx.fillRect(0, h * 0.52, w, h * 0.04);
   }
+  drawAccentBar(ctx, 0, h - 4, w, 4, accentColor, true);
   drawOtvWatermark(ctx, data);
 }
 
@@ -291,109 +317,93 @@ function renderDualQuote(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
 
 function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   drawDarkBg(ctx, w, h, "#0d1117", "#000000");
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.45, 50, "rgba(80,120,180,0.03)", "down");
+  drawNoiseOverlay(ctx, w, h, 0.012);
 
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.42, w, h * 0.58);
-    const overlay = createGradient(ctx, 0, h * 0.35, 0, h * 0.7, [
+    drawPhoto(ctx, data, 0, h * 0.42, w, h * 0.58);
+    const overlay = createGradient(ctx, 0, h * 0.32, 0, h * 0.72, [
       [0, "rgba(13, 17, 23, 1)"],
-      [0.5, "rgba(13, 17, 23, 0.7)"],
-      [1, "rgba(0,0,0,0.3)"],
+      [0.4, "rgba(13, 17, 23, 0.8)"],
+      [0.7, "rgba(13, 17, 23, 0.3)"],
+      [1, "transparent"],
     ]);
     ctx.fillStyle = overlay;
-    ctx.fillRect(0, h * 0.35, w, h * 0.35);
+    ctx.fillRect(0, h * 0.32, w, h * 0.4);
   }
 
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-
-  drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", "#ffc107", "#ffc107", 30);
+  drawAccentBar(ctx, 60, h * 0.14, 45, 4, data.highlightColor || "#FFD700", true);
+  drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", data.highlightColor || "#FFD700", data.highlightColor || "#FFD700", 30);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", "#ffc107", 78, "left", hlFont(data)
+    ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", data.highlightColor || "#FFD700", 78, "left", hlFont(data)
   );
 
-  ctx.save();
-  ctx.font = `400 18px ${SANS_FONT}`;
-  ctx.fillStyle = "#aaa";
-  ctx.globalAlpha = 0.7;
-  ctx.translate(w - 25, h - 60);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText("Image \u2014 Collected", 0, 0);
-  ctx.restore();
-
-  ctx.fillStyle = "#ffc107";
-  ctx.fillRect(0, h - 5, w, 5);
+  drawPhotoCredit(ctx, "Image \u2014 Collected", w - 25, h - 60);
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderWorldReport(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   const grad = createGradient(ctx, 0, 0, 0, h, [
-    [0, "#1a0f00"],
-    [0.3, "#2d1800"],
-    [0.7, "#0d0800"],
-    [1, "#000000"],
+    [0, "#1a0f00"], [0.3, "#2d1800"], [0.7, "#0d0800"], [1, "#000000"],
   ]);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.4, 55, "rgba(200,150,50,0.025)", "down");
+  drawNoiseOverlay(ctx, w, h, 0.015);
 
-  const glow = ctx.createRadialGradient(w * 0.5, h * 0.5, 0, w * 0.5, h * 0.5, w * 0.5);
-  glow.addColorStop(0, "rgba(255, 170, 0, 0.08)");
+  const glow = ctx.createRadialGradient(w * 0.5, h * 0.35, 0, w * 0.5, h * 0.35, w * 0.5);
+  glow.addColorStop(0, "rgba(255, 170, 0, 0.1)");
   glow.addColorStop(1, "transparent");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, w, h);
 
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, w * 0.15, h * 0.4, w * 0.7, h * 0.55, 12);
-    const imgOverlay = createGradient(ctx, 0, h * 0.35, 0, h * 0.6, [
-      [0, "rgba(26, 15, 0, 0.9)"],
-      [0.5, "rgba(26, 15, 0, 0.3)"],
-      [1, "transparent"],
-    ]);
-    ctx.fillStyle = imgOverlay;
-    ctx.fillRect(w * 0.15, h * 0.4, w * 0.7, h * 0.2);
+    drawPhoto(ctx, data, w * 0.12, h * 0.4, w * 0.76, h * 0.52, 10);
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 30;
+    ctx.strokeStyle = "rgba(255,200,50,0.15)";
+    ctx.lineWidth = 2;
+    roundedRect(ctx, w * 0.12, h * 0.4, w * 0.76, h * 0.52, 10);
+    ctx.stroke();
+    ctx.restore();
   }
 
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-
-  drawBadge(ctx, data.category, w / 2, h * 0.16, "#ffc107", "#000", undefined, 32);
+  drawBadge(ctx, data.category, w / 2, h * 0.16, data.highlightColor || "#FFD700", "#000", undefined, 32);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.22, w - 120, 64, "#ffffff", "#ffc107", 80, "left", hlFont(data)
+    ctx, data.headline, 60, h * 0.22, w - 120, 64, "#ffffff", data.highlightColor || "#FFD700", 80, "left", hlFont(data)
   );
 
-  ctx.fillStyle = "#ffc107";
-  ctx.fillRect(0, h - 80, w, 70);
-  ctx.font = `700 22px ${bnFont(data)}`;
-  ctx.fillStyle = "#000";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("Sponsor Area", w / 2, h - 45);
-  drawBottomTicker(ctx, w, h, "#000");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   const grad = createGradient(ctx, 0, 0, 0, h, [
-    [0, "#1a0000"],
-    [0.5, "#2d0a0a"],
-    [1, "#0a0000"],
+    [0, "#1a0000"], [0.5, "#2d0a0a"], [1, "#0a0000"],
   ]);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.5, 60, "rgba(255,50,50,0.02)", "down");
+  drawNoiseOverlay(ctx, w, h, 0.018);
 
   const glow = ctx.createRadialGradient(w * 0.5, h * 0.2, 0, w * 0.5, h * 0.2, w * 0.5);
-  glow.addColorStop(0, "rgba(255, 0, 0, 0.12)");
+  glow.addColorStop(0, "rgba(255, 0, 0, 0.15)");
   glow.addColorStop(1, "transparent");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, w, h);
 
-  ctx.fillStyle = "#cc0000";
-  ctx.fillRect(0, 0, w, 8);
+  drawAccentBar(ctx, 0, 0, w, 8, "#cc0000", true);
 
   drawLogo(ctx, data.channelLogo, 50, 30, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 40);
-
   drawBadge(ctx, "BREAKING", w / 2, h * 0.14, "#cc0000", "#ffffff", undefined, 38);
 
   ctx.font = `900 72px ${hlFont(data)}`;
@@ -403,29 +413,31 @@ function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   if (data.mainPhoto) {
     ctx.save();
-    roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 12);
+    ctx.shadowColor = "rgba(200,0,0,0.4)";
+    ctx.shadowBlur = 25;
+    roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 10);
     ctx.clip();
-    drawImageCover(ctx, data.mainPhoto, w * 0.1, h * 0.52, w * 0.8, h * 0.4);
+    drawPhoto(ctx, data, w * 0.1, h * 0.52, w * 0.8, h * 0.4);
     ctx.restore();
 
     ctx.strokeStyle = "#cc0000";
-    ctx.lineWidth = 4;
-    roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 12);
+    ctx.lineWidth = 3;
+    roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 10);
     ctx.stroke();
   }
 
-  drawBottomTicker(ctx, w, h, "#cc0000");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#cc0000", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   const grad = createGradient(ctx, 0, 0, 0, h, [
-    [0, "#001a0d"],
-    [0.5, "#002d1a"],
-    [1, "#000a05"],
+    [0, "#001a0d"], [0.5, "#002d1a"], [1, "#000a05"],
   ]);
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.4, 50, "rgba(0,200,100,0.025)", "down");
+  drawNoiseOverlay(ctx, w, h, 0.012);
 
   ctx.save();
   ctx.beginPath();
@@ -436,20 +448,18 @@ function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: num
   ctx.closePath();
   ctx.clip();
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.3, w, h * 0.7);
+    drawPhoto(ctx, data, 0, h * 0.3, w, h * 0.7);
   }
   ctx.restore();
 
   const overlay = createGradient(ctx, 0, h * 0.3, 0, h * 0.7, [
-    [0, "rgba(0, 26, 13, 1)"],
-    [0.3, "rgba(0, 26, 13, 0.5)"],
-    [1, "rgba(0, 10, 5, 0.3)"],
+    [0, "rgba(0, 26, 13, 1)"], [0.3, "rgba(0, 26, 13, 0.5)"], [1, "rgba(0, 10, 5, 0.3)"],
   ]);
   ctx.fillStyle = overlay;
   ctx.fillRect(0, h * 0.3, w, h * 0.4);
 
   ctx.strokeStyle = "#00e676";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(0, h * 0.45);
   ctx.lineTo(w, h * 0.35);
@@ -457,22 +467,19 @@ function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-
   drawBadge(ctx, data.category || "SPORTS", w / 2, h * 0.12, "#00c853", "#ffffff", undefined, 30);
-
-  drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.17, w - 120, 60, "#ffffff", "#00e676", 76, "left", hlFont(data)
-  );
-
-  drawBottomTicker(ctx, w, h, "#00e676");
+  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.17, w - 120, 60, "#ffffff", "#00e676", 76, "left", hlFont(data));
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#00e676", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   drawDarkBg(ctx, w, h, "#0a1628", "#050d1a");
+  drawEditorialGrid(ctx, 0, 0, w * 0.6, h, 45, "rgba(60,120,200,0.02)", "none");
+  drawNoiseOverlay(ctx, w, h, 0.01);
 
   const glow = ctx.createRadialGradient(w * 0.3, h * 0.4, 0, w * 0.3, h * 0.4, w * 0.5);
-  glow.addColorStop(0, "rgba(30, 90, 180, 0.1)");
+  glow.addColorStop(0, "rgba(30, 90, 180, 0.12)");
   glow.addColorStop(1, "transparent");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, w, h);
@@ -485,17 +492,13 @@ function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   drawLogo(ctx, data.channelLogo, 50, 40, 130, 50);
   drawViaText(ctx, data.viaText, w - 50, 50);
-
-  ctx.fillStyle = "#4a90d9";
-  ctx.fillRect(60, h * 0.14, 60, 5);
+  drawAccentBar(ctx, 60, h * 0.14, 50, 4, "#4a90d9", true);
 
   ctx.font = `600 48px ${bnFont(data)}`;
   ctx.fillStyle = "#e0e8f5";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 60, h * 0.18, w - 120, 64, "left");
-
-  ctx.fillStyle = "#4a90d9";
-  ctx.fillRect(60, endY + 10, 80, 4);
+  drawAccentBar(ctx, 60, endY + 10, 70, 3, "#4a90d9", true);
 
   if (data.personName) {
     ctx.font = `700 30px ${bnFont(data)}`;
@@ -511,6 +514,8 @@ function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   if (data.mainPhoto) {
     ctx.save();
+    ctx.shadowColor = "rgba(60,120,220,0.3)";
+    ctx.shadowBlur = 20;
     ctx.beginPath();
     const cx = w * 0.7;
     const cy = h * 0.72;
@@ -520,36 +525,36 @@ function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: num
     drawImageCover(ctx, data.mainPhoto, cx - rx, cy - rx, rx * 2, rx * 2);
     ctx.restore();
 
-    ctx.strokeStyle = "#4a90d9";
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = "rgba(74,144,217,0.5)";
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(w * 0.7, h * 0.72, w * 0.25, 0, Math.PI * 2);
     ctx.stroke();
   }
 
-  drawBottomTicker(ctx, w, h, "#4a90d9");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#4a90d9", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   drawDarkBg(ctx, w, h, "#0d0015", "#050008");
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.45, 55, "rgba(150,50,200,0.02)", "down");
+  drawNoiseOverlay(ctx, w, h, 0.015);
 
   const spotlight = ctx.createRadialGradient(w * 0.5, h * 0.3, 0, w * 0.5, h * 0.3, w * 0.4);
-  spotlight.addColorStop(0, "rgba(150, 50, 200, 0.15)");
-  spotlight.addColorStop(0.5, "rgba(100, 30, 150, 0.05)");
+  spotlight.addColorStop(0, "rgba(150, 50, 200, 0.18)");
+  spotlight.addColorStop(0.5, "rgba(100, 30, 150, 0.06)");
   spotlight.addColorStop(1, "transparent");
   ctx.fillStyle = spotlight;
   ctx.fillRect(0, 0, w, h);
 
   if (data.mainPhoto) {
     ctx.globalAlpha = 0.7;
-    drawImageCover(ctx, data.mainPhoto, w * 0.2, h * 0.45, w * 0.6, h * 0.5, 8);
+    drawPhoto(ctx, data, w * 0.2, h * 0.45, w * 0.6, h * 0.5, 8);
     ctx.globalAlpha = 1;
 
     const imgOverlay = createGradient(ctx, 0, h * 0.4, 0, h * 0.75, [
-      [0, "rgba(13, 0, 21, 0.9)"],
-      [0.5, "rgba(13, 0, 21, 0.4)"],
-      [1, "rgba(5, 0, 8, 0.6)"],
+      [0, "rgba(13, 0, 21, 0.9)"], [0.5, "rgba(13, 0, 21, 0.4)"], [1, "rgba(5, 0, 8, 0.6)"],
     ]);
     ctx.fillStyle = imgOverlay;
     ctx.fillRect(w * 0.2, h * 0.45, w * 0.6, h * 0.5);
@@ -557,43 +562,35 @@ function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: n
 
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-
   drawBadge(ctx, data.category || "INVESTIGATION", w / 2, h * 0.15, "#9c27b0", "#ffffff", undefined, 28);
-
-  drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.2, w - 120, 62, "#e0c0ff", "#d580ff", 78, "left", hlFont(data)
-  );
-
+  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#e0c0ff", "#d580ff", 78, "left", hlFont(data));
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
-  drawBottomTicker(ctx, w, h, "#9c27b0");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#9c27b0", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, 0, w, h);
+    drawPhoto(ctx, data, 0, 0, w, h);
   } else {
     drawDarkBg(ctx, w, h, "#1a1a2e", "#000");
   }
 
   const overlay = createGradient(ctx, 0, 0, 0, h, [
-    [0, "rgba(30, 0, 60, 0.85)"],
-    [0.4, "rgba(10, 0, 40, 0.6)"],
-    [0.7, "rgba(0, 0, 0, 0.7)"],
-    [1, "rgba(0, 0, 0, 0.95)"],
+    [0, "rgba(30, 0, 60, 0.85)"], [0.4, "rgba(10, 0, 40, 0.6)"],
+    [0.7, "rgba(0, 0, 0, 0.7)"], [1, "rgba(0, 0, 0, 0.95)"],
   ]);
   ctx.fillStyle = overlay;
   ctx.fillRect(0, 0, w, h);
+  drawNoiseOverlay(ctx, w, h, 0.01);
 
   drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
   drawViaText(ctx, data.viaText, w - 50, 60);
-
   drawBadge(ctx, data.category, w / 2, h * 0.18, "rgba(255,255,255,0.15)", "#ffffff", "rgba(255,255,255,0.3)", 28);
 
   ctx.font = `900 70px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
-
   ctx.shadowColor = "rgba(150, 50, 255, 0.5)";
   ctx.shadowBlur = 20;
   wrapText(ctx, data.headline.toUpperCase(), w / 2, h * 0.55, w - 120, 86, "center");
@@ -606,29 +603,23 @@ function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: nu
     ctx.fillText(data.personName, w / 2, h * 0.9);
   }
 
-  drawBottomTicker(ctx, w, h, "#a855f7");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#a855f7", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   drawDarkBg(ctx, w, h, "#0a1628", "#060e1a");
+  drawEditorialGrid(ctx, 40, 40, w - 80, h - 80, 60, "rgba(212,175,55,0.02)", "none");
+  drawNoiseOverlay(ctx, w, h, 0.01);
 
-  ctx.strokeStyle = "rgba(212, 175, 55, 0.3)";
-  ctx.lineWidth = 2;
-  roundedRect(ctx, 30, 30, w - 60, h - 60, 0);
-  ctx.stroke();
-
-  ctx.strokeStyle = "rgba(212, 175, 55, 0.15)";
-  ctx.lineWidth = 1;
-  roundedRect(ctx, 40, 40, w - 80, h - 80, 0);
+  ctx.strokeStyle = "rgba(212, 175, 55, 0.25)";
+  ctx.lineWidth = 1.5;
+  roundedRect(ctx, 30, 30, w - 60, h - 60, 4);
   ctx.stroke();
 
   drawLogo(ctx, data.channelLogo, 60, 55, 130, 50);
   drawViaText(ctx, data.viaText, w - 60, 60);
-
-  ctx.fillStyle = "#d4af37";
-  ctx.fillRect(w / 2 - 40, h * 0.12, 80, 3);
-
+  drawAccentBar(ctx, w / 2 - 40, h * 0.12, 80, 3, "#d4af37", true);
   drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", "#d4af37", "#d4af37", 28);
 
   ctx.font = `800 60px ${hlFont(data)}`;
@@ -636,35 +627,34 @@ function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
   const endY = wrapText(ctx, data.headline.toUpperCase(), w / 2, h * 0.22, w - 160, 76, "center");
-
-  ctx.fillStyle = "#d4af37";
-  ctx.fillRect(w / 2 - 40, endY + 5, 80, 3);
+  drawAccentBar(ctx, w / 2 - 40, endY + 5, 80, 3, "#d4af37");
 
   if (data.mainPhoto) {
     const photoY = Math.max(endY + 25, h * 0.48);
     const photoH = h - photoY - 60;
     ctx.save();
-    roundedRect(ctx, w * 0.12, photoY, w * 0.76, photoH, 4);
+    ctx.shadowColor = "rgba(212,175,55,0.2)";
+    ctx.shadowBlur = 15;
+    roundedRect(ctx, w * 0.12, photoY, w * 0.76, photoH, 6);
     ctx.clip();
-    drawImageCover(ctx, data.mainPhoto, w * 0.12, photoY, w * 0.76, photoH);
+    drawPhoto(ctx, data, w * 0.12, photoY, w * 0.76, photoH);
     ctx.restore();
 
-    ctx.strokeStyle = "#d4af37";
-    ctx.lineWidth = 2;
-    roundedRect(ctx, w * 0.12, photoY, w * 0.76, photoH, 4);
+    ctx.strokeStyle = "rgba(212,175,55,0.3)";
+    ctx.lineWidth = 1.5;
+    roundedRect(ctx, w * 0.12, photoY, w * 0.76, photoH, 6);
     ctx.stroke();
   }
 
-  drawBottomTicker(ctx, w, h, "#d4af37");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#d4af37", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, w, h);
+  drawPaperTexture(ctx, w, h, "#ffffff", 0.02);
+  drawSandyGrain(ctx, w, h, 0.015, true);
 
-  ctx.fillStyle = data.highlightColor || "#ffc107";
-  ctx.fillRect(0, 0, 8, h);
+  drawAccentBar(ctx, 0, 0, 8, h, data.highlightColor || "#FFD700", true);
 
   drawLogo(ctx, data.channelLogo, 40, 40, 130, 50);
 
@@ -673,22 +663,22 @@ function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 40, 120, w * 0.48, 70, "left");
 
-  drawBadge(ctx, data.category, 40 + 60, endY + 30, data.highlightColor || "#ffc107", "#000", undefined, 24);
+  drawBadge(ctx, data.category, 40 + 60, endY + 30, data.highlightColor || "#FFD700", "#000", undefined, 24);
 
   ctx.font = `400 20px ${SANS_FONT}`;
-  ctx.fillStyle = "#888";
+  ctx.fillStyle = "#999";
   ctx.textAlign = "left";
   ctx.fillText(data.viaText, 40, endY + 80);
 
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, w * 0.5, 0, w * 0.5, h, 0);
-    const edgeGrad = createGradient(ctx, w * 0.5, 0, w * 0.55, 0, [
-      [0, "#ffffff"],
-      [1, "transparent"],
+    drawPhoto(ctx, data, w * 0.5, 0, w * 0.5, h, 0);
+    const edgeGrad = createGradient(ctx, w * 0.5, 0, w * 0.56, 0, [
+      [0, "#ffffff"], [1, "transparent"],
     ]);
     ctx.fillStyle = edgeGrad;
-    ctx.fillRect(w * 0.5, 0, w * 0.05, h);
+    ctx.fillRect(w * 0.5, 0, w * 0.06, h);
   }
+  drawAccentBar(ctx, 0, h - 4, w, 4, data.highlightColor || "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
@@ -759,19 +749,17 @@ function renderDualQuoteSplit(ctx: CanvasRenderingContext2D, data: CardData, w: 
 }
 
 function renderGridHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
-  ctx.fillStyle = "#e8e4dc";
-  ctx.fillRect(0, 0, w, h);
+  drawPaperTexture(ctx, w, h, "#e8e4dc", 0.025);
+  drawEditorialGrid(ctx, 0, 0, w, h * 0.42, 35, "rgba(100,120,100,0.08)", "down");
+  drawSandyGrain(ctx, w, h, 0.018, true);
 
-  drawGridLines(ctx, 0, 0, w, h * 0.42, 35, "rgba(100,120,100,0.12)");
-
-  ctx.fillStyle = "#1a5c42";
-  ctx.fillRect(0, 0, 6, h * 0.42);
-  ctx.fillRect(w - 6, 0, 6, h * 0.42);
-  ctx.fillRect(0, 0, w, 6);
-  ctx.fillRect(0, h * 0.42 - 6, w, 6);
+  drawAccentBar(ctx, 0, 0, w, 5, "#1a5c42", true);
+  drawAccentBar(ctx, 0, 0, 5, h * 0.42, "#1a5c42", true);
+  drawAccentBar(ctx, w - 5, 0, 5, h * 0.42, "#1a5c42", true);
+  drawAccentBar(ctx, 0, h * 0.42 - 5, w, 5, "#1a5c42", true);
 
   const endY = drawHighlightedText(
-    ctx, data.headline, 50, 50, w - 100, 54, "#1a1a1a", "#ffc107", 72, bnFont(data), "left", 16, 8
+    ctx, data.headline, 50, 50, w - 100, 54, "#1a1a1a", data.highlightColor || "#FFD700", 72, bnFont(data), "left", 16, 8
   );
 
   ctx.font = `500 22px ${bnFont(data)}`;
@@ -781,28 +769,24 @@ function renderGridHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillText(`\u09A4\u09A5\u09CD\u09AF\u09B8\u09C2\u09A4\u09CD\u09B0: ${data.viaText}`, 50, endY + 15);
 
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.42, w, h * 0.58);
+    drawPhoto(ctx, data, 0, h * 0.42, w, h * 0.58);
   }
 
   drawOtvWatermark(ctx, data);
 }
 
 function renderQuoteHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
-  ctx.fillStyle = "#e8e2d8";
-  ctx.fillRect(0, 0, w, h);
-
-  const topGrad = createGradient(ctx, 0, 0, 0, h * 0.1, [[0, "#d8d0c4"], [1, "#e8e2d8"]]);
-  ctx.fillStyle = topGrad;
-  ctx.fillRect(0, 0, w, h * 0.1);
+  drawPaperTexture(ctx, w, h, "#e8e2d8", 0.025);
+  drawSandyGrain(ctx, w, h, 0.02, true);
 
   ctx.font = `700 140px ${SANS_FONT}`;
-  ctx.fillStyle = "rgba(0,0,0,0.06)";
+  ctx.fillStyle = "rgba(0,0,0,0.05)";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
   ctx.fillText("\u201C", 20, 10);
 
   const endY = drawHighlightedText(
-    ctx, data.headline, 50, 100, w - 100, 58, "#1a1a1a", data.highlightColor || "#ffc107", 78, bnFont(data), "left", 14, 8
+    ctx, data.headline, 50, 100, w - 100, 58, "#1a1a1a", data.highlightColor || "#FFD700", 78, bnFont(data), "left", 14, 8
   );
 
   ctx.font = `500 22px ${bnFont(data)}`;
@@ -818,7 +802,7 @@ function renderQuoteHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: 
     const photoH = h * 0.45;
     const photoX = w - photoW;
     const photoY = h - photoH;
-    drawImageCover(ctx, data.mainPhoto, photoX, photoY, photoW, photoH);
+    drawPhoto(ctx, data, photoX, photoY, photoW, photoH);
     const fadeGrad = createGradient(ctx, photoX, photoY, photoX + photoW * 0.3, photoY, [[0, "#e8e2d8"], [1, "transparent"]]);
     ctx.fillStyle = fadeGrad;
     ctx.fillRect(photoX, photoY, photoW * 0.3, photoH);
@@ -882,24 +866,27 @@ function makeGradientCard(
 ): (ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) => void {
   return (ctx, data, w, h) => {
     drawDarkBg(ctx, w, h, c1, c2);
+    drawEditorialGrid(ctx, 0, 0, w, h * 0.45, 55, `${accent}06`, "down");
+    drawNoiseOverlay(ctx, w, h, 0.012);
     const glow = ctx.createRadialGradient(w * 0.5, h * 0.3, 0, w * 0.5, h * 0.3, w * 0.6);
     glow.addColorStop(0, glowColor);
     glow.addColorStop(1, "transparent");
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, h);
     if (data.mainPhoto) {
-      drawImageCover(ctx, data.mainPhoto, 0, h * 0.45, w, h * 0.55);
-      const overlay = createGradient(ctx, 0, h * 0.38, 0, h * 0.7, [
-        [0, `${c1}`], [0.5, `${c1}99`], [1, "transparent"],
+      drawPhoto(ctx, data, 0, h * 0.45, w, h * 0.55);
+      const overlay = createGradient(ctx, 0, h * 0.35, 0, h * 0.7, [
+        [0, `${c1}`], [0.5, `${c1}aa`], [1, "transparent"],
       ]);
       ctx.fillStyle = overlay;
-      ctx.fillRect(0, h * 0.38, w, h * 0.32);
+      ctx.fillRect(0, h * 0.35, w, h * 0.35);
     }
+    drawAccentBar(ctx, 60, h * 0.14, 45, 4, accent, true);
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
     drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", accent, accent, 30);
     drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", accent, 78, "left", hlFont(data));
-    drawBottomTicker(ctx, w, h, accent);
+    drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
     drawOtvWatermark(ctx, data);
   };
 }
@@ -909,13 +896,14 @@ function makePhotoOverlayCard(
 ): (ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) => void {
   return (ctx, data, w, h) => {
     if (data.mainPhoto) {
-      drawImageCover(ctx, data.mainPhoto, 0, 0, w, h);
+      drawPhoto(ctx, data, 0, 0, w, h);
     } else {
       drawDarkBg(ctx, w, h, "#111", "#000");
     }
     const overlay = createGradient(ctx, 0, 0, 0, h, overlayStops);
     ctx.fillStyle = overlay;
     ctx.fillRect(0, 0, w, h);
+    drawNoiseOverlay(ctx, w, h, 0.01);
     drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
     drawViaText(ctx, data.viaText, w - 50, 60);
     drawBadge(ctx, data.category, w / 2, h * 0.15, badgeBg, badgeText, undefined, 28);
@@ -923,7 +911,7 @@ function makePhotoOverlayCard(
     ctx.fillStyle = "#ffffff";
     ctx.textBaseline = "top";
     wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.55, w - 120, 82, "left");
-    drawBottomTicker(ctx, w, h, accent);
+    drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
     drawOtvWatermark(ctx, data);
   };
 }
@@ -932,27 +920,27 @@ function makeLightCard(
   bg1: string, bg2: string, accent: string, textColor: string
 ): (ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) => void {
   return (ctx, data, w, h) => {
-    const grad = createGradient(ctx, 0, 0, 0, h, [[0, bg1], [1, bg2]]);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
+    drawPaperTexture(ctx, w, h, bg1, 0.025);
+    drawEditorialGrid(ctx, 0, 0, w * 0.55, h, 45, "rgba(50,50,50,0.025)", "none");
+    drawSandyGrain(ctx, w, h, 0.018, true);
     drawLogo(ctx, data.channelLogo, 50, 40, 130, 50);
-    ctx.fillStyle = accent;
-    ctx.fillRect(50, 110, 60, 5);
+    drawAccentBar(ctx, 50, 110, 50, 5, accent, true);
     ctx.font = `800 56px ${bnFont(data)}`;
     ctx.fillStyle = textColor;
     ctx.textBaseline = "top";
-    const endY = wrapText(ctx, data.headline, 50, 130, w * 0.5, 70, "left");
+    const endY = wrapText(ctx, data.headline, 50, 135, w * 0.5, 72, "left");
     drawBadge(ctx, data.category, 50 + 60, endY + 20, accent, "#000", undefined, 22);
     ctx.font = `400 20px ${SANS_FONT}`;
-    ctx.fillStyle = "#888";
+    ctx.fillStyle = "#999";
     ctx.textAlign = "left";
     ctx.fillText(data.viaText, 50, endY + 70);
     if (data.mainPhoto) {
-      drawImageCover(ctx, data.mainPhoto, w * 0.52, 0, w * 0.48, h);
-      const edgeGrad = createGradient(ctx, w * 0.52, 0, w * 0.57, 0, [[0, bg1], [1, "transparent"]]);
+      drawPhoto(ctx, data, w * 0.52, 0, w * 0.48, h);
+      const edgeGrad = createGradient(ctx, w * 0.52, 0, w * 0.58, 0, [[0, bg1], [1, "transparent"]]);
       ctx.fillStyle = edgeGrad;
-      ctx.fillRect(w * 0.52, 0, w * 0.05, h);
+      ctx.fillRect(w * 0.52, 0, w * 0.06, h);
     }
+    drawAccentBar(ctx, 0, h - 4, w, 4, accent, true);
     drawOtvWatermark(ctx, data);
   };
 }
@@ -962,28 +950,33 @@ function makeThemedCard(
 ): (ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) => void {
   return (ctx, data, w, h) => {
     drawDarkBg(ctx, w, h, c1, c2);
+    drawEditorialGrid(ctx, 0, 0, w, h * 0.5, 50, `${accent}08`, "down");
+    drawNoiseOverlay(ctx, w, h, 0.012);
     const glow = ctx.createRadialGradient(w * 0.5, h * 0.4, 0, w * 0.5, h * 0.4, w * 0.5);
     glow.addColorStop(0, glowColor);
     glow.addColorStop(1, "transparent");
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, h);
     if (decorFn) decorFn(ctx, w, h);
+    drawAccentBar(ctx, w / 2 - 30, h * 0.12, 60, 3, accent, true);
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
     drawBadge(ctx, data.category, w / 2, h * 0.14, accent, "#ffffff", undefined, 30);
     drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, "#ffffff", accent, 76, "left", hlFont(data));
     if (data.mainPhoto) {
       ctx.save();
-      roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 10);
+      ctx.shadowColor = `${accent}40`;
+      ctx.shadowBlur = 20;
+      roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 8);
       ctx.clip();
-      drawImageCover(ctx, data.mainPhoto, w * 0.1, h * 0.52, w * 0.8, h * 0.4);
+      drawPhoto(ctx, data, w * 0.1, h * 0.52, w * 0.8, h * 0.4);
       ctx.restore();
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 3;
-      roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 10);
+      ctx.strokeStyle = `${accent}50`;
+      ctx.lineWidth = 2;
+      roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 8);
       ctx.stroke();
     }
-    drawBottomTicker(ctx, w, h, accent);
+    drawAccentBar(ctx, 0, h - 5, w, 5, accent, true);
     drawOtvWatermark(ctx, data);
   };
 }
@@ -993,41 +986,43 @@ function makePremiumCard(
 ): (ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) => void {
   return (ctx, data, w, h) => {
     drawDarkBg(ctx, w, h, c1, c2);
+    drawEditorialGrid(ctx, 30, 30, w - 60, h - 60, 60, `${accent}05`, "none");
+    drawNoiseOverlay(ctx, w, h, 0.01);
     const glow = ctx.createRadialGradient(w * 0.3, h * 0.3, 0, w * 0.3, h * 0.3, w * 0.5);
     glow.addColorStop(0, glowColor);
     glow.addColorStop(1, "transparent");
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, h);
     ctx.strokeStyle = borderAlpha;
-    ctx.lineWidth = 2;
-    roundedRect(ctx, 25, 25, w - 50, h - 50, 0);
+    ctx.lineWidth = 1.5;
+    roundedRect(ctx, 25, 25, w - 50, h - 50, 4);
     ctx.stroke();
     drawLogo(ctx, data.channelLogo, 50, 50, 130, 50);
     drawViaText(ctx, data.viaText, w - 50, 55);
-    ctx.fillStyle = accent;
-    ctx.fillRect(w / 2 - 40, h * 0.13, 80, 3);
+    drawAccentBar(ctx, w / 2 - 40, h * 0.13, 80, 3, accent, true);
     drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", accent, accent, 28);
     ctx.font = `800 60px ${hlFont(data)}`;
     ctx.fillStyle = "#ffffff";
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
     const endY = wrapText(ctx, data.headline.toUpperCase(), w / 2, h * 0.23, w - 140, 76, "center");
-    ctx.fillStyle = accent;
-    ctx.fillRect(w / 2 - 40, endY + 5, 80, 3);
+    drawAccentBar(ctx, w / 2 - 40, endY + 5, 80, 3, accent);
     if (data.mainPhoto) {
       const photoY = Math.max(endY + 20, h * 0.5);
       const photoH = h - photoY - 50;
       ctx.save();
+      ctx.shadowColor = `${accent}30`;
+      ctx.shadowBlur = 20;
       roundedRect(ctx, w * 0.12, photoY, w * 0.76, photoH, 6);
       ctx.clip();
-      drawImageCover(ctx, data.mainPhoto, w * 0.12, photoY, w * 0.76, photoH);
+      drawPhoto(ctx, data, w * 0.12, photoY, w * 0.76, photoH);
       ctx.restore();
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = `${accent}40`;
+      ctx.lineWidth = 1.5;
       roundedRect(ctx, w * 0.12, photoY, w * 0.76, photoH, 6);
       ctx.stroke();
     }
-    drawBottomTicker(ctx, w, h, accent);
+    drawAccentBar(ctx, 0, h - 4, w, 4, accent, true);
     drawOtvWatermark(ctx, data);
   };
 }
@@ -1077,9 +1072,10 @@ const renderPhotoEditorial = makePhotoOverlayCard(
 
 function renderPhotoPortrait(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   drawDarkBg(ctx, w, h, "#0a0a14", "#000");
+  drawNoiseOverlay(ctx, w, h, 0.01);
   if (data.mainPhoto) {
     const photoW = w * 0.55;
-    drawImageCover(ctx, data.mainPhoto, w - photoW, 0, photoW, h);
+    drawPhoto(ctx, data, w - photoW, 0, photoW, h);
     const fade = createGradient(ctx, w - photoW, 0, w - photoW + photoW * 0.4, 0, [
       [0, "#0a0a14"], [1, "transparent"],
     ]);
@@ -1087,8 +1083,7 @@ function renderPhotoPortrait(ctx: CanvasRenderingContext2D, data: CardData, w: n
     ctx.fillRect(w - photoW, 0, photoW * 0.4, h);
   }
   drawLogo(ctx, data.channelLogo, 40, 40, 130, 50);
-  ctx.fillStyle = "#ffc107";
-  ctx.fillRect(40, 120, 60, 4);
+  drawAccentBar(ctx, 40, 120, 50, 4, "#FFD700", true);
   ctx.font = `800 52px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
@@ -1105,13 +1100,13 @@ function renderPhotoPortrait(ctx: CanvasRenderingContext2D, data: CardData, w: n
     ctx.textAlign = "left";
     ctx.fillText(data.personTitle, 40, h - 88);
   }
-  drawBottomTicker(ctx, w, h, "#ffc107");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderPhotoPanorama(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, 0, w, h * 0.6);
+    drawPhoto(ctx, data, 0, 0, w, h * 0.6);
   }
   drawDarkBg(ctx, w, h * 0.45, "#0d1117", "#000000");
   ctx.fillStyle = "#0d1117";
@@ -1119,19 +1114,20 @@ function renderPhotoPanorama(ctx: CanvasRenderingContext2D, data: CardData, w: n
   const fade = createGradient(ctx, 0, h * 0.5, 0, h * 0.6, [[0, "transparent"], [1, "#0d1117"]]);
   ctx.fillStyle = fade;
   ctx.fillRect(0, h * 0.5, w, h * 0.1);
+  drawNoiseOverlay(ctx, w, h, 0.01);
   drawLogo(ctx, data.channelLogo, 50, h * 0.58, 130, 50);
   drawViaText(ctx, data.viaText, w - 50, h * 0.6);
   ctx.font = `900 60px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 50, h * 0.66, w - 100, 74, "left");
-  drawBottomTicker(ctx, w, h, "#ffc107");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderPhotoVignette(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, 0, w, h);
+    drawPhoto(ctx, data, 0, 0, w, h);
   } else {
     ctx.fillStyle = "#111";
     ctx.fillRect(0, 0, w, h);
@@ -1150,13 +1146,13 @@ function renderPhotoVignette(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.7, w - 120, 80, "left");
-  drawBottomTicker(ctx, w, h, "#ffc107");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderPhotoDuotone(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, 0, w, h);
+    drawPhoto(ctx, data, 0, 0, w, h);
   }
   ctx.globalCompositeOperation = "color";
   ctx.fillStyle = "#1a237e";
@@ -1173,13 +1169,13 @@ function renderPhotoDuotone(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.6, w - 120, 82, "left");
-  drawBottomTicker(ctx, w, h, "#7c4dff");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#7c4dff", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderPhotoVintage(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, 0, w, h);
+    drawPhoto(ctx, data, 0, 0, w, h);
   }
   ctx.fillStyle = "rgba(120,80,30,0.25)";
   ctx.fillRect(0, 0, w, h);
@@ -1194,7 +1190,7 @@ function renderPhotoVintage(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.fillStyle = "#f5e6c8";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.6, w - 120, 78, "left");
-  drawBottomTicker(ctx, w, h, "#d4af37");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#d4af37", true);
   drawOtvWatermark(ctx, data);
 }
 
@@ -1224,7 +1220,7 @@ const renderEducationPurple = makeThemedCard("#0a0018", "#05000c", "#7b1fa2", "r
 
 function renderGlassCard(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, 0, w, h);
+    drawPhoto(ctx, data, 0, 0, w, h);
     ctx.fillStyle = "rgba(0,0,0,0.4)";
     ctx.fillRect(0, 0, w, h);
   } else {
@@ -1246,7 +1242,7 @@ function renderGlassCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
   wrapText(ctx, data.headline.toUpperCase(), w / 2, panelY + panelH * 0.28, panelW - 60, 72, "center");
-  drawBottomTicker(ctx, w, h, "#ffc107");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#FFD700", true);
   drawOtvWatermark(ctx, data);
 }
 
@@ -1263,7 +1259,7 @@ function renderNeonGlow(ctx: CanvasRenderingContext2D, data: CardData, w: number
     ctx.fillRect(0, 0, w, h);
   }
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.5, w, h * 0.5);
+    drawPhoto(ctx, data, 0, h * 0.5, w, h * 0.5);
     const imgFade = createGradient(ctx, 0, h * 0.45, 0, h * 0.65, [[0, "#000"], [1, "transparent"]]);
     ctx.fillStyle = imgFade;
     ctx.fillRect(0, h * 0.45, w, h * 0.2);
@@ -1277,7 +1273,7 @@ function renderNeonGlow(ctx: CanvasRenderingContext2D, data: CardData, w: number
   ctx.shadowBlur = 25;
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.2, w - 120, 82, "left");
   ctx.shadowBlur = 0;
-  drawBottomTicker(ctx, w, h, "#00ffc8");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#00ffc8", true);
   drawOtvWatermark(ctx, data);
 }
 
@@ -1296,7 +1292,7 @@ function renderGradientMesh(ctx: CanvasRenderingContext2D, data: CardData, w: nu
     ctx.fillRect(0, 0, w, h);
   }
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.48, w, h * 0.52);
+    drawPhoto(ctx, data, 0, h * 0.48, w, h * 0.52);
     const imgFade = createGradient(ctx, 0, h * 0.42, 0, h * 0.6, [[0, "#0a0a2e"], [1, "transparent"]]);
     ctx.fillStyle = imgFade;
     ctx.fillRect(0, h * 0.42, w, h * 0.18);
@@ -1305,22 +1301,15 @@ function renderGradientMesh(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawBadge(ctx, data.category, w / 2, h * 0.15, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 28);
   drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78, "left", hlFont(data));
-  drawBottomTicker(ctx, w, h, "#ff6ec7");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#ff6ec7", true);
   drawOtvWatermark(ctx, data);
 }
 
 function renderPaperTexture(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
-  ctx.fillStyle = "#f0e8d8";
-  ctx.fillRect(0, 0, w, h);
-  ctx.fillStyle = "rgba(180,160,120,0.04)";
-  for (let i = 0; i < w; i += 3) {
-    for (let j = 0; j < h; j += 3) {
-      if (Math.random() > 0.5) ctx.fillRect(i, j, 2, 2);
-    }
-  }
+  drawPaperTexture(ctx, w, h, "#f0e8d8", 0.03);
+  drawSandyGrain(ctx, w, h, 0.02, true);
   drawLogo(ctx, data.channelLogo, 50, 40, 130, 50);
-  ctx.fillStyle = "#8d6e63";
-  ctx.fillRect(50, 110, 60, 4);
+  drawAccentBar(ctx, 50, 110, 50, 4, "#8d6e63", true);
   ctx.font = `800 56px ${bnFont(data)}`;
   ctx.fillStyle = "#2c1810";
   ctx.textBaseline = "top";
@@ -1331,7 +1320,7 @@ function renderPaperTexture(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.textAlign = "left";
   ctx.fillText(data.viaText, 50, endY + 70);
   if (data.mainPhoto) {
-    drawImageCover(ctx, data.mainPhoto, 0, h * 0.55, w, h * 0.45);
+    drawPhoto(ctx, data, 0, h * 0.55, w, h * 0.45);
     const fadeTop = createGradient(ctx, 0, h * 0.55, 0, h * 0.62, [[0, "#f0e8d8"], [1, "transparent"]]);
     ctx.fillStyle = fadeTop;
     ctx.fillRect(0, h * 0.55, w, h * 0.07);
@@ -1375,14 +1364,14 @@ function renderRetroWave(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
     ctx.save();
     roundedRect(ctx, w * 0.2, h * 0.5, w * 0.6, h * 0.4, 8);
     ctx.clip();
-    drawImageCover(ctx, data.mainPhoto, w * 0.2, h * 0.5, w * 0.6, h * 0.4);
+    drawPhoto(ctx, data, w * 0.2, h * 0.5, w * 0.6, h * 0.4);
     ctx.restore();
-    ctx.strokeStyle = "#ff6ec7";
+    ctx.strokeStyle = "rgba(255,110,199,0.5)";
     ctx.lineWidth = 2;
     roundedRect(ctx, w * 0.2, h * 0.5, w * 0.6, h * 0.4, 8);
     ctx.stroke();
   }
-  drawBottomTicker(ctx, w, h, "#ff6ec7");
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#ff6ec7", true);
   drawOtvWatermark(ctx, data);
 }
 

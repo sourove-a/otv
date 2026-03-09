@@ -40,6 +40,8 @@ import {
   SlidersHorizontal,
   Type,
   Palette,
+  Eraser,
+  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import otvLogoTransparent from "@assets/otv_1773042288152.jpg";
@@ -137,6 +139,7 @@ export default function Home() {
   const [highlightColor, setHighlightColor] = useState("#ffc107");
   const [mainPhotoSrc, setMainPhotoSrc] = useState<string | null>(null);
   const [mainPhotoImg, setMainPhotoImg] = useState<HTMLImageElement | null>(null);
+  const [isRemovingBg, setIsRemovingBg] = useState(false);
   const [secondPhotoSrc, setSecondPhotoSrc] = useState<string | null>(null);
   const [secondPhotoImg, setSecondPhotoImg] = useState<HTMLImageElement | null>(null);
   const [logoSrc, setLogoSrc] = useState<string | null>(null);
@@ -151,6 +154,12 @@ export default function Home() {
   const [otvLogoY, setOtvLogoY] = useState(CANVAS_SIZE - 60);
   const [otvLogoSize, setOtvLogoSize] = useState(OTV_LOGO_DEFAULT_SIZE);
   const [isDraggingLogo, setIsDraggingLogo] = useState(false);
+  const [imageOffsetX, setImageOffsetX] = useState(0);
+  const [imageOffsetY, setImageOffsetY] = useState(0);
+  const [imageZoom, setImageZoom] = useState(1);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [dragMode, setDragMode] = useState<"logo" | "image">("logo");
+  const dragStartRef = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
   const [templateFilter, setTemplateFilter] = useState("all");
   const [templateSearch, setTemplateSearch] = useState("");
   const [headlineFontSize, setHeadlineFontSize] = useState(100);
@@ -198,6 +207,41 @@ export default function Home() {
     });
   }, [loadImg]);
 
+  const handleRemoveBg = useCallback(async () => {
+    if (!mainPhotoSrc || isRemovingBg) return;
+    setIsRemovingBg(true);
+    try {
+      const response = await fetch(mainPhotoSrc);
+      const blob = await response.blob();
+      const formData = new FormData();
+      formData.append("image", blob, "photo.png");
+      const apiRes = await fetch("/api/remove-bg", { method: "POST", body: formData });
+      if (!apiRes.ok) {
+        const errData = await apiRes.json();
+        throw new Error(errData.error || "Background removal failed");
+      }
+      const data = await apiRes.json();
+      if (data.image) {
+        if (mainPhotoSrc) URL.revokeObjectURL(mainPhotoSrc);
+        const newImg = new Image();
+        newImg.crossOrigin = "anonymous";
+        await new Promise<void>((resolve, reject) => {
+          newImg.onload = () => resolve();
+          newImg.onerror = reject;
+          newImg.src = data.image;
+        });
+        setMainPhotoSrc(data.image);
+        setMainPhotoImg(newImg);
+        setIsGenerated(false);
+      }
+    } catch (err: any) {
+      console.error("BG removal error:", err);
+      alert(err.message || "Background removal failed. Please try again.");
+    } finally {
+      setIsRemovingBg(false);
+    }
+  }, [mainPhotoSrc, isRemovingBg]);
+
   const handlePhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -205,6 +249,9 @@ export default function Home() {
     const url = URL.createObjectURL(file);
     setMainPhotoSrc(url);
     setMainPhotoImg(await loadImg(url));
+    setImageOffsetX(0);
+    setImageOffsetY(0);
+    setImageZoom(1);
     setIsGenerated(false);
   }, [loadImg, mainPhotoSrc]);
 
@@ -242,6 +289,7 @@ export default function Home() {
       channelLogo: logoImg, otvLogo: otvLogoImg,
       personName, personTitle, personName2, personTitle2, highlightColor,
       otvLogoX, otvLogoY, otvLogoSize,
+      imageOffsetX, imageOffsetY, imageZoom,
       banglaFont: selectedBanglaFont.family,
       headlineFont: `${selectedBanglaFont.family.split(",")[0]}, "Montserrat", "Noto Sans Bengali", "Hind Siliguri", sans-serif`,
     }, CANVAS_SIZE, CANVAS_SIZE);
@@ -257,7 +305,7 @@ export default function Home() {
       ctx.fillText("OTV.ONLINE", 0, 0);
       ctx.restore();
     }
-  }, [headline, headline2, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize, selectedBanglaFont]);
+  }, [headline, headline2, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX, imageOffsetY, imageZoom, selectedBanglaFont]);
 
   const renderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -301,62 +349,102 @@ export default function Home() {
     } catch (_) {}
   }, []);
 
-  const handlePreviewMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!previewRef.current) return;
+  const getCanvasCoords = useCallback((clientX: number, clientY: number) => {
+    if (!previewRef.current) return null;
     const rect = previewRef.current.getBoundingClientRect();
-    const scaleX = CANVAS_SIZE / rect.width;
-    const scaleY = CANVAS_SIZE / rect.height;
-    const cx = (e.clientX - rect.left) * scaleX;
-    const cy = (e.clientY - rect.top) * scaleY;
-    const logoHalf = otvLogoSize / 2;
-    if (cx >= otvLogoX - logoHalf - 30 && cx <= otvLogoX + logoHalf + 30 &&
-        cy >= otvLogoY - logoHalf - 30 && cy <= otvLogoY + logoHalf + 30) {
-      setIsDraggingLogo(true);
-    }
+    return {
+      x: (clientX - rect.left) * (CANVAS_SIZE / rect.width),
+      y: (clientY - rect.top) * (CANVAS_SIZE / rect.height),
+    };
+  }, []);
+
+  const isNearLogo = useCallback((cx: number, cy: number) => {
+    const pad = 30;
+    const half = otvLogoSize / 2;
+    return cx >= otvLogoX - half - pad && cx <= otvLogoX + half + pad &&
+           cy >= otvLogoY - half - pad && cy <= otvLogoY + half + pad;
   }, [otvLogoX, otvLogoY, otvLogoSize]);
+
+  const handlePreviewMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const pt = getCanvasCoords(e.clientX, e.clientY);
+    if (!pt) return;
+    if (dragMode === "logo" && isNearLogo(pt.x, pt.y)) {
+      setIsDraggingLogo(true);
+    } else if (dragMode === "image" && mainPhotoImg) {
+      setIsDraggingImage(true);
+      dragStartRef.current = { x: e.clientX, y: e.clientY, ox: imageOffsetX, oy: imageOffsetY };
+    }
+  }, [dragMode, isNearLogo, getCanvasCoords, mainPhotoImg, imageOffsetX, imageOffsetY]);
 
   const handlePreviewMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDraggingLogo || !previewRef.current) return;
-    const rect = previewRef.current.getBoundingClientRect();
-    const scaleX = CANVAS_SIZE / rect.width;
-    const scaleY = CANVAS_SIZE / rect.height;
-    setOtvLogoX(Math.max(0, Math.min(CANVAS_SIZE, (e.clientX - rect.left) * scaleX)));
-    setOtvLogoY(Math.max(0, Math.min(CANVAS_SIZE, (e.clientY - rect.top) * scaleY)));
-  }, [isDraggingLogo]);
+    if (isDraggingLogo && previewRef.current) {
+      const pt = getCanvasCoords(e.clientX, e.clientY);
+      if (pt) {
+        setOtvLogoX(Math.max(0, Math.min(CANVAS_SIZE, pt.x)));
+        setOtvLogoY(Math.max(0, Math.min(CANVAS_SIZE, pt.y)));
+      }
+    } else if (isDraggingImage && dragStartRef.current && previewRef.current) {
+      const rect = previewRef.current.getBoundingClientRect();
+      const scale = CANVAS_SIZE / rect.width;
+      const dx = (e.clientX - dragStartRef.current.x) * scale;
+      const dy = (e.clientY - dragStartRef.current.y) * scale;
+      setImageOffsetX(dragStartRef.current.ox + dx);
+      setImageOffsetY(dragStartRef.current.oy + dy);
+    }
+  }, [isDraggingLogo, isDraggingImage, getCanvasCoords]);
 
-  const handlePreviewMouseUp = useCallback(() => setIsDraggingLogo(false), []);
+  const handlePreviewMouseUp = useCallback(() => {
+    setIsDraggingLogo(false);
+    setIsDraggingImage(false);
+    dragStartRef.current = null;
+  }, []);
 
   const handlePreviewTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (!previewRef.current || e.touches.length !== 1) return;
-    const rect = previewRef.current.getBoundingClientRect();
+    if (e.touches.length !== 1) return;
     const touch = e.touches[0];
-    const scaleX = CANVAS_SIZE / rect.width;
-    const scaleY = CANVAS_SIZE / rect.height;
-    const cx = (touch.clientX - rect.left) * scaleX;
-    const cy = (touch.clientY - rect.top) * scaleY;
-    const logoHalf = otvLogoSize / 2;
-    if (cx >= otvLogoX - logoHalf - 40 && cx <= otvLogoX + logoHalf + 40 &&
-        cy >= otvLogoY - logoHalf - 40 && cy <= otvLogoY + logoHalf + 40) {
+    const pt = getCanvasCoords(touch.clientX, touch.clientY);
+    if (!pt) return;
+    if (dragMode === "logo" && isNearLogo(pt.x, pt.y)) {
       setIsDraggingLogo(true);
       e.preventDefault();
+    } else if (dragMode === "image" && mainPhotoImg) {
+      setIsDraggingImage(true);
+      dragStartRef.current = { x: touch.clientX, y: touch.clientY, ox: imageOffsetX, oy: imageOffsetY };
+      e.preventDefault();
     }
-  }, [otvLogoX, otvLogoY, otvLogoSize]);
+  }, [dragMode, isNearLogo, getCanvasCoords, mainPhotoImg, imageOffsetX, imageOffsetY]);
 
   const handlePreviewTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isDraggingLogo || !previewRef.current || e.touches.length !== 1) return;
-    e.preventDefault();
-    const rect = previewRef.current.getBoundingClientRect();
+    if (e.touches.length !== 1 || !previewRef.current) return;
     const touch = e.touches[0];
-    const scaleX = CANVAS_SIZE / rect.width;
-    const scaleY = CANVAS_SIZE / rect.height;
-    setOtvLogoX(Math.max(0, Math.min(CANVAS_SIZE, (touch.clientX - rect.left) * scaleX)));
-    setOtvLogoY(Math.max(0, Math.min(CANVAS_SIZE, (touch.clientY - rect.top) * scaleY)));
-  }, [isDraggingLogo]);
+    if (isDraggingLogo) {
+      e.preventDefault();
+      const pt = getCanvasCoords(touch.clientX, touch.clientY);
+      if (pt) {
+        setOtvLogoX(Math.max(0, Math.min(CANVAS_SIZE, pt.x)));
+        setOtvLogoY(Math.max(0, Math.min(CANVAS_SIZE, pt.y)));
+      }
+    } else if (isDraggingImage && dragStartRef.current) {
+      e.preventDefault();
+      const rect = previewRef.current.getBoundingClientRect();
+      const scale = CANVAS_SIZE / rect.width;
+      const dx = (touch.clientX - dragStartRef.current.x) * scale;
+      const dy = (touch.clientY - dragStartRef.current.y) * scale;
+      setImageOffsetX(dragStartRef.current.ox + dx);
+      setImageOffsetY(dragStartRef.current.oy + dy);
+    }
+  }, [isDraggingLogo, isDraggingImage, getCanvasCoords]);
 
   const resetLogoPosition = useCallback(() => {
     setOtvLogoX(CANVAS_SIZE / 2);
     setOtvLogoY(CANVAS_SIZE - 60);
     setOtvLogoSize(OTV_LOGO_DEFAULT_SIZE);
+  }, []);
+
+  const resetImagePosition = useCallback(() => {
+    setImageOffsetX(0);
+    setImageOffsetY(0);
+    setImageZoom(1);
   }, []);
 
   const scrollGallery = useCallback((dir: number) => {
@@ -571,6 +659,10 @@ export default function Home() {
                               <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${G.bg1}80 0%, transparent 60%)` }} />
                               <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (mainPhotoSrc) URL.revokeObjectURL(mainPhotoSrc); setMainPhotoSrc(null); setMainPhotoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-photo">
                                 <X className="w-3 h-3 text-white/80" />
+                              </button>
+                              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveBg(); }} disabled={isRemovingBg} className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all" style={{ background: isRemovingBg ? "rgba(80,160,80,0.3)" : "rgba(80,160,80,0.6)", backdropFilter: "blur(10px)", color: "white", border: `1px solid rgba(120,200,120,0.3)` }} data-testid="button-remove-bg">
+                                {isRemovingBg ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eraser className="w-3 h-3" />}
+                                {isRemovingBg ? "Processing..." : "BG Remove"}
                               </button>
                             </div>
                           ) : (
@@ -804,6 +896,51 @@ export default function Home() {
                       </div>
                     </div>
 
+                    {mainPhotoImg && (
+                      <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r, backdropFilter: G.blurSm }}>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
+                              <ImageIcon className="w-4 h-4 text-green-400/50" />
+                            </div>
+                            <div>
+                              <span className="text-[10px] font-bold text-white/45">{"\u099B\u09AC\u09BF \u09AA\u09CB\u099C\u09BF\u09B6\u09A8"}</span>
+                              <p className="text-[7px] text-white/18">{"\u09AA\u09CD\u09B0\u09BF\u09AD\u09BF\u0989\u09A4\u09C7 \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997 \u0995\u09B0\u09C7 \u099B\u09AC\u09BF \u09B8\u09B0\u09BE\u09A8"}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => setDragMode(dragMode === "image" ? "logo" : "image")}
+                              className="px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all"
+                              style={{
+                                background: dragMode === "image" ? "rgba(80,160,80,0.2)" : G.panel,
+                                border: `1px solid ${dragMode === "image" ? "rgba(80,160,80,0.4)" : G.panelBorder}`,
+                                color: dragMode === "image" ? "rgba(120,200,120,0.8)" : "rgba(255,255,255,0.25)",
+                              }}
+                              data-testid="button-toggle-drag-mode"
+                            >
+                              {dragMode === "image" ? "\u099B\u09AC\u09BF \u09AE\u09CB\u09A1" : "\u09B2\u09CB\u0997\u09CB \u09AE\u09CB\u09A1"}
+                            </button>
+                            <button onClick={resetImagePosition} className="p-2 rounded-xl transition-all hover:scale-105" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-reset-image-pos">
+                              <RotateCcw className="w-3.5 h-3.5 text-white/25" />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button onClick={() => setImageZoom(Math.max(0.5, imageZoom - 0.1))} className="p-2 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-out">
+                            <ZoomOut className="w-3.5 h-3.5 text-white/25" />
+                          </button>
+                          <div className="flex-1 relative h-2 rounded-full overflow-hidden" style={{ background: "rgba(120,180,120,0.06)" }}>
+                            <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((imageZoom - 0.5) / 1.5) * 100}%`, background: "linear-gradient(90deg, rgba(80,160,80,0.25), rgba(120,200,120,0.4))" }} />
+                          </div>
+                          <button onClick={() => setImageZoom(Math.min(2, imageZoom + 0.1))} className="p-2 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-in">
+                            <ZoomIn className="w-3.5 h-3.5 text-white/25" />
+                          </button>
+                          <span className="text-[9px] text-white/18 font-mono w-10 text-right">{Math.round(imageZoom * 100)}%</span>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r }}>
                       <div className="flex items-center gap-2.5 mb-2">
                         <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain" style={{ background: "rgba(120,180,120,0.08)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
@@ -932,17 +1069,22 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="text-[7px] text-white/8 px-2 py-1 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }}>{selectedTemplate.nameBn}</span>
-                    {isDraggingLogo && (
+                    {(isDraggingLogo || isDraggingImage) && (
                       <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-[7px] text-green-400/50 px-2 py-1 rounded-xl" style={{ background: G.accent }}>
-                        <Move className="w-3 h-3 inline mr-0.5" />{"\u09B8\u09B0\u09BE\u09A8\u09CB..."}
+                        <Move className="w-3 h-3 inline mr-0.5" />{isDraggingImage ? "\u099B\u09AC\u09BF \u09B8\u09B0\u09BE\u09A8\u09CB..." : "\u09B8\u09B0\u09BE\u09A8\u09CB..."}
                       </motion.span>
+                    )}
+                    {dragMode === "image" && mainPhotoImg && !isDraggingImage && (
+                      <span className="text-[7px] text-amber-400/50 px-2 py-1 rounded-xl" style={{ background: "rgba(200,168,50,0.08)" }}>
+                        <ImageIcon className="w-3 h-3 inline mr-0.5" />{"\u099B\u09AC\u09BF \u09A1\u09CD\u09B0\u09CD\u09AF\u09BE\u0997 \u09AE\u09CB\u09A1"}
+                      </span>
                     )}
                   </div>
                 </div>
                 <div
                   ref={previewRef}
                   className="overflow-hidden relative"
-                  style={{ background: "#000", borderRadius: G.r, cursor: isDraggingLogo ? "grabbing" : "default" }}
+                  style={{ background: "#000", borderRadius: G.r, cursor: (isDraggingLogo || isDraggingImage) ? "grabbing" : (dragMode === "image" && mainPhotoImg ? "grab" : "default") }}
                   data-testid="preview-container"
                   onMouseDown={handlePreviewMouseDown}
                   onMouseMove={handlePreviewMouseMove}

@@ -1,0 +1,201 @@
+Build a full responsive web app called “OTV Card Maker” or “Premium Bangla News Card Generator”.
+
+Goal:
+Create a professional template-based social media card generator for Bangla news graphics, quote cards, bulletin cards, editorial cards, portrait cards, and breaking news cards. The app should feel polished, modern, premium, and production-ready.
+
+Tech stack:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- HTML5 Canvas for rendering
+- No backend required
+- Everything should run client-side in browser
+- Organize code cleanly into reusable components and utilities
+
+Main app layout:
+- Left sidebar or left control panel for editing options
+- Center or right side large live preview area
+- Top bar with branding and template navigation
+- Responsive layout for desktop first, but mobile also usable
+
+Core features:
+1. Create square cards in 1080x1080
+2. Support multiple card templates
+3. Live preview updates instantly
+4. Upload main image
+5. Upload logo
+6. Add headline
+7. Add subheadline
+8. Add bullet text
+9. Add quote text
+10. Add source / courtesy / via text
+11. Add speaker name and designation
+12. Highlight selected text segments
+13. Toggle watermark
+14. Toggle background grid lines
+15. Toggle sandy grain / paper texture
+16. Choose accent colors
+17. Download final output as PNG
+18. Reset template
+19. Switch between different preset templates
+20. Use Bangla-friendly text layout and wrapping
+
+Templates required:
+- Headline card
+- Headline + image card
+- Quote card
+- Breaking news card
+- Bullet point info card
+- Portrait editorial card
+- Minimal paper card
+- Dark editorial card
+
+Visual design direction:
+The app and templates must feel premium and visually rich, inspired by modern Bangla editorial graphics shared on Facebook.
+
+Important aesthetic requirements:
+- Elegant background lines or grid behind content
+- Sandy / dusty / grainy paper texture
+- Bright foreground accents
+- Strong hierarchy in headline
+- Highlight strips with rich yellow or vivid color
+- Rounded corners
+- Modern, premium composition
+- Not flat or generic
+- Not cartoonish
+- Not too corporate
+- Should feel like a real social media news design tool
+
+Background styles to include:
+- Off-white editorial paper
+- Light gray paper
+- Sandy paper texture
+- Soft dark grain texture
+- Grid line background
+- Newspaper-style subtle print feel
+- Optional halftone / light noise overlay
+
+Control panel sections:
+- Template selection
+- Content inputs
+- Text styling
+- Background styling
+- Image settings
+- Branding settings
+- Export settings
+
+Detailed controls:
+Template selection:
+- Horizontal template cards or chips
+- Each template preview should show mini style preview
+
+Content controls:
+- Headline input
+- Subheadline input
+- Quote input
+- Bullet list input
+- Source input
+- Courtesy input
+- Name input
+- Designation input
+- Date input
+
+Text styling controls:
+- Font size sliders
+- Font weight options
+- Text alignment
+- Line height slider
+- Letter spacing slider
+- Text color picker
+- Highlight color picker
+- Accent color picker
+
+Background controls:
+- Background style selector
+- Grid toggle
+- Grain toggle
+- Texture intensity slider
+- Noise intensity slider
+- Brightness / contrast controls for background layer
+
+Image controls:
+- Upload photo
+- Upload PNG logo
+- Image fit mode
+- Rounded corners slider
+- Circle crop option
+- Image position controls
+- Overlay opacity slider
+
+Branding controls:
+- Source label
+- Watermark text
+- Corner logo placement
+- Footer badge
+- Small category tag
+
+Export controls:
+- Export PNG
+- Preview scale options
+- High resolution rendering
+- Clear canvas button
+
+Canvas requirements:
+- Use HTML5 Canvas as the main rendering engine for final output
+- Render at high resolution for crisp PNG download
+- Implement manual Bangla text wrapping logic
+- Support highlight rectangles behind selected words or lines
+- Layer order should be:
+  background color
+  texture
+  grid lines
+  decorative accents
+  image
+  overlays
+  text
+  logo
+  watermark
+  footer/meta
+
+Need a modular architecture:
+- components for controls and preview
+- template definitions in separate files
+- canvas drawing helpers
+- text wrapping utilities
+- image drawing utilities
+- texture generation utilities
+- export utilities
+
+Provide clean project structure:
+- src/components
+- src/templates
+- src/lib/canvas
+- src/lib/utils
+- src/data/presets
+- src/hooks
+
+Include default sample content in Bangla on first load.
+
+Use elegant Bangla placeholder content and demo cards.
+
+The UI should look like a premium design studio:
+- dark glassy top shell or subtle premium dashboard
+- rounded panels
+- soft borders
+- clean spacing
+- hover states
+- visual depth
+- polished template thumbnails
+
+Make sure the output cards themselves are the priority.
+The generated cards must look premium, aesthetic, shareable, and close to real editorial social media post graphics.
+
+Deliver:
+- full React code
+- reusable components
+- polished styling
+- working live preview
+- working export PNG
+- sample templates
+- no dummy broken buttons
