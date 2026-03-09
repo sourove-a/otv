@@ -31,6 +31,9 @@ export interface CardData {
   personName2: string;
   personTitle2: string;
   highlightColor: string;
+  otvLogoX: number;
+  otvLogoY: number;
+  otvLogoSize: number;
 }
 
 export interface TemplateConfig {
@@ -57,8 +60,12 @@ function drawPurpleGlow(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.fillRect(0, 0, w, h);
 }
 
-function drawOtvWatermark(ctx: CanvasRenderingContext2D, logo: HTMLImageElement | null, cx: number, cy: number, size: number = 60) {
-  if (!logo) return;
+function drawOtvWatermark(ctx: CanvasRenderingContext2D, data: CardData) {
+  if (!data.otvLogo) return;
+  const logo = data.otvLogo;
+  const size = data.otvLogoSize ?? 100;
+  const cx = data.otvLogoX ?? 600;
+  const cy = data.otvLogoY ?? 1140;
   const ratio = Math.min(size / logo.naturalWidth, size / logo.naturalHeight);
   const lw = logo.naturalWidth * ratio;
   const lh = logo.naturalHeight * ratio;
@@ -143,7 +150,7 @@ function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: numb
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawBottomTicker(ctx, w, h);
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 50, 55);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -180,7 +187,7 @@ function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
 
   drawLogo(ctx, data.channelLogo, 50, h - 80, 140, 55);
   drawBottomTicker(ctx, w, h, "#ffc107");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -210,7 +217,7 @@ function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   if (data.mainPhoto) {
     drawImageCover(ctx, data.mainPhoto, 0, h * 0.52, w, h * 0.48);
   }
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 30, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderDualQuote(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -268,7 +275,7 @@ function renderDualQuote(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   } else if (data.mainPhoto) {
     drawImageCover(ctx, data.mainPhoto, halfW, h * 0.62, halfW, h * 0.38);
   }
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 30, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -305,7 +312,7 @@ function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: nu
 
   ctx.fillStyle = "#ffc107";
   ctx.fillRect(0, h - 5, w, 5);
-  drawOtvWatermark(ctx, data.otvLogo, w - 60, h - 40, 45);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderWorldReport(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -352,7 +359,7 @@ function renderWorldReport(ctx: CanvasRenderingContext2D, data: CardData, w: num
   ctx.textBaseline = "middle";
   ctx.fillText("Sponsor Area", w / 2, h - 45);
   drawBottomTicker(ctx, w, h, "#000");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 50, 55);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -397,7 +404,7 @@ function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: num
   }
 
   drawBottomTicker(ctx, w, h, "#cc0000");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -447,7 +454,7 @@ function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: num
   );
 
   drawBottomTicker(ctx, w, h, "#00e676");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -510,7 +517,7 @@ function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: num
   }
 
   drawBottomTicker(ctx, w, h, "#4a90d9");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -548,7 +555,7 @@ function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: n
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
   drawBottomTicker(ctx, w, h, "#9c27b0");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -589,7 +596,7 @@ function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   }
 
   drawBottomTicker(ctx, w, h, "#a855f7");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -638,7 +645,7 @@ function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: n
   }
 
   drawBottomTicker(ctx, w, h, "#d4af37");
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -671,7 +678,7 @@ function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: nu
     ctx.fillStyle = edgeGrad;
     ctx.fillRect(w * 0.5, 0, w * 0.05, h);
   }
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 30, 50);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderDualQuoteSplit(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -737,7 +744,7 @@ function renderDualQuoteSplit(ctx: CanvasRenderingContext2D, data: CardData, w: 
     ctx.fillRect(halfW, photoY, halfW, photoH * 0.3);
   }
 
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h - 40, 55);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderGridHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -766,7 +773,7 @@ function renderGridHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: n
     drawImageCover(ctx, data.mainPhoto, 0, h * 0.42, w, h * 0.58);
   }
 
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, h * 0.42 - 35, 55);
+  drawOtvWatermark(ctx, data);
 }
 
 function renderQuoteHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
@@ -793,7 +800,7 @@ function renderQuoteHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: 
   ctx.textBaseline = "top";
   ctx.fillText(`\u09A4\u09A5\u09CD\u09AF\u09B8\u09C2\u09A4\u09CD\u09B0: ${data.viaText}`, 50, endY + 12);
 
-  drawOtvWatermark(ctx, data.otvLogo, 90, endY + 70, 55);
+  drawOtvWatermark(ctx, data);
 
   if (data.mainPhoto) {
     const photoW = w * 0.55;
@@ -831,7 +838,7 @@ function renderNewsSummary(ctx: CanvasRenderingContext2D, data: CardData, w: num
   const subText = data.headline2 || data.category;
   wrapText(ctx, subText, 50, headlineEndY + 10, w - 100, 34, "left");
 
-  drawOtvWatermark(ctx, data.otvLogo, w / 2, headlineEndY + 60, 55);
+  drawOtvWatermark(ctx, data);
 
   if (data.mainPhoto) {
     const cr = w * 0.16;
