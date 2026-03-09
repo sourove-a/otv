@@ -1,0 +1,41 @@
+Create a single, ultra-premium, high-resolution news graphic card template exactly in the style of Bangladeshi TV news channels like Jamuna TV, Bongo Wiki, Prothom Alo, and DBS news cards from 2025-2026.
+
+Dimensions: 1200×1200 pixels (square, perfect for social media sharing and stories), 300 DPI print-ready quality.
+
+Background: dark dramatic gradient — deep navy blue (#0a0e1f) to almost black (#000814) with subtle purple-cyan glow accents (#4a148c to #7b1fa2). Very cinematic and serious newsroom vibe.
+
+Top section (15% height):
+- Left side: small rectangular placeholder for channel logo (150×60 px, rounded corners 8px). Name this layer exactly "channel_logo" — it must accept user-uploaded PNG with transparency.
+- Right side: small text "Via | Jamuna TV" or "Via | Prothom Alo" in elegant white sans-serif font (size 24px, opacity 0.9). Layer name: "via_text". Make it editable.
+
+Category badge (top center or top right, overlapping slightly):
+- Bright yellow (#ffeb3b) or golden (#ffc107) rounded rectangle badge (pill shape, border radius 30px).
+- Bold uppercase white text inside like "JUSTICE" or "NATIONAL" or "WORLD" or "BREAKING" (font: Impact or Montserrat ExtraBold, size 38-48px with 2px black stroke for contrast).
+- Layer name: "category_badge" — text and background color both editable.
+
+Main headline area (middle 50-60%):
+- 2–4 lines maximum bold Bangla + English mixed headline.
+- Primary font: SolaimanLipi or Noto Sans Bengali + Montserrat/Bebas Neue fallback, size 72–110px depending on length.
+- Color: bright white (#ffffff) with subtle yellow glow (#ffeb3b) outer shadow 4px.
+- Left-aligned or center-aligned, high contrast.
+- Layer name: "main_headline" — multiline text support, editable.
+
+Large central/right photo placeholder:
+- Big square or slightly rounded rectangle (700×700 px or 800×500 px) for main news photo (dog, person, event etc.).
+- Subtle white border 4px or drop shadow for pop-out effect.
+- Layer name: exactly "main_photo" — must accept any user-uploaded image URL, auto-crop to fit with object-fit: cover.
+
+Bottom section (bottom 15-20%):
+- Small secondary text like "Photo—Collected" or source credit in gray-white (#e0e0e0, size 22px).
+- Optional small sponsor logo or watermark placeholder (layer name: "sponsor_logo").
+- Very thin horizontal gold line separator above it.
+
+Overall style rules:
+- Extremely professional, TV-news urgent & authoritative look — high contrast, dramatic lighting, no cartoonish elements.
+- Support for Bangla Unicode text perfectly (use compatible fonts).
+- All text layers must have editable: text content, color, font size, alignment.
+- All image layers must support external URL replacement (user upload).
+- Final output must look identical to Jamuna TV / Bongo Wiki viral news cards with yellow accents, dark moody background, bold headlines.
+- Add subtle news ticker-style thin yellow line at very bottom if possible.
+
+Generate only ONE clean, well-organized template with properly named & grouped layers ready for API automation (image replacement + text dynamic change).
