@@ -332,3 +332,24 @@ export function drawCircularImage(
 export const BENGALI_FONT = '"Noto Sans Bengali", "Hind Siliguri", sans-serif';
 export const HEADLINE_FONT = '"Montserrat", "Noto Sans Bengali", "Hind Siliguri", sans-serif';
 export const SANS_FONT = '"Montserrat", sans-serif';
+
+export const BANGLA_FONT_OPTIONS = [
+  { id: "noto-sans", name: "Noto Sans Bengali", family: '"Noto Sans Bengali", sans-serif', bn: "\u09A8\u09CB\u099F\u09CB \u09B8\u09CD\u09AF\u09BE\u09A8\u09CD\u09B8", style: "modern" },
+  { id: "noto-serif", name: "Noto Serif Bengali", family: '"Noto Serif Bengali", serif', bn: "\u09A8\u09CB\u099F\u09CB \u09B8\u09C7\u09B0\u09BF\u09AB", style: "elegant" },
+  { id: "hind-siliguri", name: "Hind Siliguri", family: '"Hind Siliguri", sans-serif', bn: "\u09B9\u09BF\u09A8\u09CD\u09A6 \u09B6\u09BF\u09B2\u09BF\u0997\u09C1\u09DC\u09BF", style: "clean" },
+  { id: "siyam-rupali", name: "SiyamRupali", family: '"SiyamRupali", sans-serif', bn: "\u09B8\u09BF\u09AF\u09BC\u09BE\u09AE\u09B0\u09C2\u09AA\u09BE\u09B2\u09C0", style: "classic" },
+  { id: "solaiman-lipi", name: "SolaimanLipi", family: '"SolaimanLipi", sans-serif', bn: "\u09B8\u09CB\u09B2\u09BE\u0987\u09AE\u09BE\u09A8\u09B2\u09BF\u09AA\u09BF", style: "standard" },
+  { id: "kalpurush", name: "Kalpurush", family: '"Kalpurush", sans-serif', bn: "\u0995\u09B2\u09CD\u09AA\u09C1\u09B0\u09C1\u09B7", style: "bold" },
+  { id: "nikosh", name: "Nikosh", family: '"Nikosh", sans-serif', bn: "\u09A8\u09BF\u0995\u09B7", style: "editorial" },
+  { id: "anek-bangla", name: "Anek Bangla", family: '"Anek Bangla", sans-serif', bn: "\u0985\u09A8\u09C7\u0995 \u09AC\u09BE\u0982\u09B2\u09BE", style: "modern" },
+  { id: "baloo-da", name: "Baloo Da 2", family: '"Baloo Da 2", sans-serif', bn: "\u09AC\u09BE\u09B2\u09C1 \u09A6\u09BE", style: "playful" },
+  { id: "tiro-bangla", name: "Tiro Bangla", family: '"Tiro Bangla", serif', bn: "\u099F\u09BF\u09B0\u09CB \u09AC\u09BE\u0982\u09B2\u09BE", style: "literary" },
+  { id: "galada", name: "Galada", family: '"Galada", cursive', bn: "\u0997\u09BE\u09B2\u09BE\u09A6\u09BE", style: "decorative" },
+  { id: "atma", name: "Atma", family: '"Atma", sans-serif', bn: "\u0986\u09A4\u09CD\u09AE\u09BE", style: "handwritten" },
+  { id: "mukti", name: "Mukti", family: '"Mukti", sans-serif', bn: "\u09AE\u09C1\u0995\u09CD\u09A4\u09BF", style: "newspaper" },
+  { id: "bangla", name: "Bangla", family: '"Bangla", sans-serif', bn: "\u09AC\u09BE\u0982\u09B2\u09BE", style: "standard" },
+  { id: "akaash", name: "Akaash", family: '"Akaash", sans-serif', bn: "\u0986\u0995\u09BE\u09B6", style: "creative" },
+  { id: "mina", name: "Mina", family: '"Mina", sans-serif', bn: "\u09AE\u09BF\u09A8\u09BE", style: "rounded" },
+] as const;
+
+export type BanglaFontId = typeof BANGLA_FONT_OPTIONS[number]['id'];

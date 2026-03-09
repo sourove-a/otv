@@ -1,0 +1,194 @@
+Build a full responsive web app called “Premium Bangla News Card Generator”.
+
+The app should generate square social media news graphics and quote cards inspired by modern Bangla news pages and editorial graphics.
+
+Use:
+- HTML
+- CSS
+- Vanilla JavaScript
+- Canvas API
+
+Main goal:
+Create a beautiful template-based card generator where users can make highly aesthetic Bangla news cards with textured backgrounds, grid lines, sandy grain effect, bright front colors, highlighted text, and image-based layouts.
+
+Core layout:
+- Left side control panel
+- Right side live 1080x1080 preview
+- Fully responsive UI
+- Preview must update live while typing
+
+Card size:
+- Default export size: 1080x1080
+- Also keep internal rendering sharp for download
+
+Templates to include:
+1. Headline only card
+2. Headline + image card
+3. Quote card
+4. Breaking news card
+5. Info bullet card
+6. Portrait news card
+7. Minimal editorial card
+
+User controls:
+- Upload main image
+- Upload logo
+- Headline input
+- Subheadline input
+- Quote input
+- Bullet point input
+- Speaker/author/source name
+- Date / courtesy line
+- Highlight words input
+- Template selector
+- Text color picker
+- Accent color picker
+- Background style selector
+- Toggle for watermark
+- Toggle for grid lines
+- Toggle for grain / sand texture
+- Toggle for highlight strips
+- Download as PNG
+
+Visual design requirements:
+The design should feel premium, editorial, clean, and modern.
+
+Background styles must include:
+- Off-white paper texture
+- Light gray paper texture
+- Sandy / dusty texture
+- Newspaper-like subtle grain
+- Soft background grid lines
+- Thin vertical and horizontal lines in the top portion
+- Slight noise overlay to give a printed feel
+- Soft shadow and depth, not flat
+
+Important background direction:
+I want the background to have subtle but elegant line patterns behind the text, similar to notebook/editorial grid layouts.
+I also want a slightly sandy, dusty, grainy texture that looks premium and visually rich.
+The background should never feel plain. It should feel like textured paper with modern design lines.
+
+Front color direction:
+Use brighter and more attractive front colors.
+Text and accent colors should feel vivid and premium, not dull.
+Suggested accent colors:
+- Bright yellow highlight
+- Deep green
+- Rich blue
+- Strong orange
+- Bold black typography
+Allow the design to feel visually punchy but still elegant.
+
+Typography:
+- Bangla-friendly bold headline style
+- Large readable title
+- Strong editorial hierarchy
+- Clean spacing
+- Good line-height for Bangla text
+- Highlighted words must stand out clearly
+- Support multi-line text wrapping on canvas
+
+Text styling:
+- Headline in bold black or dark color
+- Highlighted words/segments with bright yellow background
+- Optional green rounded label bar behind top heading
+- Quote cards should have oversized quotation marks
+- Source line smaller and elegant
+- Add text shadow only very subtly if needed
+
+Image styling:
+- Rounded image masks
+- Circle portrait crop option
+- Rectangular image with rounded corners
+- Soft drop shadows
+- Premium collage feel
+- Optional image overlay gradient for readability
+
+Template styling details:
+1. Headline only card:
+   - Strong top area with grid line background
+   - Big headline in center/top
+   - Highlight strip under selected text
+   - Minimal editorial look
+
+2. Headline + image card:
+   - One portrait or rectangular image
+   - Text block aligned nicely
+   - Highlighted key phrases
+   - Balanced white space
+
+3. Quote card:
+   - Large quote symbol
+   - Main quote text with bright highlight blocks
+   - Speaker name box
+   - Person image on one side
+   - Optional blurred background panel
+
+4. Breaking news card:
+   - Bold label at top
+   - Dramatic but clean
+   - Strong contrast
+   - Bright accent strip
+
+5. Info bullet card:
+   - Bullet points with colored circular dots
+   - Selected lines highlighted
+   - Editorial infographic look
+
+UI styling:
+- Premium dark/light mixed dashboard
+- Rounded controls
+- Smooth hover effects
+- Soft shadows
+- Clean spacing
+- Modern control panel
+- Easy to use form sections
+- Card preview area should look like a design studio
+
+Canvas rendering requirements:
+- Render all card elements on HTML5 Canvas
+- Handle Bangla text wrapping manually
+- Draw highlight rectangles behind matched text
+- Draw background textures using canvas patterns/noise
+- Draw subtle grid lines in the background
+- Add layered composition like:
+  background color
+  paper grain
+  grid lines
+  accent blocks
+  images
+  text
+  logo
+  watermark
+
+Special style instruction:
+The generated cards must feel similar to professional Bangla social media editorial cards.
+I especially want:
+- beautiful background lines
+- slightly sandy/grainy texture
+- bright front accent colors
+- strong visual hierarchy
+- elegant modern composition
+- realistic premium paper feel
+
+Technical features:
+- Everything should work in browser
+- No backend needed
+- All templates generated client-side
+- Download final image as PNG
+- Use modular JavaScript functions
+- Clean and readable code
+- Organize files into:
+  index.html
+  style.css
+  script.js
+
+Also include:
+- 3 to 5 sample preset templates
+- Sample Bangla placeholder content
+- Default generated demo card on first load
+
+Important:
+Do not make the design generic.
+Make it look polished, aesthetic, and close to real shareable Facebook news cards.
+The background texture, lines, and bright foreground accents are very important.

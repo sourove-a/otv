@@ -76,12 +76,14 @@ Premium Bangladeshi TV news-style photo card generator for otv.online. Features 
 - `makePremiumCard(bgStyle, accentColor)` - Premium special effects
 
 ## Fonts
-- Noto Sans Bengali (primary Bengali font)
-- Hind Siliguri (Bengali fallback)
-- Montserrat (Headlines, English text)
+- 16 selectable Bengali fonts via `BANGLA_FONT_OPTIONS` in canvas-utils.ts
+- Sources: Google Fonts + fonts.maateen.me (SiyamRupali, SolaimanLipi, Kalpurush, Nikosh, Akaash, Mukti, Bangla)
+- Font selector UI in Style tab — shows preview in each font's Bengali name
+- Templates use `bnFont(data)` / `hlFont(data)` helpers to respect user's font selection
+- Default: Noto Sans Bengali; Fallback: Hind Siliguri; Headlines: Montserrat + selected Bengali font
 
 ## CardData Interface
-headline, headline2, category, viaText, mainPhoto, secondPhoto, channelLogo, otvLogo, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize
+headline, headline2, category, viaText, mainPhoto, secondPhoto, channelLogo, otvLogo, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize, banglaFont?, headlineFont?
 
 ## drawOtvWatermark
 Signature: `(ctx, data: CardData)` - reads otvLogoX/Y/Size from data with `??` nullish coalescing defaults. Used in all 68 templates.

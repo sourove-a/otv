@@ -34,6 +34,8 @@ export interface CardData {
   otvLogoX: number;
   otvLogoY: number;
   otvLogoSize: number;
+  banglaFont?: string;
+  headlineFont?: string;
 }
 
 export interface TemplateConfig {
@@ -44,6 +46,14 @@ export interface TemplateConfig {
   accentColor: string;
   defaultCategory: string;
   render: (ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) => void;
+}
+
+function bnFont(data: CardData): string {
+  return data.banglaFont || BENGALI_FONT;
+}
+
+function hlFont(data: CardData): string {
+  return data.headlineFont || HEADLINE_FONT;
 }
 
 function drawDarkBg(ctx: CanvasRenderingContext2D, w: number, h: number, c1: string, c2: string) {
@@ -84,9 +94,10 @@ function drawHeadlineWithHighlight(
   mainColor: string,
   highlightColor: string,
   lineHeight: number,
-  align: "left" | "center" = "left"
+  align: "left" | "center" = "left",
+  fontOverride?: string
 ): number {
-  ctx.font = `900 ${fontSize}px ${HEADLINE_FONT}`;
+  ctx.font = `900 ${fontSize}px ${fontOverride || HEADLINE_FONT}`;
   ctx.textBaseline = "top";
   const lines = wrapTextLines(ctx, text.toUpperCase(), maxWidth);
   let currentY = y;
@@ -145,7 +156,7 @@ function renderJamunaDark(ctx: CanvasRenderingContext2D, data: CardData, w: numb
   drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", "#ffc107", "#ffc107", 32);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.22, w - 120, 68, "#ffffff", "#ffc107", 82
+    ctx, data.headline, 60, h * 0.22, w - 120, 68, "#ffffff", "#ffc107", 82, "left", hlFont(data)
   );
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
@@ -164,7 +175,7 @@ function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   ctx.fillStyle = textGrad;
   ctx.fillRect(0, 0, w, h * 0.58);
 
-  ctx.font = `700 52px ${BENGALI_FONT}`;
+  ctx.font = `700 52px ${bnFont(data)}`;
   ctx.fillStyle = "#1a1a1a";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 60, 60, w - 120, 68, "left");
@@ -172,12 +183,12 @@ function renderQuoteCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   ctx.fillStyle = "#ffc107";
   ctx.fillRect(60, endY + 10, 80, 4);
 
-  ctx.font = `700 32px ${BENGALI_FONT}`;
+  ctx.font = `700 32px ${bnFont(data)}`;
   ctx.fillStyle = "#1a1a1a";
   ctx.textAlign = "left";
   ctx.fillText(data.personName || data.category, 60, endY + 30);
 
-  ctx.font = `400 22px ${BENGALI_FONT}`;
+  ctx.font = `400 22px ${bnFont(data)}`;
   ctx.fillStyle = "#555";
   ctx.fillText(data.personTitle || data.viaText, 60, endY + 70);
 
@@ -204,7 +215,7 @@ function renderCleanNews(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
     drawLogo(ctx, data.channelLogo, w - 120, 40, 70, 70);
   }
 
-  ctx.font = `800 58px ${BENGALI_FONT}`;
+  ctx.font = `800 58px ${bnFont(data)}`;
   ctx.fillStyle = "#111111";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 60, 130, w - 120, 72, "left");
@@ -236,7 +247,7 @@ function renderDualQuote(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   const leftText = data.headline || "";
   const rightText = data.headline2 || data.headline || "";
 
-  ctx.font = `800 44px ${BENGALI_FONT}`;
+  ctx.font = `800 44px ${bnFont(data)}`;
   ctx.fillStyle = "#111";
   ctx.textBaseline = "top";
   const leftEndY = wrapText(ctx, leftText, 40, 120, halfW - 80, 58, "left");
@@ -252,7 +263,7 @@ function renderDualQuote(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
     ctx.fillText(data.personTitle, 40, leftEndY + 38);
   }
 
-  ctx.font = `800 44px ${BENGALI_FONT}`;
+  ctx.font = `800 44px ${bnFont(data)}`;
   ctx.fillStyle = "#e0e0e0";
   const rightEndY = wrapText(ctx, rightText, halfW + 40, 120, halfW - 80, 58, "left");
 
@@ -298,7 +309,7 @@ function renderNationalDark(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", "#ffc107", "#ffc107", 30);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", "#ffc107", 78
+    ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", "#ffc107", 78, "left", hlFont(data)
   );
 
   ctx.save();
@@ -348,12 +359,12 @@ function renderWorldReport(ctx: CanvasRenderingContext2D, data: CardData, w: num
   drawBadge(ctx, data.category, w / 2, h * 0.16, "#ffc107", "#000", undefined, 32);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.22, w - 120, 64, "#ffffff", "#ffc107", 80
+    ctx, data.headline, 60, h * 0.22, w - 120, 64, "#ffffff", "#ffc107", 80, "left", hlFont(data)
   );
 
   ctx.fillStyle = "#ffc107";
   ctx.fillRect(0, h - 80, w, 70);
-  ctx.font = `700 22px ${BENGALI_FONT}`;
+  ctx.font = `700 22px ${bnFont(data)}`;
   ctx.fillStyle = "#000";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -385,7 +396,7 @@ function renderBreakingRed(ctx: CanvasRenderingContext2D, data: CardData, w: num
 
   drawBadge(ctx, "BREAKING", w / 2, h * 0.14, "#cc0000", "#ffffff", undefined, 38);
 
-  ctx.font = `900 72px ${HEADLINE_FONT}`;
+  ctx.font = `900 72px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.2, w - 120, 88, "left");
@@ -450,7 +461,7 @@ function renderSportsGreen(ctx: CanvasRenderingContext2D, data: CardData, w: num
   drawBadge(ctx, data.category || "SPORTS", w / 2, h * 0.12, "#00c853", "#ffffff", undefined, 30);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.17, w - 120, 60, "#ffffff", "#00e676", 76
+    ctx, data.headline, 60, h * 0.17, w - 120, 60, "#ffffff", "#00e676", 76, "left", hlFont(data)
   );
 
   drawBottomTicker(ctx, w, h, "#00e676");
@@ -478,7 +489,7 @@ function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: num
   ctx.fillStyle = "#4a90d9";
   ctx.fillRect(60, h * 0.14, 60, 5);
 
-  ctx.font = `600 48px ${BENGALI_FONT}`;
+  ctx.font = `600 48px ${bnFont(data)}`;
   ctx.fillStyle = "#e0e8f5";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 60, h * 0.18, w - 120, 64, "left");
@@ -487,13 +498,13 @@ function renderOpinionBlue(ctx: CanvasRenderingContext2D, data: CardData, w: num
   ctx.fillRect(60, endY + 10, 80, 4);
 
   if (data.personName) {
-    ctx.font = `700 30px ${BENGALI_FONT}`;
+    ctx.font = `700 30px ${bnFont(data)}`;
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "left";
     ctx.fillText(data.personName, 60, endY + 30);
   }
   if (data.personTitle) {
-    ctx.font = `400 22px ${BENGALI_FONT}`;
+    ctx.font = `400 22px ${bnFont(data)}`;
     ctx.fillStyle = "#8899bb";
     ctx.fillText(data.personTitle, 60, endY + 68);
   }
@@ -550,7 +561,7 @@ function renderInvestigation(ctx: CanvasRenderingContext2D, data: CardData, w: n
   drawBadge(ctx, data.category || "INVESTIGATION", w / 2, h * 0.15, "#9c27b0", "#ffffff", undefined, 28);
 
   drawHeadlineWithHighlight(
-    ctx, data.headline, 60, h * 0.2, w - 120, 62, "#e0c0ff", "#d580ff", 78
+    ctx, data.headline, 60, h * 0.2, w - 120, 62, "#e0c0ff", "#d580ff", 78, "left", hlFont(data)
   );
 
   drawPhotoCredit(ctx, "Photo \u2014 Collected", 28, h - 60);
@@ -579,7 +590,7 @@ function renderSocialModern(ctx: CanvasRenderingContext2D, data: CardData, w: nu
 
   drawBadge(ctx, data.category, w / 2, h * 0.18, "rgba(255,255,255,0.15)", "#ffffff", "rgba(255,255,255,0.3)", 28);
 
-  ctx.font = `900 70px ${HEADLINE_FONT}`;
+  ctx.font = `900 70px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
 
@@ -620,7 +631,7 @@ function renderClassicFormal(ctx: CanvasRenderingContext2D, data: CardData, w: n
 
   drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", "#d4af37", "#d4af37", 28);
 
-  ctx.font = `800 60px ${HEADLINE_FONT}`;
+  ctx.font = `800 60px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
@@ -657,7 +668,7 @@ function renderMinimalLight(ctx: CanvasRenderingContext2D, data: CardData, w: nu
 
   drawLogo(ctx, data.channelLogo, 40, 40, 130, 50);
 
-  ctx.font = `800 56px ${BENGALI_FONT}`;
+  ctx.font = `800 56px ${bnFont(data)}`;
   ctx.fillStyle = "#111";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 40, 120, w * 0.48, 70, "left");
@@ -702,7 +713,7 @@ function renderDualQuoteSplit(ctx: CanvasRenderingContext2D, data: CardData, w: 
   ctx.fillText("\u201C", 20, 10);
   ctx.fillText("\u201C", halfW + 20, 10);
 
-  ctx.font = `700 42px ${BENGALI_FONT}`;
+  ctx.font = `700 42px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   const leftText = data.headline || "";
@@ -714,7 +725,7 @@ function renderDualQuoteSplit(ctx: CanvasRenderingContext2D, data: CardData, w: 
   ctx.fillRect(45, leftEndY + 8, 70, 4);
   ctx.fillRect(halfW + 45, rightEndY + 8, 70, 4);
 
-  ctx.font = `800 28px ${BENGALI_FONT}`;
+  ctx.font = `800 28px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "left";
   const ln1 = data.personName || "";
@@ -722,7 +733,7 @@ function renderDualQuoteSplit(ctx: CanvasRenderingContext2D, data: CardData, w: 
   if (ln1) ctx.fillText(`\u2014 ${ln1}`, 45, leftEndY + 25);
   if (ln2) ctx.fillText(`\u2014 ${ln2}`, halfW + 45, rightEndY + 25);
 
-  ctx.font = `400 20px ${BENGALI_FONT}`;
+  ctx.font = `400 20px ${bnFont(data)}`;
   ctx.fillStyle = "rgba(255,255,255,0.6)";
   if (data.personTitle) ctx.fillText(data.personTitle, 45, leftEndY + 60);
   if (data.personTitle2) ctx.fillText(data.personTitle2, halfW + 45, rightEndY + 60);
@@ -760,10 +771,10 @@ function renderGridHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillRect(0, h * 0.42 - 6, w, 6);
 
   const endY = drawHighlightedText(
-    ctx, data.headline, 50, 50, w - 100, 54, "#1a1a1a", "#ffc107", 72, BENGALI_FONT, "left", 16, 8
+    ctx, data.headline, 50, 50, w - 100, 54, "#1a1a1a", "#ffc107", 72, bnFont(data), "left", 16, 8
   );
 
-  ctx.font = `500 22px ${BENGALI_FONT}`;
+  ctx.font = `500 22px ${bnFont(data)}`;
   ctx.fillStyle = "#555";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
@@ -791,10 +802,10 @@ function renderQuoteHighlight(ctx: CanvasRenderingContext2D, data: CardData, w: 
   ctx.fillText("\u201C", 20, 10);
 
   const endY = drawHighlightedText(
-    ctx, data.headline, 50, 100, w - 100, 58, "#1a1a1a", data.highlightColor || "#ffc107", 78, BENGALI_FONT, "left", 14, 8
+    ctx, data.headline, 50, 100, w - 100, 58, "#1a1a1a", data.highlightColor || "#ffc107", 78, bnFont(data), "left", 14, 8
   );
 
-  ctx.font = `500 22px ${BENGALI_FONT}`;
+  ctx.font = `500 22px ${bnFont(data)}`;
   ctx.fillStyle = "#666";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
@@ -828,10 +839,10 @@ function renderNewsSummary(ctx: CanvasRenderingContext2D, data: CardData, w: num
   drawGridLines(ctx, 0, 0, w, h * 0.18, 35, "rgba(50,100,70,0.08)");
 
   const headlineEndY = drawHighlightedText(
-    ctx, data.headline, 50, 30, w - 100, 50, "#1a1a1a", data.highlightColor || "#ffc107", 68, BENGALI_FONT, "left", 14, 8
+    ctx, data.headline, 50, 30, w - 100, 50, "#1a1a1a", data.highlightColor || "#ffc107", 68, bnFont(data), "left", 14, 8
   );
 
-  ctx.font = `500 26px ${BENGALI_FONT}`;
+  ctx.font = `500 26px ${bnFont(data)}`;
   ctx.fillStyle = "#333";
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
@@ -860,7 +871,7 @@ function renderNewsSummary(ctx: CanvasRenderingContext2D, data: CardData, w: num
     ctx.fill();
 
     const endY = drawHighlightedText(
-      ctx, bullet, bulletX + 22, by + 2, bulletW - 30, 26, "#1a1a1a", data.highlightColor || "#ffc107", 34, BENGALI_FONT, "left", 8, 4
+      ctx, bullet, bulletX + 22, by + 2, bulletW - 30, 26, "#1a1a1a", data.highlightColor || "#ffc107", 34, bnFont(data), "left", 8, 4
     );
     by = endY + 12;
   }
@@ -887,7 +898,7 @@ function makeGradientCard(
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
     drawBadge(ctx, data.category, w / 2, h * 0.16, "transparent", accent, accent, 30);
-    drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", accent, 78);
+    drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.21, w - 120, 62, "#ffffff", accent, 78, "left", hlFont(data));
     drawBottomTicker(ctx, w, h, accent);
     drawOtvWatermark(ctx, data);
   };
@@ -908,7 +919,7 @@ function makePhotoOverlayCard(
     drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
     drawViaText(ctx, data.viaText, w - 50, 60);
     drawBadge(ctx, data.category, w / 2, h * 0.15, badgeBg, badgeText, undefined, 28);
-    ctx.font = `900 66px ${HEADLINE_FONT}`;
+    ctx.font = `900 66px ${hlFont(data)}`;
     ctx.fillStyle = "#ffffff";
     ctx.textBaseline = "top";
     wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.55, w - 120, 82, "left");
@@ -927,7 +938,7 @@ function makeLightCard(
     drawLogo(ctx, data.channelLogo, 50, 40, 130, 50);
     ctx.fillStyle = accent;
     ctx.fillRect(50, 110, 60, 5);
-    ctx.font = `800 56px ${BENGALI_FONT}`;
+    ctx.font = `800 56px ${bnFont(data)}`;
     ctx.fillStyle = textColor;
     ctx.textBaseline = "top";
     const endY = wrapText(ctx, data.headline, 50, 130, w * 0.5, 70, "left");
@@ -960,7 +971,7 @@ function makeThemedCard(
     drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
     drawViaText(ctx, data.viaText, w - 50, 50);
     drawBadge(ctx, data.category, w / 2, h * 0.14, accent, "#ffffff", undefined, 30);
-    drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, "#ffffff", accent, 76);
+    drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.19, w - 120, 60, "#ffffff", accent, 76, "left", hlFont(data));
     if (data.mainPhoto) {
       ctx.save();
       roundedRect(ctx, w * 0.1, h * 0.52, w * 0.8, h * 0.4, 10);
@@ -996,7 +1007,7 @@ function makePremiumCard(
     ctx.fillStyle = accent;
     ctx.fillRect(w / 2 - 40, h * 0.13, 80, 3);
     drawBadge(ctx, data.category, w / 2, h * 0.17, "transparent", accent, accent, 28);
-    ctx.font = `800 60px ${HEADLINE_FONT}`;
+    ctx.font = `800 60px ${hlFont(data)}`;
     ctx.fillStyle = "#ffffff";
     ctx.textBaseline = "top";
     ctx.textAlign = "center";
@@ -1078,12 +1089,12 @@ function renderPhotoPortrait(ctx: CanvasRenderingContext2D, data: CardData, w: n
   drawLogo(ctx, data.channelLogo, 40, 40, 130, 50);
   ctx.fillStyle = "#ffc107";
   ctx.fillRect(40, 120, 60, 4);
-  ctx.font = `800 52px ${BENGALI_FONT}`;
+  ctx.font = `800 52px ${bnFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline, 40, 140, w * 0.45, 66, "left");
   if (data.personName) {
-    ctx.font = `600 26px ${BENGALI_FONT}`;
+    ctx.font = `600 26px ${bnFont(data)}`;
     ctx.fillStyle = "#ffc107";
     ctx.textAlign = "left";
     ctx.fillText(data.personName, 40, h - 120);
@@ -1110,7 +1121,7 @@ function renderPhotoPanorama(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillRect(0, h * 0.5, w, h * 0.1);
   drawLogo(ctx, data.channelLogo, 50, h * 0.58, 130, 50);
   drawViaText(ctx, data.viaText, w - 50, h * 0.6);
-  ctx.font = `900 60px ${HEADLINE_FONT}`;
+  ctx.font = `900 60px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 50, h * 0.66, w - 100, 74, "left");
@@ -1135,7 +1146,7 @@ function renderPhotoVignette(ctx: CanvasRenderingContext2D, data: CardData, w: n
   ctx.fillRect(0, h * 0.6, w, h * 0.4);
   drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
   drawBadge(ctx, data.category, w / 2, h * 0.12, "rgba(0,0,0,0.5)", "#ffffff", "rgba(255,255,255,0.3)", 26);
-  ctx.font = `900 64px ${HEADLINE_FONT}`;
+  ctx.font = `900 64px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.7, w - 120, 80, "left");
@@ -1158,7 +1169,7 @@ function renderPhotoDuotone(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.fillRect(0, 0, w, h);
   drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
   drawViaText(ctx, data.viaText, w - 50, 60);
-  ctx.font = `900 66px ${HEADLINE_FONT}`;
+  ctx.font = `900 66px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.6, w - 120, 82, "left");
@@ -1179,7 +1190,7 @@ function renderPhotoVintage(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   ctx.fillRect(0, 0, w, h);
   drawLogo(ctx, data.channelLogo, 50, 50, 140, 55);
   drawViaText(ctx, data.viaText, w - 50, 60, "#e8d5b0");
-  ctx.font = `900 62px ${HEADLINE_FONT}`;
+  ctx.font = `900 62px ${hlFont(data)}`;
   ctx.fillStyle = "#f5e6c8";
   ctx.textBaseline = "top";
   wrapText(ctx, data.headline.toUpperCase(), 60, h * 0.6, w - 120, 78, "left");
@@ -1230,7 +1241,7 @@ function renderGlassCard(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   drawLogo(ctx, data.channelLogo, panelX + 20, panelY + 20, 120, 45);
   drawViaText(ctx, data.viaText, panelX + panelW - 20, panelY + 25);
   drawBadge(ctx, data.category, w / 2, panelY + panelH * 0.18, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 26);
-  ctx.font = `800 58px ${HEADLINE_FONT}`;
+  ctx.font = `800 58px ${hlFont(data)}`;
   ctx.fillStyle = "#ffffff";
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
@@ -1259,7 +1270,7 @@ function renderNeonGlow(ctx: CanvasRenderingContext2D, data: CardData, w: number
   }
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  ctx.font = `900 66px ${HEADLINE_FONT}`;
+  ctx.font = `900 66px ${hlFont(data)}`;
   ctx.fillStyle = "#00ffc8";
   ctx.textBaseline = "top";
   ctx.shadowColor = "rgba(0,255,200,0.6)";
@@ -1293,7 +1304,7 @@ function renderGradientMesh(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
   drawBadge(ctx, data.category, w / 2, h * 0.15, "rgba(255,255,255,0.1)", "#ffffff", "rgba(255,255,255,0.2)", 28);
-  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78);
+  drawHeadlineWithHighlight(ctx, data.headline, 60, h * 0.2, w - 120, 62, "#ffffff", "#ff6ec7", 78, "left", hlFont(data));
   drawBottomTicker(ctx, w, h, "#ff6ec7");
   drawOtvWatermark(ctx, data);
 }
@@ -1310,7 +1321,7 @@ function renderPaperTexture(ctx: CanvasRenderingContext2D, data: CardData, w: nu
   drawLogo(ctx, data.channelLogo, 50, 40, 130, 50);
   ctx.fillStyle = "#8d6e63";
   ctx.fillRect(50, 110, 60, 4);
-  ctx.font = `800 56px ${BENGALI_FONT}`;
+  ctx.font = `800 56px ${bnFont(data)}`;
   ctx.fillStyle = "#2c1810";
   ctx.textBaseline = "top";
   const endY = wrapText(ctx, data.headline, 50, 130, w - 100, 70, "left");
@@ -1353,7 +1364,7 @@ function renderRetroWave(ctx: CanvasRenderingContext2D, data: CardData, w: numbe
   }
   drawLogo(ctx, data.channelLogo, 50, 40, 150, 60);
   drawViaText(ctx, data.viaText, w - 50, 50);
-  ctx.font = `900 66px ${HEADLINE_FONT}`;
+  ctx.font = `900 66px ${hlFont(data)}`;
   ctx.fillStyle = "#ff6ec7";
   ctx.textBaseline = "top";
   ctx.shadowColor = "rgba(255,110,199,0.5)";

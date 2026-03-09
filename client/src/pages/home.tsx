@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { templates, type TemplateConfig } from "@/lib/templates";
+import { BANGLA_FONT_OPTIONS } from "@/lib/canvas-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -154,6 +155,7 @@ export default function Home() {
   const [templateSearch, setTemplateSearch] = useState("");
   const [headlineFontSize, setHeadlineFontSize] = useState(100);
   const [showTemplateGrid, setShowTemplateGrid] = useState(false);
+  const [selectedBanglaFont, setSelectedBanglaFont] = useState(BANGLA_FONT_OPTIONS[0]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -240,6 +242,8 @@ export default function Home() {
       channelLogo: logoImg, otvLogo: otvLogoImg,
       personName, personTitle, personName2, personTitle2, highlightColor,
       otvLogoX, otvLogoY, otvLogoSize,
+      banglaFont: selectedBanglaFont.family,
+      headlineFont: `${selectedBanglaFont.family.split(",")[0]}, "Montserrat", "Noto Sans Bengali", "Hind Siliguri", sans-serif`,
     }, CANVAS_SIZE, CANVAS_SIZE);
     if (!isPro) {
       ctx.save();
@@ -253,7 +257,7 @@ export default function Home() {
       ctx.fillText("OTV.ONLINE", 0, 0);
       ctx.restore();
     }
-  }, [headline, headline2, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize]);
+  }, [headline, headline2, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, otvLogoX, otvLogoY, otvLogoSize, selectedBanglaFont]);
 
   const renderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -741,6 +745,28 @@ export default function Home() {
                                   <motion.div layoutId="color-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: c.color, boxShadow: `0 2px 8px ${c.color}40` }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
                                     <Check className="w-2.5 h-2.5 text-white" />
                                   </motion.div>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-[8px] font-bold text-white/15 uppercase mb-3 pl-1" style={{ letterSpacing: "0.18em" }}>{"\u09AC\u09BE\u0982\u09B2\u09BE \u09AB\u09A8\u09CD\u099F"}</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {BANGLA_FONT_OPTIONS.map((f) => {
+                          const isAct = selectedBanglaFont.id === f.id;
+                          return (
+                            <button key={f.id} onClick={() => { setSelectedBanglaFont(f); setIsGenerated(false); }} className="group text-left" data-testid={`button-font-${f.id}`}>
+                              <div className={`relative p-3 transition-all duration-300 ${isAct ? "scale-[1.02]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(120,180,120,0.08)" : G.panel, border: isAct ? "2px solid rgba(120,180,120,0.2)" : `1px solid ${G.panelBorder}` }}>
+                                <span className="block text-[15px] text-white/80 leading-tight mb-1" style={{ fontFamily: f.family }}>{f.bn}</span>
+                                <span className="text-[8px] font-bold text-white/25">{f.name}</span>
+                                {isAct && (
+                                  <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full flex items-center justify-center" style={{ background: "rgba(120,180,120,0.3)" }}>
+                                    <Check className="w-2 h-2 text-green-400" />
+                                  </div>
                                 )}
                               </div>
                             </button>
