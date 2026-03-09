@@ -150,31 +150,84 @@ const DEMO_PRESETS = [
   },
 ];
 
+const COLOR_PRESETS = [
+  { id: "aurora-glass", name: "Aurora Glass", nameBn: "\u0985\u09B0\u09CB\u09B0\u09BE \u0997\u09CD\u09B2\u09BE\u09B8", colors: ["#00d2ff", "#7b2ff7", "#ff6bca"], accent: "#7b2ff7" },
+  { id: "neon-ice", name: "Neon Ice", nameBn: "\u09A8\u09BF\u09AF\u09BC\u09A8 \u0986\u0987\u09B8", colors: ["#00f5ff", "#00b4d8", "#0077b6"], accent: "#00f5ff" },
+  { id: "royal-purple", name: "Royal Purple", nameBn: "\u09B0\u09AF\u09BC\u09BE\u09B2 \u09AA\u09BE\u09B0\u09CD\u09AA\u09B2", colors: ["#6a0dad", "#9b59b6", "#c39bd3"], accent: "#9b59b6" },
+  { id: "sunset-glow", name: "Sunset Glow", nameBn: "\u09B8\u09BE\u09A8\u09B8\u09C7\u099F \u0997\u09CD\u09B2\u09CB", colors: ["#ff6b35", "#ff8c42", "#ffd700"], accent: "#ff6b35" },
+  { id: "premium-gold", name: "Premium Gold", nameBn: "\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u0997\u09CB\u09B2\u09CD\u09A1", colors: ["#d4af37", "#f5e6a3", "#b8860b"], accent: "#d4af37" },
+  { id: "emerald-crystal", name: "Emerald Crystal", nameBn: "\u098F\u09AE\u09C7\u09B0\u09BE\u09B2\u09CD\u09A1 \u0995\u09CD\u09B0\u09BF\u09B8\u09CD\u099F\u09BE\u09B2", colors: ["#00c853", "#2ecc71", "#1abc9c"], accent: "#00c853" },
+  { id: "candy-glass", name: "Candy Glass", nameBn: "\u0995\u09CD\u09AF\u09BE\u09A8\u09CD\u09A1\u09BF \u0997\u09CD\u09B2\u09BE\u09B8", colors: ["#ff6bcb", "#ff9a9e", "#fecfef"], accent: "#ff6bcb" },
+  { id: "editorial-frost", name: "Editorial Frost", nameBn: "\u098F\u09A1\u09BF\u099F\u09CB\u09B0\u09BF\u09AF\u09BC\u09BE\u09B2 \u09AB\u09CD\u09B0\u09B8\u09CD\u099F", colors: ["#e0e0e0", "#f5f5f5", "#bdbdbd", "#9e9e9e"], accent: "#757575" },
+  { id: "dark-luxe", name: "Dark Luxe", nameBn: "\u09A1\u09BE\u09B0\u09CD\u0995 \u09B2\u09BE\u0995\u09CD\u09B8", colors: ["#1a1a2e", "#16213e", "#0f3460"], accent: "#e94560" },
+  { id: "rainbow-prism", name: "Rainbow Prism", nameBn: "\u09B0\u09C7\u0987\u09A8\u09AC\u09CB \u09AA\u09CD\u09B0\u09BF\u099C\u09AE", colors: ["#ff0000", "#ff8c00", "#ffff00", "#00ff00", "#0000ff", "#8b00ff"], accent: "#ff8c00" },
+];
+
+const BG_PRESETS = [
+  { id: "aurora-glow", name: "Aurora Glow", nameBn: "\u0985\u09B0\u09CB\u09B0\u09BE \u0997\u09CD\u09B2\u09CB", gradientStops: ["#0a0020", "#1a0040", "#003060"], glowColors: ["rgba(0,210,255,0.15)", "rgba(123,47,247,0.12)"] },
+  { id: "crystal-blue", name: "Crystal Blue", nameBn: "\u0995\u09CD\u09B0\u09BF\u09B8\u09CD\u099F\u09BE\u09B2 \u09AC\u09CD\u09B2\u09C1", gradientStops: ["#001529", "#002244", "#003366"], glowColors: ["rgba(0,180,216,0.15)", "rgba(0,119,182,0.1)"] },
+  { id: "luxury-violet", name: "Luxury Violet", nameBn: "\u09B2\u09BE\u0995\u09CD\u09B8\u09BE\u09B0\u09BF \u09AD\u09BE\u09AF\u09BC\u09CB\u09B2\u09C7\u099F", gradientStops: ["#0d001a", "#1a0033", "#2d004d"], glowColors: ["rgba(155,89,182,0.15)", "rgba(106,13,173,0.1)"] },
+  { id: "sunset-bloom", name: "Sunset Bloom", nameBn: "\u09B8\u09BE\u09A8\u09B8\u09C7\u099F \u09AC\u09CD\u09B2\u09C1\u09AE", gradientStops: ["#1a0500", "#2d0a00", "#401500"], glowColors: ["rgba(255,107,53,0.12)", "rgba(255,215,0,0.1)"] },
+  { id: "gold-shine", name: "Gold Shine", nameBn: "\u0997\u09CB\u09B2\u09CD\u09A1 \u09B6\u09BE\u0987\u09A8", gradientStops: ["#1a1200", "#2d1f00", "#403000"], glowColors: ["rgba(212,175,55,0.15)", "rgba(245,230,163,0.08)"] },
+  { id: "emerald-haze", name: "Emerald Haze", nameBn: "\u098F\u09AE\u09C7\u09B0\u09BE\u09B2\u09CD\u09A1 \u09B9\u09C7\u099C", gradientStops: ["#001a0d", "#002d1a", "#004d2e"], glowColors: ["rgba(0,200,83,0.12)", "rgba(26,188,156,0.1)"] },
+  { id: "midnight-glass", name: "Midnight Glass", nameBn: "\u09AE\u09BF\u09A1\u09A8\u09BE\u0987\u099F \u0997\u09CD\u09B2\u09BE\u09B8", gradientStops: ["#0a0a1a", "#0f0f2e", "#141442"], glowColors: ["rgba(100,100,200,0.1)", "rgba(60,60,150,0.08)"] },
+  { id: "rainbow-prism-bg", name: "Rainbow Prism", nameBn: "\u09B0\u09C7\u0987\u09A8\u09AC\u09CB \u09AA\u09CD\u09B0\u09BF\u099C\u09AE", gradientStops: ["#0a001a", "#001a2e", "#001a0d"], glowColors: ["rgba(255,0,100,0.08)", "rgba(0,100,255,0.08)", "rgba(0,255,100,0.06)"] },
+  { id: "white-frost", name: "White Frost", nameBn: "\u09B9\u09CB\u09AF\u09BC\u09BE\u0987\u099F \u09AB\u09CD\u09B0\u09B8\u09CD\u099F", gradientStops: ["#f0f0f5", "#e8e8f0", "#dddde8"], glowColors: ["rgba(200,200,220,0.2)", "rgba(180,180,200,0.15)"] },
+  { id: "dark-editorial", name: "Dark Editorial", nameBn: "\u09A1\u09BE\u09B0\u09CD\u0995 \u098F\u09A1\u09BF\u099F\u09CB\u09B0\u09BF\u09AF\u09BC\u09BE\u09B2", gradientStops: ["#0a0a0a", "#141414", "#1e1e1e"], glowColors: ["rgba(255,255,255,0.03)", "rgba(200,200,200,0.02)"] },
+];
+
+const GLASS_STYLES = [
+  { id: "clear-premium", name: "Clear Premium", nameBn: "\u0995\u09CD\u09B2\u09BF\u09AF\u09BC\u09BE\u09B0 \u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE", bgOpacity: 0.15, blurLevel: 20, edgeColor: "rgba(255,255,255,0.3)" },
+  { id: "frosted-white", name: "Frosted White", nameBn: "\u09AB\u09CD\u09B0\u09B8\u09CD\u099F\u09C7\u09A1 \u09B9\u09CB\u09AF\u09BC\u09BE\u0987\u099F", bgOpacity: 0.25, blurLevel: 30, edgeColor: "rgba(255,255,255,0.5)" },
+  { id: "dark-smoked", name: "Dark Smoked", nameBn: "\u09A1\u09BE\u09B0\u09CD\u0995 \u09B8\u09CD\u09AE\u09CB\u0995\u09A1", bgOpacity: 0.4, blurLevel: 25, edgeColor: "rgba(255,255,255,0.15)" },
+  { id: "colorful-neon", name: "Colorful Neon", nameBn: "\u0995\u09BE\u09B2\u09BE\u09B0\u09AB\u09C1\u09B2 \u09A8\u09BF\u09AF\u09BC\u09A8", bgOpacity: 0.2, blurLevel: 18, edgeColor: "rgba(0,255,200,0.4)" },
+  { id: "luxury-gradient", name: "Luxury Gradient", nameBn: "\u09B2\u09BE\u0995\u09CD\u09B8\u09BE\u09B0\u09BF \u0997\u09CD\u09B0\u09C7\u09A1\u09BF\u09AF\u09BC\u09C7\u09A8\u09CD\u099F", bgOpacity: 0.3, blurLevel: 22, edgeColor: "rgba(212,175,55,0.35)" },
+  { id: "soft-pastel", name: "Soft Pastel", nameBn: "\u09B8\u09AB\u09CD\u099F \u09AA\u09CD\u09AF\u09BE\u09B8\u09CD\u099F\u09C7\u09B2", bgOpacity: 0.2, blurLevel: 28, edgeColor: "rgba(255,182,193,0.35)" },
+  { id: "editorial-panel", name: "Editorial Panel", nameBn: "\u098F\u09A1\u09BF\u099F\u09CB\u09B0\u09BF\u09AF\u09BC\u09BE\u09B2 \u09AA\u09CD\u09AF\u09BE\u09A8\u09C7\u09B2", bgOpacity: 0.35, blurLevel: 15, edgeColor: "rgba(200,200,200,0.25)" },
+  { id: "crystal-card", name: "Crystal Card", nameBn: "\u0995\u09CD\u09B0\u09BF\u09B8\u09CD\u099F\u09BE\u09B2 \u0995\u09BE\u09B0\u09CD\u09A1", bgOpacity: 0.1, blurLevel: 35, edgeColor: "rgba(255,255,255,0.45)" },
+];
+
+const DECOR_PRESET_OPTIONS = [
+  { id: "sparkle", name: "Sparkle", nameBn: "\u09B8\u09CD\u09AA\u09BE\u09B0\u09CD\u0995\u09B2" },
+  { id: "breaking", name: "Breaking", nameBn: "\u09AC\u09CD\u09B0\u09C7\u0995\u09BF\u0982" },
+  { id: "social", name: "Social", nameBn: "\u09B8\u09CB\u09B6\u09CD\u09AF\u09BE\u09B2" },
+  { id: "cute", name: "Cute", nameBn: "\u0995\u09BF\u0989\u099F" },
+  { id: "editorial", name: "Editorial", nameBn: "\u098F\u09A1\u09BF\u099F\u09CB\u09B0\u09BF\u09AF\u09BC\u09BE\u09B2" },
+  { id: "futuristic", name: "Futuristic", nameBn: "\u09AB\u09BF\u0989\u099A\u09BE\u09B0\u09BF\u09B8\u09CD\u099F\u09BF\u0995" },
+  { id: "neon", name: "Neon", nameBn: "\u09A8\u09BF\u09AF\u09BC\u09A8" },
+  { id: "celebration", name: "Celebration", nameBn: "\u0989\u09CE\u09B8\u09AC" },
+];
+
 const CANVAS_SIZE = 1200;
 const BN = "'Noto Sans Bengali', 'Hind Siliguri', sans-serif";
 const DUAL_TEMPLATES = ["dual-quote", "dual-quote-split"];
 
 const G = {
-  bg1: "#0a1208",
-  bg2: "#0d1a0f",
-  bg3: "#081410",
-  panel: "rgba(120,180,120,0.04)",
-  panelBorder: "rgba(120,180,120,0.08)",
-  panelActive: "rgba(120,180,120,0.08)",
-  input: "rgba(120,180,120,0.05)",
-  inputBorder: "rgba(120,180,120,0.1)",
-  inputFocus: "rgba(180,220,120,0.15)",
-  gold: "#c8a832",
-  goldLight: "#d4b844",
+  bg1: "#080a14",
+  bg2: "#0c1022",
+  bg3: "#06081a",
+  panel: "rgba(100,130,220,0.06)",
+  panelBorder: "rgba(120,140,220,0.10)",
+  panelActive: "rgba(120,140,220,0.12)",
+  input: "rgba(100,130,220,0.07)",
+  inputBorder: "rgba(120,140,220,0.12)",
+  inputFocus: "rgba(160,140,255,0.20)",
+  gold: "#d4a830",
+  goldLight: "#e0b840",
   goldDim: "rgba(200,168,50,0.15)",
-  blur: "blur(50px) saturate(200%)",
-  blurSm: "blur(30px) saturate(180%)",
+  blur: "blur(50px) saturate(220%)",
+  blurSm: "blur(30px) saturate(200%)",
   r: "22px",
   rSm: "16px",
   rXl: "28px",
-  headerBg: "rgba(10,18,8,0.6)",
-  accent: "rgba(120,200,120,0.12)",
-  accentBorder: "rgba(120,200,120,0.18)",
+  headerBg: "rgba(8,10,20,0.65)",
+  accent: "rgba(130,120,255,0.14)",
+  accentBorder: "rgba(140,130,255,0.22)",
+  glassGradient: "linear-gradient(135deg, rgba(120,130,255,0.08), rgba(200,160,255,0.06), rgba(100,180,255,0.04))",
+  glassHighlight: "inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(255,255,255,0.02)",
+  iridescent: "linear-gradient(135deg, #d4a830, #c084fc, #60a5fa, #d4a830)",
+  iridescentHover: "linear-gradient(135deg, #e0b840, #d8a8ff, #7cb8ff, #e0b840)",
+  shimmer: "linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)",
 };
 
 const OTV_LOGO_DEFAULT_SIZE = 100;
@@ -198,7 +251,7 @@ function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true }:
       <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between px-4 py-3" data-testid={`section-toggle-${title}`}>
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-            <Icon className="w-3.5 h-3.5 text-green-400/50" />
+            <Icon className="w-3.5 h-3.5 text-indigo-400/60" />
           </div>
           <span className="text-[10px] font-bold text-white/45">{title}</span>
         </div>
@@ -267,6 +320,16 @@ export default function Home() {
   const [gridIntensity, setGridIntensity] = useState(0.5);
   const [grainIntensity, setGrainIntensity] = useState(0.5);
   const [exportSize, setExportSize] = useState(1200);
+  const [selectedColorPreset, setSelectedColorPreset] = useState<typeof COLOR_PRESETS[number] | null>(null);
+  const [selectedBgPreset, setSelectedBgPreset] = useState<typeof BG_PRESETS[number] | null>(null);
+  const [selectedGlassStyle, setSelectedGlassStyle] = useState<typeof GLASS_STYLES[number] | null>(null);
+  const [autoDecorate, setAutoDecorate] = useState(false);
+  const [decorPreset, setDecorPreset] = useState("sparkle");
+  const [emojiDensity, setEmojiDensity] = useState(0.5);
+  const [glowIntensity, setGlowIntensity] = useState(0.5);
+  const [blurIntensity, setBlurIntensity] = useState(0.5);
+  const [transparencyLevel, setTransparencyLevel] = useState(0.5);
+  const [cornerRadius, setCornerRadius] = useState(20);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -400,6 +463,16 @@ export default function Home() {
       gridIntensity, grainIntensity,
       textAlign,
       exportSize,
+      colorPreset: selectedColorPreset ? { id: selectedColorPreset.id, name: selectedColorPreset.name, colors: selectedColorPreset.colors, accent: selectedColorPreset.accent } : undefined,
+      bgPreset: selectedBgPreset ? { id: selectedBgPreset.id, name: selectedBgPreset.name, gradientStops: selectedBgPreset.gradientStops, glowColors: selectedBgPreset.glowColors } : undefined,
+      glassStyle: selectedGlassStyle ? { id: selectedGlassStyle.id, name: selectedGlassStyle.name, bgOpacity: selectedGlassStyle.bgOpacity, blurLevel: selectedGlassStyle.blurLevel, edgeColor: selectedGlassStyle.edgeColor } : undefined,
+      autoDecorate,
+      decorPreset,
+      emojiDensity,
+      glowIntensity,
+      blurIntensity,
+      transparencyLevel,
+      cornerRadius,
     }, CANVAS_SIZE, CANVAS_SIZE);
     if (!isPro) {
       ctx.save();
@@ -413,7 +486,7 @@ export default function Home() {
       ctx.fillText("OTV.ONLINE", 0, 0);
       ctx.restore();
     }
-  }, [headline, headline2, subheadline, bulletText, quoteText, dateText, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, highlightWords, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX, imageOffsetY, imageZoom, selectedBanglaFont, gridEnabled, grainEnabled, textureEnabled, gridIntensity, grainIntensity, textAlign, exportSize]);
+  }, [headline, headline2, subheadline, bulletText, quoteText, dateText, category, viaText, mainPhotoImg, secondPhotoImg, logoImg, otvLogoImg, selectedTemplate, isPro, personName, personTitle, personName2, personTitle2, highlightColor, highlightWords, otvLogoX, otvLogoY, otvLogoSize, imageOffsetX, imageOffsetY, imageZoom, selectedBanglaFont, gridEnabled, grainEnabled, textureEnabled, gridIntensity, grainIntensity, textAlign, exportSize, selectedColorPreset, selectedBgPreset, selectedGlassStyle, autoDecorate, decorPreset, emojiDensity, glowIntensity, blurIntensity, transparencyLevel, cornerRadius]);
 
   const renderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -502,6 +575,9 @@ export default function Home() {
     setOtvLogoX(CANVAS_SIZE / 2);
     setOtvLogoY(CANVAS_SIZE - 60);
     setOtvLogoSize(OTV_LOGO_DEFAULT_SIZE);
+    setSelectedColorPreset(null);
+    setSelectedBgPreset(null);
+    setSelectedGlassStyle(null);
     setIsGenerated(false);
   }, []);
 
@@ -635,22 +711,23 @@ export default function Home() {
   return (
     <div className="min-h-screen text-white relative" style={{ fontFamily: BN, background: `linear-gradient(165deg, ${G.bg1} 0%, ${G.bg2} 35%, ${G.bg3} 65%, ${G.bg1} 100%)` }} data-testid="home-page">
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <motion.div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full" style={{ background: "radial-gradient(circle, rgba(80,160,80,0.06) 0%, rgba(60,120,60,0.03) 40%, transparent 70%)" }} animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
-        <motion.div className="absolute top-1/3 -left-32 w-[500px] h-[500px] rounded-full" style={{ background: "radial-gradient(circle, rgba(200,168,50,0.04) 0%, transparent 70%)" }} animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }} />
-        <motion.div className="absolute bottom-20 right-1/4 w-[400px] h-[300px]" style={{ background: "radial-gradient(ellipse, rgba(80,180,120,0.03) 0%, transparent 70%)" }} animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 5 }} />
-        <div className="absolute inset-0" style={{ background: "repeating-conic-gradient(rgba(120,180,120,0.008) 0% 25%, transparent 0% 50%) 0 0 / 80px 80px" }} />
+        <motion.div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full" style={{ background: "radial-gradient(circle, rgba(100,80,220,0.08) 0%, rgba(80,60,180,0.04) 40%, transparent 70%)" }} animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.9, 0.5] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.div className="absolute top-1/3 -left-32 w-[500px] h-[500px] rounded-full" style={{ background: "radial-gradient(circle, rgba(200,140,255,0.05) 0%, transparent 70%)" }} animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }} />
+        <motion.div className="absolute bottom-20 right-1/4 w-[400px] h-[300px]" style={{ background: "radial-gradient(ellipse, rgba(60,130,255,0.04) 0%, transparent 70%)" }} animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 5 }} />
+        <motion.div className="absolute top-2/3 left-1/3 w-[350px] h-[350px] rounded-full" style={{ background: "radial-gradient(circle, rgba(212,168,48,0.04) 0%, transparent 70%)" }} animate={{ scale: [1, 1.12, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 7 }} />
+        <div className="absolute inset-0" style={{ background: "repeating-conic-gradient(rgba(100,120,200,0.008) 0% 25%, transparent 0% 50%) 0 0 / 80px 80px" }} />
       </div>
 
-      <header className="relative z-50 sticky top-0" style={{ background: G.headerBg, backdropFilter: G.blur, WebkitBackdropFilter: G.blur, borderBottom: `1px solid ${G.panelBorder}` }}>
+      <header className="relative z-50 sticky top-0 glass-header-shimmer" style={{ background: G.headerBg, backdropFilter: G.blur, WebkitBackdropFilter: G.blur, borderBottom: `1px solid ${G.panelBorder}`, boxShadow: "0 4px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)" }}>
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <motion.div className="flex items-center gap-3" initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, type: "spring" }}>
             <div className="relative">
-              <img src={otvLogoPath} alt="OTV" className="w-10 h-10 rounded-2xl object-contain" style={{ background: "rgba(120,180,120,0.08)", padding: "3px", border: `1px solid ${G.panelBorder}` }} data-testid="img-otv-logo" onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2" style={{ borderColor: G.bg1 }} />
+              <img src={otvLogoPath} alt="OTV" className="w-10 h-10 rounded-2xl object-contain" style={{ background: "rgba(100,120,220,0.10)", padding: "3px", border: `1px solid ${G.panelBorder}` }} data-testid="img-otv-logo" onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-indigo-400 border-2" style={{ borderColor: G.bg1 }} />
             </div>
             <div>
               <h1 className="text-[15px] font-bold text-white/90 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }} data-testid="text-app-title">OTV Card Maker</h1>
-              <p className="text-[7px] font-bold" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.25em", color: G.gold, opacity: 0.5 }}>PREMIUM CARD STUDIO</p>
+              <p className="text-[7px] font-bold glass-text-shimmer" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.25em", color: G.gold, opacity: 0.6 }}>LIQUID GLASS STUDIO</p>
             </div>
           </motion.div>
           <motion.div className="flex items-center gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
@@ -700,7 +777,7 @@ export default function Home() {
                     borderRadius: G.rSm,
                     background: templateFilter === cat.id ? G.accent : "transparent",
                     border: `1px solid ${templateFilter === cat.id ? G.accentBorder : "transparent"}`,
-                    color: templateFilter === cat.id ? "rgba(180,220,160,0.9)" : "rgba(255,255,255,0.2)",
+                    color: templateFilter === cat.id ? "rgba(180,175,255,0.9)" : "rgba(255,255,255,0.2)",
                     boxShadow: templateFilter === cat.id ? "inset 0 1px 0 rgba(255,255,255,0.04)" : "none",
                   }}
                   data-testid={`button-filter-${cat.id}`}
@@ -711,7 +788,7 @@ export default function Home() {
             </div>
 
             {showTemplateGrid ? (
-              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 max-h-[320px] overflow-y-auto pr-1" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(120,180,120,0.1) transparent" }} data-testid="template-gallery">
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2 max-h-[320px] overflow-y-auto pr-1" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(100,110,200,0.1) transparent" }} data-testid="template-gallery">
                 {filteredTemplates.map((t, i) => {
                   const isActive = selectedTemplate.id === t.id;
                   const isSplit = DUAL_TEMPLATES.includes(t.id);
@@ -725,7 +802,7 @@ export default function Home() {
                       className="group relative"
                       data-testid={`button-template-${t.id}`}
                     >
-                      <div className={`overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, border: isActive ? `2px solid rgba(120,200,120,0.5)` : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 4px 20px rgba(80,160,80,0.15), inset 0 1px 0 rgba(255,255,255,0.04)" : "none" }}>
+                      <div className={`overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, border: isActive ? `2px solid rgba(130,120,255,0.5)` : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 4px 20px rgba(100,90,255,0.15), inset 0 1px 0 rgba(255,255,255,0.06)" : "none" }}>
                         <div className="h-[52px] relative" style={isSplit ? { background: `linear-gradient(90deg, ${t.previewColors[0]} 50%, ${t.previewColors[1]} 50%)` } : { background: `linear-gradient(135deg, ${t.previewColors[0]}, ${t.previewColors[1]})` }}>
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                           <div className="absolute bottom-1 left-1.5 space-y-[1px]">
@@ -733,7 +810,7 @@ export default function Home() {
                             <div className="h-[1.5px] w-[50%] bg-white/15 rounded-full" />
                           </div>
                           {isActive && (
-                            <motion.div className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(80,180,80,0.9)", boxShadow: "0 2px 8px rgba(80,180,80,0.4)" }} layoutId="tmpl-active" transition={{ type: "spring", stiffness: 300, damping: 25 }}>
+                            <motion.div className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} layoutId="tmpl-active" transition={{ type: "spring", stiffness: 300, damping: 25 }}>
                               <Check className="w-2.5 h-2.5 text-white" />
                             </motion.div>
                           )}
@@ -748,10 +825,10 @@ export default function Home() {
               </div>
             ) : (
               <div className="relative group/gallery">
-                <button onClick={() => scrollGallery(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover/gallery:opacity-100 transition-all" style={{ background: "rgba(10,18,8,0.8)", backdropFilter: "blur(10px)", border: `1px solid ${G.panelBorder}` }} data-testid="button-scroll-left">
+                <button onClick={() => scrollGallery(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover/gallery:opacity-100 transition-all" style={{ background: "rgba(8,10,20,0.8)", backdropFilter: "blur(10px)", border: `1px solid ${G.panelBorder}` }} data-testid="button-scroll-left">
                   <ChevronLeft className="w-4 h-4 text-white/50" />
                 </button>
-                <button onClick={() => scrollGallery(1)} className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover/gallery:opacity-100 transition-all" style={{ background: "rgba(10,18,8,0.8)", backdropFilter: "blur(10px)", border: `1px solid ${G.panelBorder}` }} data-testid="button-scroll-right">
+                <button onClick={() => scrollGallery(1)} className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover/gallery:opacity-100 transition-all" style={{ background: "rgba(8,10,20,0.8)", backdropFilter: "blur(10px)", border: `1px solid ${G.panelBorder}` }} data-testid="button-scroll-right">
                   <ChevronRight className="w-4 h-4 text-white/50" />
                 </button>
 
@@ -769,7 +846,7 @@ export default function Home() {
                         className="flex-shrink-0 snap-center group relative"
                         data-testid={`button-template-${t.id}`}
                       >
-                        <div className={`w-[95px] overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, border: isActive ? "2px solid rgba(120,200,120,0.5)" : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 6px 24px rgba(80,160,80,0.15), inset 0 1px 0 rgba(255,255,255,0.04)" : "none" }}>
+                        <div className={`w-[95px] overflow-hidden transition-all duration-400 ${isActive ? "scale-[1.04]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, border: isActive ? "2px solid rgba(130,120,255,0.5)" : `1px solid ${G.panelBorder}`, boxShadow: isActive ? "0 6px 24px rgba(100,90,255,0.15), inset 0 1px 0 rgba(255,255,255,0.06)" : "none" }}>
                           <div className="h-[62px] relative" style={isSplit ? { background: `linear-gradient(90deg, ${t.previewColors[0]} 50%, ${t.previewColors[1]} 50%)` } : { background: `linear-gradient(135deg, ${t.previewColors[0]}, ${t.previewColors[1]})` }}>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
                             <div className="absolute bottom-1.5 left-2 space-y-[2px]">
@@ -777,7 +854,7 @@ export default function Home() {
                               <div className="h-[1.5px] w-[50%] bg-white/15 rounded-full" />
                             </div>
                             {isActive && (
-                              <motion.div layoutId="tmpl-active-h" className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(80,180,80,0.9)", boxShadow: "0 2px 8px rgba(80,180,80,0.4)" }} transition={{ type: "spring", stiffness: 300, damping: 25 }}>
+                              <motion.div layoutId="tmpl-active-h" className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} transition={{ type: "spring", stiffness: 300, damping: 25 }}>
                                 <Check className="w-2.5 h-2.5 text-white" />
                               </motion.div>
                             )}
@@ -810,7 +887,7 @@ export default function Home() {
                     data-testid={`tab-${tab.id}`}
                   >
                     {activeSection === tab.id && (
-                      <motion.div layoutId="tab-glass" className="absolute inset-0" style={{ borderRadius: G.rSm, background: G.accent, border: `1px solid ${G.accentBorder}`, boxShadow: "0 4px 16px rgba(80,160,80,0.06), inset 0 1px 0 rgba(255,255,255,0.03)" }} transition={{ type: "spring", stiffness: 350, damping: 30 }} />
+                      <motion.div layoutId="tab-glass" className="absolute inset-0" style={{ borderRadius: G.rSm, background: "linear-gradient(135deg, rgba(130,120,255,0.16), rgba(100,160,255,0.10))", border: `1px solid ${G.accentBorder}`, boxShadow: "0 4px 20px rgba(100,100,255,0.08), inset 0 1px 0 rgba(255,255,255,0.05)" }} transition={{ type: "spring", stiffness: 350, damping: 30 }} />
                     )}
                     <span className="relative z-10 flex items-center gap-2">
                       <tab.icon className="w-3.5 h-3.5" />
@@ -825,7 +902,7 @@ export default function Home() {
                   <motion.div key="content" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }} className="space-y-3">
 
                     <div className="flex gap-2 mb-1">
-                      <button onClick={loadRandomPreset} className="flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold transition-all hover:scale-[1.02]" style={{ background: G.accent, border: `1px solid ${G.accentBorder}`, borderRadius: G.rSm, color: "rgba(180,220,160,0.8)" }} data-testid="button-random-demo">
+                      <button onClick={loadRandomPreset} className="flex items-center gap-1.5 px-3 py-2 text-[9px] font-bold transition-all hover:scale-[1.02]" style={{ background: G.accent, border: `1px solid ${G.accentBorder}`, borderRadius: G.rSm, color: "rgba(180,175,255,0.8)" }} data-testid="button-random-demo">
                         <Shuffle className="w-3 h-3" />
                         {"\u09A1\u09C7\u09AE\u09CB \u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"}
                       </button>
@@ -856,7 +933,7 @@ export default function Home() {
                                 <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (mainPhotoSrc) URL.revokeObjectURL(mainPhotoSrc); setMainPhotoSrc(null); setMainPhotoImg(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-xl flex items-center justify-center" style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(10px)" }} data-testid="button-remove-photo">
                                   <X className="w-3 h-3 text-white/80" />
                                 </button>
-                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveBg(); }} disabled={isRemovingBg} className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all" style={{ background: isRemovingBg ? "rgba(80,160,80,0.3)" : "rgba(80,160,80,0.6)", backdropFilter: "blur(10px)", color: "white", border: `1px solid rgba(120,200,120,0.3)` }} data-testid="button-remove-bg">
+                                <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleRemoveBg(); }} disabled={isRemovingBg} className="absolute bottom-2 right-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[9px] font-bold transition-all" style={{ background: isRemovingBg ? "rgba(100,90,220,0.3)" : "rgba(100,90,220,0.6)", backdropFilter: "blur(10px)", color: "white", border: `1px solid rgba(130,120,255,0.3)` }} data-testid="button-remove-bg">
                                   {isRemovingBg ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eraser className="w-3 h-3" />}
                                   {isRemovingBg ? "Processing..." : "BG Remove"}
                                 </button>
@@ -864,7 +941,7 @@ export default function Home() {
                             ) : (
                               <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
                                 <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                                  <Upload className="w-4 h-4 text-green-400/40" />
+                                  <Upload className="w-4 h-4 text-indigo-400/40" />
                                 </div>
                                 <p className="text-[10px] text-white/22 font-medium">{isDual ? "\u09AC\u09BE\u09AE \u09AB\u099F\u09CB" : "\u09AB\u099F\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
                               </div>
@@ -889,7 +966,7 @@ export default function Home() {
                                 ) : (
                                   <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
                                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                                      <Users className="w-4 h-4 text-green-400/40" />
+                                      <Users className="w-4 h-4 text-indigo-400/40" />
                                     </div>
                                     <p className="text-[10px] text-white/22 font-medium">{"\u09A1\u09BE\u09A8 \u09AB\u099F\u09CB"}</p>
                                   </div>
@@ -910,7 +987,7 @@ export default function Home() {
                                 ) : (
                                   <div className="flex flex-col items-center justify-center py-7 group-hover:scale-105 transition-transform duration-500">
                                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                                      <ImageIcon className="w-4 h-4 text-green-400/40" />
+                                      <ImageIcon className="w-4 h-4 text-indigo-400/40" />
                                     </div>
                                     <p className="text-[10px] text-white/22 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB"}</p>
                                   </div>
@@ -935,7 +1012,7 @@ export default function Home() {
                               </div>
                             ) : (
                               <div className="flex items-center justify-center py-4 gap-2 group-hover:scale-105 transition-transform duration-500">
-                                <ImageIcon className="w-4 h-4 text-green-400/20" />
+                                <ImageIcon className="w-4 h-4 text-indigo-400/20" />
                                 <p className="text-[10px] text-white/15 font-medium">PNG {"\u09B2\u09CB\u0997\u09CB \u0986\u09AA\u09B2\u09CB\u09A1"}</p>
                               </div>
                             )}
@@ -1025,9 +1102,9 @@ export default function Home() {
                               <SelectTrigger className="border-0 text-white text-xs h-10" style={{ background: G.input, borderRadius: G.rSm, border: `1px solid ${G.inputBorder}` }} data-testid="select-category">
                                 <SelectValue />
                               </SelectTrigger>
-                              <SelectContent className="border-0" style={{ background: "rgba(10,18,8,0.96)", backdropFilter: G.blur, borderRadius: G.rSm, border: `1px solid ${G.panelBorder}` }}>
+                              <SelectContent className="border-0" style={{ background: "rgba(8,10,20,0.96)", backdropFilter: G.blur, borderRadius: G.rSm, border: `1px solid ${G.panelBorder}` }}>
                                 {CATEGORIES.map((c) => (
-                                  <SelectItem key={c.value} value={c.value} className="text-white/60 text-xs focus:bg-green-500/8 focus:text-white" style={{ borderRadius: "10px" }}>
+                                  <SelectItem key={c.value} value={c.value} className="text-white/60 text-xs focus:bg-indigo-500/8 focus:text-white" style={{ borderRadius: "10px" }}>
                                     {c.bn} &middot; {c.value}
                                   </SelectItem>
                                 ))}
@@ -1106,6 +1183,132 @@ export default function Home() {
                       </div>
                     </CollapsibleSection>
 
+                    <CollapsibleSection title={"\u0995\u09BE\u09B2\u09BE\u09B0 \u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"} icon={Sparkles} defaultOpen={false}>
+                      <div className="grid grid-cols-5 gap-2">
+                        {COLOR_PRESETS.map((p) => {
+                          const isAct = selectedColorPreset?.id === p.id;
+                          return (
+                            <button key={p.id} onClick={() => { setSelectedColorPreset(isAct ? null : p); setIsGenerated(false); }} className="group" data-testid={`button-color-preset-${p.id}`}>
+                              <div className={`relative p-2.5 flex flex-col items-center gap-1.5 transition-all duration-400 ${isAct ? "scale-[1.06]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? `${p.accent}10` : G.panel, border: isAct ? `2px solid ${p.accent}40` : `1px solid ${G.panelBorder}`, boxShadow: isAct ? `0 4px 16px ${p.accent}20` : "none" }}>
+                                <div className="w-8 h-8 rounded-xl overflow-hidden flex" style={{ boxShadow: isAct ? `0 2px 12px ${p.accent}30` : "none" }}>
+                                  {p.colors.slice(0, 3).map((c, ci) => (
+                                    <div key={ci} className="flex-1 h-full" style={{ backgroundColor: c }} />
+                                  ))}
+                                </div>
+                                <span className="text-[6px] font-bold text-white/30 text-center leading-tight">{p.nameBn}</span>
+                                {isAct && (
+                                  <motion.div layoutId="color-preset-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: p.accent, boxShadow: `0 2px 8px ${p.accent}40` }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
+                                    <Check className="w-2.5 h-2.5 text-white" />
+                                  </motion.div>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u09AC\u09CD\u09AF\u09BE\u0995\u0997\u09CD\u09B0\u09BE\u0989\u09A8\u09CD\u09A1 \u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"} icon={Layers} defaultOpen={false}>
+                      <div className="grid grid-cols-5 gap-2">
+                        {BG_PRESETS.map((p) => {
+                          const isAct = selectedBgPreset?.id === p.id;
+                          const bgGrad = `linear-gradient(135deg, ${p.gradientStops.join(", ")})`;
+                          return (
+                            <button key={p.id} onClick={() => { setSelectedBgPreset(isAct ? null : p); setIsGenerated(false); }} className="group" data-testid={`button-bg-preset-${p.id}`}>
+                              <div className={`relative p-2.5 flex flex-col items-center gap-1.5 transition-all duration-400 ${isAct ? "scale-[1.06]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(100,100,220,0.08)" : G.panel, border: isAct ? "2px solid rgba(130,120,255,0.3)" : `1px solid ${G.panelBorder}`, boxShadow: isAct ? "0 4px 16px rgba(110,100,255,0.12)" : "none" }}>
+                                <div className="w-8 h-8 rounded-xl" style={{ background: bgGrad, boxShadow: isAct ? "0 2px 12px rgba(0,0,0,0.3)" : "none" }} />
+                                <span className="text-[6px] font-bold text-white/30 text-center leading-tight">{p.nameBn}</span>
+                                {isAct && (
+                                  <motion.div layoutId="bg-preset-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
+                                    <Check className="w-2.5 h-2.5 text-white" />
+                                  </motion.div>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u0997\u09CD\u09B2\u09BE\u09B8 \u09B8\u09CD\u099F\u09BE\u0987\u09B2"} icon={Palette} defaultOpen={false}>
+                      <div className="grid grid-cols-4 gap-2">
+                        {GLASS_STYLES.map((s) => {
+                          const isAct = selectedGlassStyle?.id === s.id;
+                          return (
+                            <button key={s.id} onClick={() => { setSelectedGlassStyle(isAct ? null : s); setIsGenerated(false); }} className="group" data-testid={`button-glass-style-${s.id}`}>
+                              <div className={`relative p-3 flex flex-col items-center gap-1.5 transition-all duration-400 ${isAct ? "scale-[1.04]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(100,100,220,0.1)" : G.panel, border: isAct ? "2px solid rgba(130,120,255,0.3)" : `1px solid ${G.panelBorder}`, boxShadow: isAct ? "0 4px 16px rgba(110,100,255,0.1)" : "none" }}>
+                                <div className="w-10 h-6 rounded-lg" style={{ background: `rgba(255,255,255,${s.bgOpacity})`, border: `1px solid ${s.edgeColor}`, backdropFilter: `blur(${s.blurLevel}px)`, boxShadow: isAct ? `0 0 8px ${s.edgeColor}` : "none" }} />
+                                <span className="text-[6px] font-bold text-white/30 text-center leading-tight">{s.nameBn}</span>
+                                {isAct && (
+                                  <motion.div layoutId="glass-style-check" className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.9)", boxShadow: "0 2px 8px rgba(110,100,255,0.4)" }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
+                                    <Check className="w-2.5 h-2.5 text-white" />
+                                  </motion.div>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u0985\u099F\u09CB \u09A1\u09C7\u0995\u09CB\u09B0\u09C7\u099F"} icon={Wand2} defaultOpen={false}>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] text-white/35 font-medium">{"\u0985\u099F\u09CB \u09A1\u09C7\u0995\u09CB\u09B0\u09C7\u099F"}</span>
+                          <Switch checked={autoDecorate} onCheckedChange={(v) => { setAutoDecorate(v); setIsGenerated(false); }} data-testid="switch-auto-decorate" />
+                        </div>
+                        {autoDecorate && (
+                          <>
+                            <div>
+                              <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AA\u09CD\u09B0\u09BF\u09B8\u09C7\u099F"}</p>
+                              <div className="grid grid-cols-4 gap-1.5">
+                                {DECOR_PRESET_OPTIONS.map((p) => {
+                                  const isAct = decorPreset === p.id;
+                                  return (
+                                    <button key={p.id} onClick={() => { setDecorPreset(p.id); setIsGenerated(false); }} data-testid={`button-decor-preset-${p.id}`}>
+                                      <div className={`p-2 text-center transition-all duration-300 ${isAct ? "scale-[1.04]" : "opacity-30 hover:opacity-60"}`} style={{ borderRadius: G.rSm, background: isAct ? G.accent : G.panel, border: `1px solid ${isAct ? G.accentBorder : G.panelBorder}` }}>
+                                        <span className={`text-[7px] font-bold ${isAct ? "text-indigo-300/80" : "text-white/30"}`}>{p.nameBn}</span>
+                                      </div>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-[8px] text-white/20 w-16">{"\u0987\u09AE\u09CB\u099C\u09BF \u0998\u09A8\u09A4\u09CD\u09AC"}</span>
+                              <input type="range" min="0" max="1" step="0.05" value={emojiDensity} onChange={(e) => { setEmojiDensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-emoji-density" />
+                              <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(emojiDensity * 100)}%</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title={"\u0997\u09CD\u09B2\u09BE\u09B8 \u0987\u09AB\u09C7\u0995\u09CD\u099F"} icon={Sparkles} defaultOpen={false}>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[8px] text-white/20 w-16">{"\u0997\u09CD\u09B2\u09CB \u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                          <input type="range" min="0" max="1" step="0.05" value={glowIntensity} onChange={(e) => { setGlowIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-glow-intensity" />
+                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(glowIntensity * 100)}%</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[8px] text-white/20 w-16">{"\u09AC\u09CD\u09B2\u09BE\u09B0 \u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
+                          <input type="range" min="0" max="1" step="0.05" value={blurIntensity} onChange={(e) => { setBlurIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-blur-intensity" />
+                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(blurIntensity * 100)}%</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[8px] text-white/20 w-16">{"\u09B8\u09CD\u09AC\u099A\u09CD\u099B\u09A4\u09BE"}</span>
+                          <input type="range" min="0" max="1" step="0.05" value={transparencyLevel} onChange={(e) => { setTransparencyLevel(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-transparency" />
+                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(transparencyLevel * 100)}%</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[8px] text-white/20 w-16">{"\u0995\u09B0\u09CD\u09A8\u09BE\u09B0 \u09B0\u09C7\u09A1\u09BF\u09AF\u09BC\u09BE\u09B8"}</span>
+                          <input type="range" min="0" max="60" step="2" value={cornerRadius} onChange={(e) => { setCornerRadius(parseInt(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-corner-radius" />
+                          <span className="text-[8px] text-white/15 font-mono w-6 text-right">{cornerRadius}px</span>
+                        </div>
+                      </div>
+                    </CollapsibleSection>
+
                     <CollapsibleSection title={"\u099F\u09C7\u0995\u09CD\u09B8\u099F \u0985\u09CD\u09AF\u09BE\u09B2\u09BE\u0987\u09A8\u09AE\u09C7\u09A8\u09CD\u099F"} icon={AlignLeft} defaultOpen={false}>
                       <div className="flex gap-2">
                         {([
@@ -1116,8 +1319,8 @@ export default function Home() {
                           const isAct = textAlign === a.value;
                           return (
                             <button key={a.value} onClick={() => { setTextAlign(a.value); setIsGenerated(false); }} className="flex-1 flex items-center justify-center gap-2 py-3 transition-all" style={{ background: isAct ? G.accent : G.panel, border: `1px solid ${isAct ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm }} data-testid={`button-align-${a.value}`}>
-                              <a.icon className={`w-4 h-4 ${isAct ? "text-green-400/70" : "text-white/20"}`} />
-                              <span className={`text-[9px] font-bold ${isAct ? "text-green-300/80" : "text-white/20"}`}>{a.bn}</span>
+                              <a.icon className={`w-4 h-4 ${isAct ? "text-indigo-400/70" : "text-white/20"}`} />
+                              <span className={`text-[9px] font-bold ${isAct ? "text-indigo-300/80" : "text-white/20"}`}>{a.bn}</span>
                             </button>
                           );
                         })}
@@ -1130,12 +1333,12 @@ export default function Home() {
                           const isAct = selectedBanglaFont.id === f.id;
                           return (
                             <button key={f.id} onClick={() => { setSelectedBanglaFont(f); setIsGenerated(false); }} className="group text-left" data-testid={`button-font-${f.id}`}>
-                              <div className={`relative p-3 transition-all duration-300 ${isAct ? "scale-[1.02]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(120,180,120,0.08)" : G.panel, border: isAct ? "2px solid rgba(120,180,120,0.2)" : `1px solid ${G.panelBorder}` }}>
+                              <div className={`relative p-3 transition-all duration-300 ${isAct ? "scale-[1.02]" : "opacity-40 hover:opacity-70"}`} style={{ borderRadius: G.rSm, background: isAct ? "rgba(100,100,220,0.08)" : G.panel, border: isAct ? "2px solid rgba(130,120,255,0.2)" : `1px solid ${G.panelBorder}` }}>
                                 <span className="block text-[15px] text-white/80 leading-tight mb-1" style={{ fontFamily: f.family }}>{f.bn}</span>
                                 <span className="text-[8px] font-bold text-white/25">{f.name}</span>
                                 {isAct && (
-                                  <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full flex items-center justify-center" style={{ background: "rgba(120,180,120,0.3)" }}>
-                                    <Check className="w-2 h-2 text-green-400" />
+                                  <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full flex items-center justify-center" style={{ background: "rgba(110,100,255,0.3)" }}>
+                                    <Check className="w-2 h-2 text-indigo-400" />
                                   </div>
                                 )}
                               </div>
@@ -1154,7 +1357,7 @@ export default function Home() {
                         {gridEnabled && (
                           <div className="flex items-center gap-3">
                             <span className="text-[8px] text-white/20 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
-                            <input type="range" min="0.1" max="1" step="0.1" value={gridIntensity} onChange={(e) => { setGridIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-green-500 rounded-full" data-testid="slider-grid-intensity" />
+                            <input type="range" min="0.1" max="1" step="0.1" value={gridIntensity} onChange={(e) => { setGridIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-grid-intensity" />
                             <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(gridIntensity * 100)}%</span>
                           </div>
                         )}
@@ -1165,7 +1368,7 @@ export default function Home() {
                         {grainEnabled && (
                           <div className="flex items-center gap-3">
                             <span className="text-[8px] text-white/20 w-12">{"\u09A4\u09C0\u09AC\u09CD\u09B0\u09A4\u09BE"}</span>
-                            <input type="range" min="0.1" max="1" step="0.1" value={grainIntensity} onChange={(e) => { setGrainIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-green-500 rounded-full" data-testid="slider-grain-intensity" />
+                            <input type="range" min="0.1" max="1" step="0.1" value={grainIntensity} onChange={(e) => { setGrainIntensity(parseFloat(e.target.value)); setIsGenerated(false); }} className="flex-1 h-1 accent-indigo-500 rounded-full" data-testid="slider-grain-intensity" />
                             <span className="text-[8px] text-white/15 font-mono w-6 text-right">{Math.round(grainIntensity * 100)}%</span>
                           </div>
                         )}
@@ -1189,8 +1392,8 @@ export default function Home() {
                             <button onClick={() => setOtvLogoSize(Math.max(40, otvLogoSize - 15))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-smaller">
                               <ZoomOut className="w-3 h-3 text-white/25" />
                             </button>
-                            <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(120,180,120,0.06)" }}>
-                              <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((otvLogoSize - 40) / 180) * 100}%`, background: "linear-gradient(90deg, rgba(80,160,80,0.25), rgba(120,200,120,0.4))" }} />
+                            <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(100,100,220,0.06)" }}>
+                              <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((otvLogoSize - 40) / 180) * 100}%`, background: "linear-gradient(90deg, rgba(100,90,220,0.25), rgba(130,120,255,0.4))" }} />
                             </div>
                             <button onClick={() => setOtvLogoSize(Math.min(220, otvLogoSize + 15))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-logo-bigger">
                               <ZoomIn className="w-3 h-3 text-white/25" />
@@ -1208,9 +1411,9 @@ export default function Home() {
                                   onClick={() => setDragMode(dragMode === "image" ? "logo" : "image")}
                                   className="px-2 py-1 rounded-lg text-[8px] font-bold transition-all"
                                   style={{
-                                    background: dragMode === "image" ? "rgba(80,160,80,0.2)" : G.panel,
-                                    border: `1px solid ${dragMode === "image" ? "rgba(80,160,80,0.4)" : G.panelBorder}`,
-                                    color: dragMode === "image" ? "rgba(120,200,120,0.8)" : "rgba(255,255,255,0.25)",
+                                    background: dragMode === "image" ? "rgba(100,90,220,0.2)" : G.panel,
+                                    border: `1px solid ${dragMode === "image" ? "rgba(100,90,220,0.4)" : G.panelBorder}`,
+                                    color: dragMode === "image" ? "rgba(130,120,255,0.8)" : "rgba(255,255,255,0.25)",
                                   }}
                                   data-testid="button-toggle-drag-mode"
                                 >
@@ -1225,8 +1428,8 @@ export default function Home() {
                               <button onClick={() => setImageZoom(Math.max(0.5, imageZoom - 0.1))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-out">
                                 <ZoomOut className="w-3 h-3 text-white/25" />
                               </button>
-                              <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(120,180,120,0.06)" }}>
-                                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((imageZoom - 0.5) / 1.5) * 100}%`, background: "linear-gradient(90deg, rgba(80,160,80,0.25), rgba(120,200,120,0.4))" }} />
+                              <div className="flex-1 relative h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(100,100,220,0.06)" }}>
+                                <div className="h-full rounded-full transition-all duration-300" style={{ width: `${((imageZoom - 0.5) / 1.5) * 100}%`, background: "linear-gradient(90deg, rgba(100,90,220,0.25), rgba(130,120,255,0.4))" }} />
                               </div>
                               <button onClick={() => setImageZoom(Math.min(2, imageZoom + 0.1))} className="p-1.5 rounded-lg" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }} data-testid="button-image-zoom-in">
                                 <ZoomIn className="w-3 h-3 text-white/25" />
@@ -1240,7 +1443,7 @@ export default function Home() {
 
                     <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r }}>
                       <div className="flex items-center gap-2.5 mb-2">
-                        <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain" style={{ background: "rgba(120,180,120,0.08)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
+                        <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain" style={{ background: "rgba(100,110,200,0.08)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
                         <span className="text-[10px] font-bold text-white/35">OTV {"\u09B2\u09CB\u0997\u09CB \u09B8\u09AC \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u09B8\u09CD\u09AC\u09AF\u09BC\u0982\u0995\u09CD\u09B0\u09BF\u09AF\u09BC"}</span>
                       </div>
                       <p className="text-[8px] text-white/15 leading-relaxed">{"\u0993\u099F\u09BF\u09AD\u09BF \u09B2\u09CB\u0997\u09CB \u09AA\u09CD\u09B0\u09A4\u09BF\u099F\u09BF \u0995\u09BE\u09B0\u09CD\u09A1\u09C7 \u0985\u099F\u09CB\u09AE\u09CD\u09AF\u09BE\u099F\u09BF\u0995 \u09AF\u09CB\u0997 \u09B9\u09AF\u09BC \u2022 \u099F\u09CD\u09B0\u09BE\u09A8\u09CD\u09B8\u09AA\u09CD\u09AF\u09BE\u09B0\u09C7\u09A8\u09CD\u099F \u09AC\u09CD\u09AF\u09BE\u0995\u0997\u09CD\u09B0\u09BE\u0989\u09A8\u09CD\u09A1"}</p>
@@ -1273,7 +1476,7 @@ export default function Home() {
                           <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u0995\u09BE\u09B0\u09CD\u09A1 \u09B8\u09BE\u0987\u099C"}</p>
                           <div className="flex gap-2">
                             {[1080, 1200, 2048].map(s => (
-                              <button key={s} onClick={() => { setExportSize(s); setIsGenerated(false); }} className="flex-1 py-2 text-[9px] font-bold transition-all" style={{ background: exportSize === s ? G.accent : G.panel, border: `1px solid ${exportSize === s ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm, color: exportSize === s ? "rgba(180,220,160,0.9)" : "rgba(255,255,255,0.2)" }} data-testid={`button-size-${s}`}>
+                              <button key={s} onClick={() => { setExportSize(s); setIsGenerated(false); }} className="flex-1 py-2 text-[9px] font-bold transition-all" style={{ background: exportSize === s ? G.accent : G.panel, border: `1px solid ${exportSize === s ? G.accentBorder : G.panelBorder}`, borderRadius: G.rSm, color: exportSize === s ? "rgba(180,175,255,0.9)" : "rgba(255,255,255,0.2)" }} data-testid={`button-size-${s}`}>
                                 {s}x{s}
                               </button>
                             ))}
@@ -1299,7 +1502,7 @@ export default function Home() {
                         ].map((step, i) => (
                           <div key={i} className="flex items-start gap-2.5">
                             <div className="w-5 h-5 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: G.accent, border: `1px solid ${G.accentBorder}` }}>
-                              <span className="text-[7px] text-green-400 font-bold">{i + 1}</span>
+                              <span className="text-[7px] text-indigo-400 font-bold">{i + 1}</span>
                             </div>
                             <p className="text-[10px] text-white/20 leading-relaxed">{step}</p>
                           </div>
@@ -1310,7 +1513,7 @@ export default function Home() {
                     <div className="p-4" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.r }}>
                       <p className="text-[8px] font-bold text-white/15 uppercase mb-2" style={{ letterSpacing: "0.18em" }}>{"\u09AD\u09BE\u09B0\u09CD\u09B6\u09A8"}</p>
                       <p className="text-[10px] text-white/20">OTV Card Maker v4.0 &middot; {templates.length} Templates</p>
-                      <p className="text-[8px] text-white/10 mt-1">Premium Glass UI &middot; otv.online</p>
+                      <p className="text-[8px] text-white/10 mt-1">Liquid Glass Studio &middot; otv.online</p>
                     </div>
                   </motion.div>
                 )}
@@ -1324,10 +1527,10 @@ export default function Home() {
                   style={{ height: 56, borderRadius: G.r }}
                   data-testid="button-generate-card"
                 >
-                  <div className="absolute inset-0 transition-all duration-500" style={{ background: `linear-gradient(135deg, ${G.gold}, #9a8020, ${G.gold})` }} />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(135deg, ${G.goldLight}, ${G.gold}, #b8922a)` }} />
-                  <div className="absolute inset-[1px] opacity-20" style={{ borderRadius: "20px", background: "linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%)" }} />
-                  <div className="absolute -inset-2 rounded-3xl opacity-20 group-hover:opacity-40 blur-2xl transition-all" style={{ background: `linear-gradient(135deg, ${G.gold}, rgba(200,168,50,0.3))` }} />
+                  <div className="absolute inset-0 transition-all duration-500" style={{ background: G.iridescent }} />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: G.iridescentHover }} />
+                  <div className="absolute inset-[1px] opacity-20" style={{ borderRadius: "20px", background: "linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%)" }} />
+                  <div className="absolute -inset-2 rounded-3xl opacity-25 group-hover:opacity-45 blur-2xl transition-all" style={{ background: "linear-gradient(135deg, rgba(212,168,48,0.4), rgba(192,132,252,0.3), rgba(96,165,250,0.3))" }} />
                   <span className="relative z-10 flex items-center justify-center gap-2.5 text-black font-bold text-[13px]">
                     {isGenerating ? (
                       <>
@@ -1346,12 +1549,12 @@ export default function Home() {
 
               <AnimatePresence>
                 {isGenerated && (
-                  <motion.div initial={{ opacity: 0, y: 15, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.94 }} transition={{ type: "spring", stiffness: 300, damping: 25 }} className="p-5" style={{ background: "rgba(80,180,80,0.03)", border: "1px solid rgba(80,180,80,0.12)", borderRadius: G.r, backdropFilter: G.blurSm }}>
+                  <motion.div initial={{ opacity: 0, y: 15, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.94 }} transition={{ type: "spring", stiffness: 300, damping: 25 }} className="p-5" style={{ background: "rgba(100,90,255,0.04)", border: "1px solid rgba(110,100,255,0.14)", borderRadius: G.r, backdropFilter: G.blurSm }}>
                     <div className="flex items-center gap-2.5 mb-4">
-                      <motion.div className="w-6 h-6 rounded-xl bg-green-500/15 flex items-center justify-center" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400 }}>
-                        <Check className="w-3.5 h-3.5 text-green-400" />
+                      <motion.div className="w-6 h-6 rounded-xl bg-indigo-500/15 flex items-center justify-center" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400 }}>
+                        <Check className="w-3.5 h-3.5 text-indigo-400" />
                       </motion.div>
-                      <span className="text-xs font-bold text-green-300">{"\u0995\u09BE\u09B0\u09CD\u09A1 \u09A4\u09C8\u09B0\u09BF! \u09A1\u09BE\u0989\u09A8\u09B2\u09CB\u09A1 \u0995\u09B0\u09C1\u09A8:"}</span>
+                      <span className="text-xs font-bold text-indigo-300">{"\u0995\u09BE\u09B0\u09CD\u09A1 \u09A4\u09C8\u09B0\u09BF! \u09A1\u09BE\u0989\u09A8\u09B2\u09CB\u09A1 \u0995\u09B0\u09C1\u09A8:"}</span>
                     </div>
                     <div className="grid grid-cols-4 gap-2">
                       {[
@@ -1374,16 +1577,16 @@ export default function Home() {
             </motion.div>
 
             <motion.div className="order-1 lg:order-2 lg:sticky lg:top-[64px] lg:self-start" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.08, type: "spring" }}>
-              <div className="p-3 relative" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.rXl, backdropFilter: G.blurSm, boxShadow: "0 12px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(120,180,120,0.03)" }}>
+              <div className="p-3 relative" style={{ background: G.panel, border: `1px solid ${G.panelBorder}`, borderRadius: G.rXl, backdropFilter: G.blurSm, boxShadow: "0 12px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(100,110,220,0.05)" }}>
                 <div className="flex items-center justify-between px-2 mb-2.5">
                   <div className="flex items-center gap-2">
-                    <motion.div className="w-2 h-2 rounded-full" style={{ background: "linear-gradient(135deg, #4ade80, #22c55e)" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
+                    <motion.div className="w-2 h-2 rounded-full" style={{ background: "linear-gradient(135deg, #818cf8, #6366f1)" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
                     <span className="text-[7px] font-bold text-white/10 uppercase" style={{ letterSpacing: "0.2em" }}>{"\u09B2\u09BE\u0987\u09AD \u09AA\u09CD\u09B0\u09BF\u09AD\u09BF\u0989"}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="text-[7px] text-white/8 px-2 py-1 rounded-xl" style={{ background: G.panel, border: `1px solid ${G.panelBorder}` }}>{selectedTemplate.nameBn}</span>
                     {(isDraggingLogo || isDraggingImage) && (
-                      <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-[7px] text-green-400/50 px-2 py-1 rounded-xl" style={{ background: G.accent }}>
+                      <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="text-[7px] text-indigo-400/50 px-2 py-1 rounded-xl" style={{ background: G.accent }}>
                         <Move className="w-3 h-3 inline mr-0.5" />{isDraggingImage ? "\u099B\u09AC\u09BF \u09B8\u09B0\u09BE\u09A8\u09CB..." : "\u09B8\u09B0\u09BE\u09A8\u09CB..."}
                       </motion.span>
                     )}
@@ -1410,10 +1613,10 @@ export default function Home() {
                   <canvas ref={canvasRef} width={CANVAS_SIZE} height={CANVAS_SIZE} className="w-full block" data-testid="canvas-preview" />
                   <AnimatePresence>
                     {isGenerating && (
-                      <motion.div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(10,18,8,0.6)", backdropFilter: "blur(12px)" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      <motion.div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(8,10,20,0.6)", backdropFilter: "blur(12px)" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <div className="flex flex-col items-center gap-4">
-                          <motion.div className="w-10 h-10 rounded-full" style={{ border: "3px solid rgba(80,180,80,0.15)", borderTopColor: "#4ade80" }} animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
-                          <span className="text-[10px] text-green-300 font-semibold">{"\u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F \u09B9\u099A\u09CD\u099B\u09C7..."}</span>
+                          <motion.div className="w-10 h-10 rounded-full" style={{ border: "3px solid rgba(110,100,255,0.15)", borderTopColor: "#818cf8" }} animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
+                          <span className="text-[10px] text-indigo-300 font-semibold">{"\u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F \u09B9\u099A\u09CD\u099B\u09C7..."}</span>
                         </div>
                       </motion.div>
                     )}
@@ -1428,7 +1631,7 @@ export default function Home() {
                 <div className="flex items-center justify-between px-2.5 mt-2.5">
                   <span className="text-[7px] text-white/6 font-mono">{exportSize} &times; {exportSize}</span>
                   <div className="flex items-center gap-1.5">
-                    <img src={otvLogoPath} alt="" className="w-3.5 h-3.5 rounded-md object-contain" style={{ background: "rgba(120,180,120,0.06)", padding: "1px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
+                    <img src={otvLogoPath} alt="" className="w-3.5 h-3.5 rounded-md object-contain" style={{ background: "rgba(100,100,220,0.06)", padding: "1px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
                     <span className="text-[7px] text-white/6" style={{ fontFamily: "'Montserrat', sans-serif" }}>otv.online</span>
                   </div>
                 </div>
@@ -1442,7 +1645,7 @@ export default function Home() {
       <footer className="relative z-10 py-8 mt-6" style={{ borderTop: `1px solid ${G.panelBorder}` }}>
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain opacity-20" style={{ background: "rgba(120,180,120,0.04)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
+            <img src={otvLogoPath} alt="OTV" className="w-7 h-7 rounded-xl object-contain opacity-20" style={{ background: "rgba(100,110,200,0.04)", padding: "2px" }} onError={(e) => { (e.target as HTMLImageElement).src = otvLogoTransparent; }} />
             <span className="text-[9px] text-white/6 font-medium" style={{ fontFamily: "'Montserrat', sans-serif" }}>OTV Card Maker v4.0 &middot; {templates.length} Templates &middot; otv.online</span>
           </div>
           <p className="text-[8px] text-white/4">{"\u09AA\u09CD\u09B0\u09BF\u09AE\u09BF\u09AF\u09BC\u09BE\u09AE \u09A8\u09BF\u0989\u099C \u09AB\u099F\u09CB \u0995\u09BE\u09B0\u09CD\u09A1 \u099C\u09C7\u09A8\u09BE\u09B0\u09C7\u099F\u09B0"}</p>

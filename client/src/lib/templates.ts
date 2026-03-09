@@ -18,6 +18,16 @@ import {
   drawEditorialGrid,
   drawNoiseOverlay,
   drawAccentBar,
+  drawGlassPanel,
+  drawGlowBlobs,
+  drawGlassReflection,
+  drawGradientMesh,
+  drawGlassEdge,
+  drawGlassBadge,
+  drawDecorativeEmoji,
+  drawSparkles,
+  drawGlowRing,
+  drawFloatingOrbs,
   HEADLINE_FONT,
   SANS_FONT,
   BENGALI_FONT,
@@ -57,6 +67,16 @@ export interface CardData {
   grainIntensity?: number;
   textAlign?: "left" | "center" | "right";
   exportSize?: number;
+  colorPreset?: { id: string; name: string; colors: string[]; accent: string };
+  bgPreset?: { id: string; name: string; gradientStops: string[]; glowColors: string[] };
+  glassStyle?: { id: string; name: string; bgOpacity: number; blurLevel: number; edgeColor: string };
+  autoDecorate?: boolean;
+  decorPreset?: string;
+  emojiDensity?: number;
+  glowIntensity?: number;
+  blurIntensity?: number;
+  transparencyLevel?: number;
+  cornerRadius?: number;
 }
 
 export interface TemplateConfig {
@@ -188,6 +208,190 @@ function drawUserTextures(ctx: CanvasRenderingContext2D, data: CardData, w: numb
   if (data.textureEnabled) {
     drawNoiseOverlay(ctx, w, h, 0.02);
   }
+}
+
+export const DECOR_PRESETS: Record<string, {
+  emojis: string[];
+  sparkleCount: number;
+  glowColors: string[];
+  placementStyle: "corners" | "edges" | "scattered" | "top" | "bottom";
+}> = {
+  sparkle: {
+    emojis: ["\u2728", "\u2B50", "\u26A1"],
+    sparkleCount: 18,
+    glowColors: ["rgba(255,215,0,0.3)", "rgba(255,255,255,0.2)"],
+    placementStyle: "scattered",
+  },
+  breaking: {
+    emojis: ["\uD83D\uDEA8", "\u26A0\uFE0F", "\uD83D\uDD34"],
+    sparkleCount: 10,
+    glowColors: ["rgba(255,0,0,0.4)", "rgba(255,100,0,0.3)"],
+    placementStyle: "edges",
+  },
+  social: {
+    emojis: ["\uD83D\uDCAC", "\uD83D\uDD25", "\uD83D\uDC4D"],
+    sparkleCount: 14,
+    glowColors: ["rgba(168,85,247,0.3)", "rgba(236,72,153,0.3)"],
+    placementStyle: "corners",
+  },
+  cute: {
+    emojis: ["\uD83C\uDF38", "\uD83C\uDF3C", "\uD83E\uDD8B"],
+    sparkleCount: 20,
+    glowColors: ["rgba(255,182,193,0.3)", "rgba(255,218,185,0.25)"],
+    placementStyle: "scattered",
+  },
+  editorial: {
+    emojis: ["\uD83D\uDCF0", "\u270D\uFE0F", "\uD83D\uDCDD"],
+    sparkleCount: 8,
+    glowColors: ["rgba(100,150,255,0.2)", "rgba(200,200,200,0.15)"],
+    placementStyle: "corners",
+  },
+  futuristic: {
+    emojis: ["\uD83D\uDE80", "\uD83E\uDD16", "\uD83D\uDD2E"],
+    sparkleCount: 16,
+    glowColors: ["rgba(0,255,200,0.3)", "rgba(0,150,255,0.3)"],
+    placementStyle: "edges",
+  },
+  neon: {
+    emojis: ["\uD83C\uDF1F", "\uD83D\uDCA0", "\uD83D\uDD36"],
+    sparkleCount: 22,
+    glowColors: ["rgba(0,255,255,0.35)", "rgba(255,0,200,0.3)", "rgba(0,255,100,0.25)"],
+    placementStyle: "scattered",
+  },
+  celebration: {
+    emojis: ["\uD83C\uDF89", "\uD83C\uDF8A", "\uD83C\uDF86"],
+    sparkleCount: 24,
+    glowColors: ["rgba(255,215,0,0.3)", "rgba(255,100,50,0.25)", "rgba(200,0,255,0.2)"],
+    placementStyle: "scattered",
+  },
+};
+
+export function drawAutoDecorate(
+  ctx: CanvasRenderingContext2D,
+  data: CardData,
+  w: number,
+  h: number
+) {
+  if (!data.autoDecorate) return;
+
+  const presetName = data.decorPreset || "sparkle";
+  const preset = DECOR_PRESETS[presetName] || DECOR_PRESETS.sparkle;
+  const density = data.emojiDensity ?? 0.5;
+  const glowStr = data.glowIntensity ?? 0.5;
+
+  const emojiCount = Math.round(preset.emojis.length * density * 2);
+  const sparkleCount = Math.round(preset.sparkleCount * density);
+
+  const safeZone = { x1: w * 0.15, y1: h * 0.15, x2: w * 0.85, y2: h * 0.75 };
+
+  type Pos = { x: number; y: number };
+  const positions: Pos[] = [];
+
+  if (preset.placementStyle === "corners") {
+    positions.push(
+      { x: w * 0.08, y: h * 0.06 },
+      { x: w * 0.92, y: h * 0.06 },
+      { x: w * 0.08, y: h * 0.92 },
+      { x: w * 0.92, y: h * 0.92 },
+      { x: w * 0.06, y: h * 0.5 },
+      { x: w * 0.94, y: h * 0.5 },
+    );
+  } else if (preset.placementStyle === "edges") {
+    positions.push(
+      { x: w * 0.05, y: h * 0.15 },
+      { x: w * 0.95, y: h * 0.25 },
+      { x: w * 0.05, y: h * 0.85 },
+      { x: w * 0.95, y: h * 0.75 },
+      { x: w * 0.5, y: h * 0.03 },
+      { x: w * 0.5, y: h * 0.97 },
+    );
+  } else if (preset.placementStyle === "top") {
+    positions.push(
+      { x: w * 0.1, y: h * 0.05 },
+      { x: w * 0.3, y: h * 0.08 },
+      { x: w * 0.7, y: h * 0.06 },
+      { x: w * 0.9, y: h * 0.09 },
+      { x: w * 0.5, y: h * 0.04 },
+      { x: w * 0.15, y: h * 0.12 },
+    );
+  } else if (preset.placementStyle === "bottom") {
+    positions.push(
+      { x: w * 0.1, y: h * 0.88 },
+      { x: w * 0.3, y: h * 0.92 },
+      { x: w * 0.7, y: h * 0.9 },
+      { x: w * 0.9, y: h * 0.85 },
+      { x: w * 0.5, y: h * 0.95 },
+      { x: w * 0.2, y: h * 0.82 },
+    );
+  } else {
+    positions.push(
+      { x: w * 0.06, y: h * 0.08 },
+      { x: w * 0.94, y: h * 0.12 },
+      { x: w * 0.08, y: h * 0.88 },
+      { x: w * 0.92, y: h * 0.85 },
+      { x: w * 0.04, y: h * 0.45 },
+      { x: w * 0.96, y: h * 0.55 },
+      { x: w * 0.12, y: h * 0.25 },
+      { x: w * 0.88, y: h * 0.35 },
+    );
+  }
+
+  for (let i = 0; i < Math.min(emojiCount, positions.length); i++) {
+    const pos = positions[i];
+    const emoji = preset.emojis[i % preset.emojis.length];
+    const size = 28 + (i % 3) * 10;
+    const isInSafeZone = pos.x > safeZone.x1 && pos.x < safeZone.x2 &&
+                          pos.y > safeZone.y1 && pos.y < safeZone.y2;
+    if (!isInSafeZone) {
+      drawDecorativeEmoji(ctx, emoji, pos.x, pos.y, size, 0.5 + density * 0.3, true);
+    }
+  }
+
+  if (sparkleCount > 0) {
+    drawSparkles(ctx, w * 0.02, h * 0.02, w * 0.25, h * 0.2, Math.ceil(sparkleCount / 3), preset.glowColors[0] || "rgba(255,255,255,0.7)");
+    drawSparkles(ctx, w * 0.73, h * 0.78, w * 0.25, h * 0.2, Math.ceil(sparkleCount / 3), preset.glowColors[0] || "rgba(255,255,255,0.7)");
+    if (sparkleCount > 8) {
+      drawSparkles(ctx, w * 0.75, h * 0.02, w * 0.22, h * 0.15, Math.ceil(sparkleCount / 4), preset.glowColors[1] || "rgba(255,255,255,0.5)");
+    }
+  }
+
+  if (glowStr > 0.3) {
+    const ringCount = glowStr > 0.7 ? 2 : 1;
+    const ringPositions = [
+      { cx: w * 0.1, cy: h * 0.1, r: 35 },
+      { cx: w * 0.9, cy: h * 0.9, r: 28 },
+    ];
+    for (let i = 0; i < ringCount; i++) {
+      const rp = ringPositions[i];
+      drawGlowRing(ctx, rp.cx, rp.cy, rp.r, preset.glowColors[i % preset.glowColors.length], 2);
+    }
+  }
+
+  if (density > 0.5 && glowStr > 0.4) {
+    drawFloatingOrbs(ctx, w, h, preset.glowColors, Math.round(density * 4));
+  }
+}
+
+function applyGlassBackground(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number, fallbackColors: string[]) {
+  const colors = data.bgPreset?.gradientStops || fallbackColors;
+  drawGradientMesh(ctx, w, h, colors);
+  if (data.bgPreset?.glowColors) {
+    drawGlowBlobs(ctx, w, h, data.bgPreset.glowColors, 4, (data.glowIntensity ?? 0.5) * 0.5);
+  }
+}
+
+function getGlassRadius(data: CardData, fallback: number): number {
+  return data.cornerRadius ?? fallback;
+}
+
+function getGlassOpacity(data: CardData, fallback: number): number {
+  const base = data.glassStyle?.bgOpacity ?? fallback;
+  const trans = data.transparencyLevel ?? 0.5;
+  return base * (0.5 + trans * 0.5);
+}
+
+function getGlassEdgeColor(data: CardData, fallback: string): string {
+  return data.glassStyle?.edgeColor || fallback;
 }
 
 function drawSubheadline(ctx: CanvasRenderingContext2D, data: CardData, x: number, y: number, maxWidth: number, color: string): number {
@@ -1491,6 +1695,656 @@ const renderRoyalPurple = makePremiumCard("#0f0020", "#050010", "#9c27b0", "rgba
 const renderFireRed = makePremiumCard("#1a0000", "#0a0000", "#ff1744", "rgba(255,23,68,0.15)", "rgba(255,23,68,0.08)");
 const renderOceanDeep = makePremiumCard("#001030", "#000818", "#0288d1", "rgba(2,136,209,0.2)", "rgba(2,136,209,0.1)");
 
+function renderGlassHeadline(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const colors = data.colorPreset?.colors || ["#0a0a2e", "#1a0040", "#00204a", "#0a0020"];
+  applyGlassBackground(ctx, data, w, h, colors);
+  drawGlowBlobs(ctx, w, h, ["rgba(100,50,255,0.15)", "rgba(0,180,255,0.12)", "rgba(255,50,150,0.1)"], 5, (data.glowIntensity ?? 0.5) * 0.6);
+  drawNoiseOverlay(ctx, w, h, 0.01);
+
+  const r = getGlassRadius(data, 20);
+  const panelX = 50, panelY = h * 0.18, panelW = w - 100, panelH = h * 0.55;
+  drawGlassPanel(ctx, panelX, panelY, panelW, panelH, r, {
+    bgColor: "rgba(255,255,255,0.08)",
+    opacity: getGlassOpacity(data, 0.12),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  drawGlassReflection(ctx, panelX, panelY, panelW, panelH, r);
+
+  drawLogo(ctx, data.channelLogo, 60, 40, 140, 55);
+  drawViaText(ctx, data.viaText, w - 60, 50);
+
+  drawGlassBadge(ctx, data.category, w / 2, panelY + 50, "rgba(255,255,255,0.15)", "#ffffff", "rgba(100,150,255,0.5)", 28);
+
+  ctx.font = `900 64px ${hlFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "center";
+  const endY = wrapText(ctx, data.headline.toUpperCase(), w / 2, panelY + 100, panelW - 80, 80, "center");
+
+  if (data.subheadline) {
+    ctx.font = `500 30px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    wrapText(ctx, data.subheadline, w / 2, endY + 10, panelW - 100, 40, "center");
+  }
+
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, w * 0.15, h * 0.76, w * 0.7, h * 0.2, 12);
+    drawGlassEdge(ctx, w * 0.15, h * 0.76, w * 0.7, h * 0.2, 12, "rgba(255,255,255,0.2)");
+  }
+
+  drawSparkles(ctx, 0, 0, w, h, 15, "rgba(255,255,255,0.7)");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#7c4dff", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassPhotoOverlay(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 0, 0, w, h);
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fillRect(0, 0, w, h);
+  } else {
+    drawGradientMesh(ctx, w, h, ["#0a0a2e", "#1a0040", "#000a20"]);
+  }
+
+  drawGlowBlobs(ctx, w, h, ["rgba(0,100,255,0.08)", "rgba(255,0,150,0.06)"], 3, (data.glowIntensity ?? 0.5) * 0.4);
+
+  const r = getGlassRadius(data, 18);
+  const panelX = 40, panelY = h * 0.55, panelW = w - 80, panelH = h * 0.38;
+  drawGlassPanel(ctx, panelX, panelY, panelW, panelH, r, {
+    bgColor: "rgba(0,0,0,0.3)",
+    opacity: getGlassOpacity(data, 0.2),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  drawGlassReflection(ctx, panelX, panelY, panelW, panelH, r);
+
+  drawLogo(ctx, data.channelLogo, 50, 40, 140, 55);
+  drawViaText(ctx, data.viaText, w - 50, 50);
+
+  drawGlassBadge(ctx, data.category, w / 2, h * 0.12, "rgba(255,255,255,0.2)", "#ffffff", "rgba(255,255,255,0.4)", 26);
+
+  ctx.font = `900 58px ${hlFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  const endY = wrapText(ctx, data.headline.toUpperCase(), panelX + 30, panelY + 30, panelW - 60, 72, "left");
+
+  if (data.subheadline) {
+    ctx.font = `500 26px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.65)";
+    wrapText(ctx, data.subheadline, panelX + 30, endY + 5, panelW - 60, 34, "left");
+  }
+
+  drawSparkles(ctx, panelX, panelY, panelW, panelH, 10, "rgba(255,255,255,0.6)");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#00b0ff", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassQuote(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  applyGlassBackground(ctx, data, w, h, ["#0a1a2e", "#001030", "#0a0a28", "#000820"]);
+  drawGlowBlobs(ctx, w, h, ["rgba(50,100,200,0.12)", "rgba(100,200,255,0.08)"], 3, (data.glowIntensity ?? 0.5) * 0.5);
+  drawNoiseOverlay(ctx, w, h, 0.008);
+
+  const r = getGlassRadius(data, 24);
+  const panelX = 60, panelY = h * 0.12, panelW = w - 120, panelH = h * 0.7;
+  drawGlassPanel(ctx, panelX, panelY, panelW, panelH, r, {
+    bgColor: "rgba(255,255,255,0.06)",
+    opacity: getGlassOpacity(data, 0.1),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  drawGlassReflection(ctx, panelX, panelY, panelW, panelH, r);
+
+  ctx.save();
+  ctx.font = `300 200px Georgia, serif`;
+  ctx.fillStyle = "rgba(100,180,255,0.1)";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("\u201C", panelX + 20, panelY + 10);
+  ctx.restore();
+
+  const quoteText = data.quoteText || data.headline;
+  ctx.font = `700 48px ${bnFont(data)}`;
+  ctx.fillStyle = "#e8f0ff";
+  ctx.textBaseline = "top";
+  const endY = wrapText(ctx, quoteText, panelX + 50, panelY + 100, panelW - 100, 64, "left");
+
+  ctx.save();
+  ctx.font = `300 200px Georgia, serif`;
+  ctx.fillStyle = "rgba(100,180,255,0.1)";
+  ctx.textAlign = "right";
+  ctx.fillText("\u201D", panelX + panelW - 20, endY - 40);
+  ctx.restore();
+
+  drawAccentBar(ctx, panelX + 50, endY + 20, 80, 3, data.highlightColor || "#4fc3f7", true);
+
+  if (data.personName) {
+    ctx.font = `700 28px ${bnFont(data)}`;
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "left";
+    ctx.fillText(data.personName, panelX + 50, endY + 40);
+  }
+  if (data.personTitle) {
+    ctx.font = `400 22px ${SANS_FONT}`;
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillText(data.personTitle, panelX + 50, endY + 74);
+  }
+
+  drawLogo(ctx, data.channelLogo, 50, h - 80, 130, 50);
+  drawSparkles(ctx, 0, 0, w, h * 0.15, 8, "rgba(150,200,255,0.5)");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#4fc3f7", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassBreaking(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  applyGlassBackground(ctx, data, w, h, ["#1a0000", "#2a0500", "#1a0a00", "#0a0000"]);
+  drawGlowBlobs(ctx, w, h, ["rgba(255,0,0,0.15)", "rgba(255,100,0,0.12)", "rgba(255,50,50,0.1)"], 4, (data.glowIntensity ?? 0.5) * 0.7);
+  drawNoiseOverlay(ctx, w, h, 0.015);
+
+  drawAccentBar(ctx, 0, 0, w, 6, "#ff1744", true);
+  const r = getGlassRadius(data, 16);
+
+  const alertPanelW = w * 0.5, alertPanelH = 60;
+  drawGlassPanel(ctx, w / 2 - alertPanelW / 2, 30, alertPanelW, alertPanelH, 30, {
+    bgColor: "rgba(255,0,0,0.25)",
+    opacity: getGlassOpacity(data, 0.3),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  ctx.font = `900 32px ${SANS_FONT}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("BREAKING NEWS", w / 2, 60);
+
+  drawLogo(ctx, data.channelLogo, 50, 110, 140, 55);
+  drawViaText(ctx, data.viaText, w - 50, 120);
+
+  const mainPanelX = 40, mainPanelY = h * 0.2, mainPanelW = w - 80, mainPanelH = h * 0.45;
+  drawGlassPanel(ctx, mainPanelX, mainPanelY, mainPanelW, mainPanelH, r, {
+    bgColor: "rgba(255,30,30,0.08)",
+    opacity: getGlassOpacity(data, 0.12),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+
+  ctx.font = `900 66px ${hlFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  wrapText(ctx, data.headline.toUpperCase(), mainPanelX + 30, mainPanelY + 30, mainPanelW - 60, 82, "left");
+
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, w * 0.1, h * 0.7, w * 0.8, h * 0.25, 10);
+    drawGlassEdge(ctx, w * 0.1, h * 0.7, w * 0.8, h * 0.25, 10, "rgba(255,50,50,0.3)");
+  }
+
+  drawGlowRing(ctx, w * 0.9, h * 0.15, 30, "rgba(255,0,0,0.4)", 2);
+  drawGlowRing(ctx, w * 0.08, h * 0.85, 20, "rgba(255,100,0,0.3)", 2);
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#ff1744", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassPortrait(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  const colors = data.colorPreset?.colors || ["#0a0020", "#1a0040", "#000a30"];
+  applyGlassBackground(ctx, data, w, h, colors);
+  drawGlowBlobs(ctx, w, h, ["rgba(120,50,255,0.12)", "rgba(255,100,200,0.08)"], 3, (data.glowIntensity ?? 0.5) * 0.5);
+  drawNoiseOverlay(ctx, w, h, 0.008);
+
+  if (data.mainPhoto) {
+    const photoR = Math.min(w, h) * 0.18;
+    const photoCx = w / 2, photoCy = h * 0.3;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(120,50,255,0.4)";
+    ctx.shadowBlur = 30;
+    ctx.beginPath();
+    ctx.arc(photoCx, photoCy, photoR + 4, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
+
+    drawCircularImage(ctx, data.mainPhoto, photoCx, photoCy, photoR, "rgba(255,255,255,0.3)", 3);
+    drawGlowRing(ctx, photoCx, photoCy, photoR + 15, "rgba(150,100,255,0.2)", 1.5);
+  }
+
+  const namePanelW = w * 0.7, namePanelH = 180;
+  const namePanelX = (w - namePanelW) / 2, namePanelY = h * 0.48;
+  drawGlassPanel(ctx, namePanelX, namePanelY, namePanelW, namePanelH, getGlassRadius(data, 16), {
+    bgColor: "rgba(255,255,255,0.06)",
+    opacity: getGlassOpacity(data, 0.1),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+
+  ctx.font = `800 40px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.fillText(data.personName || data.headline, w / 2, namePanelY + 30);
+
+  if (data.personTitle) {
+    ctx.font = `400 24px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.fillText(data.personTitle, w / 2, namePanelY + 80);
+  }
+
+  if (data.subheadline) {
+    ctx.font = `500 26px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    wrapText(ctx, data.subheadline, w / 2, namePanelY + 120, namePanelW - 60, 34, "center");
+  }
+
+  if (data.quoteText) {
+    const quotePanelY = h * 0.7;
+    drawGlassPanel(ctx, 60, quotePanelY, w - 120, h * 0.2, 12, {
+      bgColor: "rgba(255,255,255,0.04)",
+      opacity: 0.08,
+    });
+    ctx.font = `600 28px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    wrapText(ctx, `\u201C${data.quoteText}\u201D`, w / 2, quotePanelY + 20, w - 200, 38, "center");
+  }
+
+  drawLogo(ctx, data.channelLogo, 50, 40, 130, 50);
+  drawViaText(ctx, data.viaText, w - 50, 50);
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#b388ff", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassEditorial(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  applyGlassBackground(ctx, data, w, h, ["#0a0a18", "#101028", "#08081a"]);
+  drawEditorialGrid(ctx, 0, 0, w, h, 60, "rgba(100,120,200,0.03)", "down");
+  drawNoiseOverlay(ctx, w, h, 0.01);
+
+  const topPanelH = h * 0.08;
+  drawGlassPanel(ctx, 0, 0, w, topPanelH, 0, {
+    bgColor: "rgba(255,255,255,0.05)",
+    opacity: 0.08,
+    edgeGlow: false,
+    glossyStreak: false,
+  });
+  drawLogo(ctx, data.channelLogo, 30, topPanelH / 2 - 22, 120, 44);
+  drawViaText(ctx, data.viaText, w - 30, topPanelH / 2 - 10);
+
+  drawGlassBadge(ctx, data.category, w / 2, topPanelH + 40, "rgba(255,255,255,0.1)", "#ffffff", "rgba(100,150,255,0.3)", 24);
+
+  const leftPanelW = w * 0.48, rightPanelW = w * 0.44;
+  const contentY = h * 0.15;
+
+  drawGlassPanel(ctx, 30, contentY, leftPanelW, h * 0.5, 14, {
+    bgColor: "rgba(255,255,255,0.05)",
+    opacity: 0.08,
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+
+  ctx.font = `800 50px ${hlFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  const hlEnd = wrapText(ctx, data.headline.toUpperCase(), 55, contentY + 25, leftPanelW - 50, 62, "left");
+
+  if (data.subheadline) {
+    ctx.font = `500 26px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    wrapText(ctx, data.subheadline, 55, hlEnd + 10, leftPanelW - 50, 34, "left");
+  }
+
+  if (data.mainPhoto) {
+    const rightX = w - rightPanelW - 30;
+    drawPhoto(ctx, data, rightX, contentY, rightPanelW, h * 0.5, 14);
+    drawGlassEdge(ctx, rightX, contentY, rightPanelW, h * 0.5, 14, "rgba(255,255,255,0.15)");
+  }
+
+  const bottomY = h * 0.72;
+  drawGlassPanel(ctx, 30, bottomY, w - 60, h * 0.2, 12, {
+    bgColor: "rgba(255,255,255,0.04)",
+    opacity: 0.06,
+    edgeGlow: true,
+  });
+
+  if (data.bulletText) {
+    drawBulletText(ctx, data, 55, bottomY + 15, w - 120, "rgba(255,255,255,0.7)", data.highlightColor || "#82b1ff");
+  } else if (data.quoteText) {
+    ctx.font = `600 26px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.65)";
+    wrapText(ctx, data.quoteText, 55, bottomY + 20, w - 120, 34, "left");
+  }
+
+  drawDateLine(ctx, data, 55, h - 60, "rgba(255,255,255,0.3)");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#82b1ff", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassGlowPoster(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, w, h);
+  if (data.bgPreset?.gradientStops) applyGlassBackground(ctx, data, w, h, ["#000"]);
+  drawGlowBlobs(ctx, w, h, [
+    "rgba(0,255,200,0.12)", "rgba(255,0,180,0.1)", "rgba(0,100,255,0.1)", "rgba(255,200,0,0.06)"
+  ], 6, (data.glowIntensity ?? 0.5) * 0.8);
+  drawNoiseOverlay(ctx, w, h, 0.012);
+  drawFloatingOrbs(ctx, w, h, ["rgba(0,255,200,0.15)", "rgba(255,0,180,0.12)", "rgba(0,150,255,0.15)"], 6);
+
+  const r = getGlassRadius(data, 20);
+  const panelX = 50, panelY = h * 0.25, panelW = w - 100, panelH = h * 0.45;
+  drawGlassPanel(ctx, panelX, panelY, panelW, panelH, r, {
+    bgColor: "rgba(0,0,0,0.3)",
+    opacity: getGlassOpacity(data, 0.15),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  drawGlassReflection(ctx, panelX, panelY, panelW, panelH, r);
+
+  drawLogo(ctx, data.channelLogo, 50, 40, 140, 55);
+  drawViaText(ctx, data.viaText, w - 50, 50);
+
+  drawGlassBadge(ctx, data.category, w / 2, panelY + 40, "rgba(0,255,200,0.2)", "#00ffc8", "rgba(0,255,200,0.5)", 26);
+
+  ctx.font = `900 60px ${hlFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.shadowColor = "rgba(0,255,200,0.3)";
+  ctx.shadowBlur = 15;
+  const endY = wrapText(ctx, data.headline.toUpperCase(), panelX + 30, panelY + 90, panelW - 60, 76, "left");
+  ctx.shadowBlur = 0;
+
+  if (data.subheadline) {
+    ctx.font = `500 28px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    wrapText(ctx, data.subheadline, panelX + 30, endY + 5, panelW - 60, 36, "left");
+  }
+
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, w * 0.12, h * 0.75, w * 0.76, h * 0.2, 10);
+    drawGlassEdge(ctx, w * 0.12, h * 0.75, w * 0.76, h * 0.2, 10, "rgba(0,255,200,0.2)");
+  }
+
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#00ffc8", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassInfo(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  applyGlassBackground(ctx, data, w, h, ["#0a1020", "#081828", "#0a0a20"]);
+  drawGlowBlobs(ctx, w, h, ["rgba(50,120,255,0.1)", "rgba(0,200,150,0.08)"], 3, (data.glowIntensity ?? 0.5) * 0.4);
+  drawNoiseOverlay(ctx, w, h, 0.008);
+
+  drawLogo(ctx, data.channelLogo, 50, 40, 140, 55);
+  drawViaText(ctx, data.viaText, w - 50, 50);
+
+  const headerPanelY = h * 0.1;
+  drawGlassPanel(ctx, 40, headerPanelY, w - 80, h * 0.18, 14, {
+    bgColor: "rgba(255,255,255,0.06)",
+    opacity: 0.1,
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  drawGlassBadge(ctx, data.category, w / 2, headerPanelY + 30, "rgba(50,150,255,0.2)", "#ffffff", "rgba(50,150,255,0.4)", 24);
+
+  ctx.font = `800 44px ${bnFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  wrapText(ctx, data.headline, w / 2, headerPanelY + 70, w - 160, 56, "center");
+
+  const infoY = h * 0.33;
+  const colW = (w - 100) / 2;
+
+  drawGlassPanel(ctx, 40, infoY, colW, h * 0.35, 12, {
+    bgColor: "rgba(255,255,255,0.04)",
+    opacity: 0.07,
+    edgeGlow: true,
+  });
+
+  drawGlassPanel(ctx, 60 + colW, infoY, colW, h * 0.35, 12, {
+    bgColor: "rgba(255,255,255,0.04)",
+    opacity: 0.07,
+    edgeGlow: true,
+  });
+
+  if (data.bulletText) {
+    drawBulletText(ctx, data, 60, infoY + 20, colW - 40, "rgba(255,255,255,0.75)", data.highlightColor || "#4fc3f7");
+  }
+
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, 60 + colW + 10, infoY + 10, colW - 20, h * 0.35 - 20, 8);
+  }
+
+  if (data.quoteText) {
+    const quotePanelY = h * 0.72;
+    drawGlassPanel(ctx, 40, quotePanelY, w - 80, h * 0.16, 12, {
+      bgColor: "rgba(255,255,255,0.04)",
+      opacity: 0.06,
+    });
+    ctx.font = `600 26px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    wrapText(ctx, data.quoteText, w / 2, quotePanelY + 20, w - 160, 34, "center");
+  }
+
+  drawDateLine(ctx, data, 50, h - 70, "rgba(255,255,255,0.3)");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#4fc3f7", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassNeonSocial(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  ctx.fillStyle = "#050008";
+  ctx.fillRect(0, 0, w, h);
+  if (data.bgPreset?.gradientStops) applyGlassBackground(ctx, data, w, h, ["#050008"]);
+  drawGlowBlobs(ctx, w, h, [
+    "rgba(255,0,100,0.15)", "rgba(0,200,255,0.12)", "rgba(180,0,255,0.1)", "rgba(255,200,0,0.08)"
+  ], 5, (data.glowIntensity ?? 0.5) * 0.8);
+  drawNoiseOverlay(ctx, w, h, 0.01);
+
+  drawLogo(ctx, data.channelLogo, 50, 40, 140, 55);
+  drawViaText(ctx, data.viaText, w - 50, 50);
+
+  const chipY = h * 0.12;
+  drawGlassBadge(ctx, data.category, w / 2, chipY, "rgba(255,0,100,0.3)", "#ffffff", "rgba(255,0,100,0.6)", 30);
+
+  const panelX = 40, panelY = h * 0.2, panelW = w - 80, panelH = h * 0.4;
+  drawGlassPanel(ctx, panelX, panelY, panelW, panelH, 18, {
+    bgColor: "rgba(255,255,255,0.06)",
+    opacity: 0.1,
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+
+  ctx.font = `900 58px ${hlFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.shadowColor = "rgba(255,0,100,0.4)";
+  ctx.shadowBlur = 20;
+  wrapText(ctx, data.headline.toUpperCase(), panelX + 30, panelY + 30, panelW - 60, 72, "left");
+  ctx.shadowBlur = 0;
+
+  if (data.subheadline) {
+    ctx.font = `500 28px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    wrapText(ctx, data.subheadline, panelX + 30, panelY + panelH - 80, panelW - 60, 36, "left");
+  }
+
+  if (data.mainPhoto) {
+    drawPhoto(ctx, data, w * 0.08, h * 0.65, w * 0.84, h * 0.28, 12);
+    drawGlassEdge(ctx, w * 0.08, h * 0.65, w * 0.84, h * 0.28, 12, "rgba(255,0,200,0.25)");
+  }
+
+  drawSparkles(ctx, 0, 0, w, h, 20, "rgba(255,200,255,0.6)");
+  drawGlowRing(ctx, w * 0.88, h * 0.1, 25, "rgba(0,200,255,0.4)", 2);
+  drawGlowRing(ctx, w * 0.1, h * 0.92, 18, "rgba(255,0,200,0.3)", 2);
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#ff0064", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassLuxuryGradient(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  applyGlassBackground(ctx, data, w, h, ["#1a1000", "#0a0800", "#1a0a00", "#0d0600"]);
+  drawGlowBlobs(ctx, w, h, ["rgba(212,175,55,0.12)", "rgba(255,200,50,0.08)", "rgba(180,140,40,0.06)"], 4, (data.glowIntensity ?? 0.5) * 0.6);
+  drawNoiseOverlay(ctx, w, h, 0.01);
+
+  if (data.mainPhoto) {
+    const frameX = w * 0.1, frameY = h * 0.08, frameW = w * 0.8, frameH = h * 0.5;
+    drawPhoto(ctx, data, frameX + 4, frameY + 4, frameW - 8, frameH - 8, 10);
+
+    ctx.strokeStyle = "rgba(212,175,55,0.5)";
+    ctx.lineWidth = 3;
+    roundedRect(ctx, frameX, frameY, frameW, frameH, 12);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(255,215,0,0.2)";
+    ctx.lineWidth = 1;
+    roundedRect(ctx, frameX - 5, frameY - 5, frameW + 10, frameH + 10, 14);
+    ctx.stroke();
+
+    drawGlassReflection(ctx, frameX, frameY, frameW, frameH * 0.3, 10);
+  }
+
+  drawLogo(ctx, data.channelLogo, 50, h * 0.62, 130, 50);
+  drawViaText(ctx, data.viaText, w - 50, h * 0.63);
+
+  const textPanelY = h * 0.62;
+  drawGlassPanel(ctx, 40, textPanelY, w - 80, h * 0.28, 14, {
+    bgColor: "rgba(212,175,55,0.05)",
+    opacity: 0.08,
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+
+  drawGlassBadge(ctx, data.category, w / 2, textPanelY + 30, "rgba(212,175,55,0.2)", "#ffd700", "rgba(212,175,55,0.4)", 24);
+
+  ctx.font = `800 50px ${hlFont(data)}`;
+  ctx.fillStyle = "#fff8e1";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "center";
+  wrapText(ctx, data.headline.toUpperCase(), w / 2, textPanelY + 70, w - 160, 62, "center");
+
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#d4af37", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassFrostedQuote(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  applyGlassBackground(ctx, data, w, h, ["#1a1a2e", "#2a2040", "#1a1830", "#101020"]);
+  drawGlowBlobs(ctx, w, h, ["rgba(200,150,255,0.1)", "rgba(150,200,255,0.08)", "rgba(255,180,200,0.06)"], 4, (data.glowIntensity ?? 0.5) * 0.5);
+  drawNoiseOverlay(ctx, w, h, 0.01);
+
+  const r = getGlassRadius(data, 22);
+  const panelX = 40, panelY = h * 0.06, panelW = w - 80, panelH = h * 0.88;
+  drawGlassPanel(ctx, panelX, panelY, panelW, panelH, r, {
+    bgColor: "rgba(255,255,255,0.1)",
+    opacity: getGlassOpacity(data, 0.18),
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  drawGlassReflection(ctx, panelX, panelY, panelW, panelH, 22);
+
+  drawLogo(ctx, data.channelLogo, panelX + 20, panelY + 20, 120, 45);
+  drawViaText(ctx, data.viaText, panelX + panelW - 20, panelY + 25);
+
+  ctx.save();
+  ctx.font = `300 240px Georgia, serif`;
+  ctx.fillStyle = "rgba(200,150,255,0.08)";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.fillText("\u201C", panelX + 20, panelY + 60);
+  ctx.restore();
+
+  const quoteText = data.quoteText || data.headline;
+  ctx.font = `700 52px ${bnFont(data)}`;
+  ctx.fillStyle = "#f0e8ff";
+  ctx.textBaseline = "top";
+  const endY = wrapText(ctx, quoteText, panelX + 60, panelY + 160, panelW - 120, 70, "left");
+
+  drawAccentBar(ctx, panelX + 60, endY + 15, 80, 3, data.highlightColor || "#ce93d8", true);
+
+  if (data.personName) {
+    ctx.font = `700 30px ${bnFont(data)}`;
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "left";
+    ctx.fillText(data.personName, panelX + 60, endY + 35);
+  }
+  if (data.personTitle) {
+    ctx.font = `400 22px ${SANS_FONT}`;
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillText(data.personTitle, panelX + 60, endY + 72);
+  }
+
+  if (data.mainPhoto) {
+    const photoY = Math.max(endY + 100, h * 0.65);
+    const photoH = panelY + panelH - photoY - 20;
+    if (photoH > 60) {
+      drawPhoto(ctx, data, panelX + 20, photoY, panelW - 40, photoH, 10);
+      drawGlassEdge(ctx, panelX + 20, photoY, panelW - 40, photoH, 10, "rgba(200,150,255,0.2)");
+    }
+  }
+
+  drawSparkles(ctx, panelX, panelY, panelW, 120, 8, "rgba(200,180,255,0.5)");
+  drawAccentBar(ctx, 0, h - 5, w, 5, data.highlightColor || "#ce93d8", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
+function renderGlassAiPoster(ctx: CanvasRenderingContext2D, data: CardData, w: number, h: number) {
+  applyGlassBackground(ctx, data, w, h, ["#050510", "#0a0a2e", "#100520", "#050018"]);
+  drawGlowBlobs(ctx, w, h, [
+    "rgba(0,200,255,0.12)", "rgba(255,0,180,0.1)", "rgba(100,255,100,0.06)", "rgba(255,200,0,0.08)"
+  ], 6, (data.glowIntensity ?? 0.5) * 0.7);
+  drawNoiseOverlay(ctx, w, h, 0.01);
+  drawFloatingOrbs(ctx, w, h, [
+    "rgba(0,200,255,0.15)", "rgba(255,0,200,0.12)", "rgba(100,255,150,0.1)", "rgba(255,200,50,0.12)"
+  ], 8);
+
+  drawLogo(ctx, data.channelLogo, 50, 40, 140, 55);
+  drawViaText(ctx, data.viaText, w - 50, 50);
+
+  const mainPanelX = 50, mainPanelY = h * 0.14, mainPanelW = w - 100, mainPanelH = h * 0.5;
+  drawGlassPanel(ctx, mainPanelX, mainPanelY, mainPanelW, mainPanelH, 20, {
+    bgColor: "rgba(255,255,255,0.06)",
+    opacity: 0.1,
+    edgeGlow: true,
+    glossyStreak: true,
+  });
+  drawGlassReflection(ctx, mainPanelX, mainPanelY, mainPanelW, mainPanelH, 20);
+
+  drawGlassBadge(ctx, data.category, w / 2, mainPanelY + 40, "rgba(0,200,255,0.2)", "#00e5ff", "rgba(0,200,255,0.5)", 26);
+
+  ctx.font = `900 56px ${hlFont(data)}`;
+  ctx.fillStyle = "#ffffff";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "center";
+  ctx.shadowColor = "rgba(0,200,255,0.3)";
+  ctx.shadowBlur = 12;
+  const endY = wrapText(ctx, data.headline.toUpperCase(), w / 2, mainPanelY + 90, mainPanelW - 60, 70, "center");
+  ctx.shadowBlur = 0;
+
+  if (data.subheadline) {
+    ctx.font = `500 28px ${bnFont(data)}`;
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    wrapText(ctx, data.subheadline, w / 2, endY + 5, mainPanelW - 80, 36, "center");
+  }
+
+  if (data.mainPhoto) {
+    const photoY = h * 0.68;
+    drawPhoto(ctx, data, w * 0.12, photoY, w * 0.76, h * 0.25, 12);
+    drawGlassEdge(ctx, w * 0.12, photoY, w * 0.76, h * 0.25, 12, "rgba(0,200,255,0.2)");
+  }
+
+  drawSparkles(ctx, 0, 0, w, h, 25, "rgba(200,220,255,0.5)");
+  drawGlowRing(ctx, w * 0.15, h * 0.1, 35, "rgba(0,200,255,0.2)", 2);
+  drawGlowRing(ctx, w * 0.85, h * 0.9, 28, "rgba(255,0,200,0.2)", 2);
+  drawGlowRing(ctx, w * 0.5, h * 0.95, 20, "rgba(100,255,100,0.15)", 1.5);
+
+  drawAccentBar(ctx, 0, h - 5, w, 5, "#00e5ff", true);
+  drawAutoDecorate(ctx, data, w, h);
+  drawOtvWatermark(ctx, data);
+}
+
 export const templates: TemplateConfig[] = [
   {
     id: "jamuna-dark",
@@ -2094,5 +2948,113 @@ export const templates: TemplateConfig[] = [
     accentColor: "#0288d1",
     defaultCategory: "WORLD",
     render: renderOceanDeep,
+  },
+  {
+    id: "glass-headline",
+    name: "Glass Headline",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u09B9\u09C7\u09A1\u09B2\u09BE\u0987\u09A8",
+    previewColors: ["#0a0a2e", "#1a0040"],
+    accentColor: "#7c4dff",
+    defaultCategory: "FEATURE",
+    render: renderGlassHeadline,
+  },
+  {
+    id: "glass-photo-overlay",
+    name: "Glass Photo Overlay",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u09AB\u099F\u09CB \u0993\u09AD\u09BE\u09B0\u09B2\u09C7",
+    previewColors: ["#1a2040", "#0a1020"],
+    accentColor: "#00b0ff",
+    defaultCategory: "NATIONAL",
+    render: renderGlassPhotoOverlay,
+  },
+  {
+    id: "glass-quote",
+    name: "Glass Quote",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u0989\u09A6\u09CD\u09A7\u09C3\u09A4\u09BF",
+    previewColors: ["#0a1a2e", "#001030"],
+    accentColor: "#4fc3f7",
+    defaultCategory: "OPINION",
+    render: renderGlassQuote,
+  },
+  {
+    id: "glass-breaking",
+    name: "Glass Breaking",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u09AC\u09CD\u09B0\u09C7\u0995\u09BF\u0982",
+    previewColors: ["#1a0000", "#2a0500"],
+    accentColor: "#ff1744",
+    defaultCategory: "BREAKING",
+    render: renderGlassBreaking,
+  },
+  {
+    id: "glass-portrait",
+    name: "Glass Portrait",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u09AA\u09CB\u09B0\u09CD\u099F\u09CD\u09B0\u09C7\u099F",
+    previewColors: ["#0a0020", "#1a0040"],
+    accentColor: "#b388ff",
+    defaultCategory: "PROFILE",
+    render: renderGlassPortrait,
+  },
+  {
+    id: "glass-editorial",
+    name: "Glass Editorial",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u098F\u09A1\u09BF\u099F\u09CB\u09B0\u09BF\u09AF\u09BC\u09BE\u09B2",
+    previewColors: ["#0a0a18", "#101028"],
+    accentColor: "#82b1ff",
+    defaultCategory: "OPINION",
+    render: renderGlassEditorial,
+  },
+  {
+    id: "glass-glow-poster",
+    name: "Glass Glow Poster",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u0997\u09CD\u09B2\u09CB \u09AA\u09CB\u09B8\u09CD\u099F\u09BE\u09B0",
+    previewColors: ["#000000", "#001a10"],
+    accentColor: "#00ffc8",
+    defaultCategory: "TRENDING",
+    render: renderGlassGlowPoster,
+  },
+  {
+    id: "glass-info",
+    name: "Glass Info",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u0987\u09A8\u09AB\u09CB",
+    previewColors: ["#0a1020", "#081828"],
+    accentColor: "#4fc3f7",
+    defaultCategory: "NATIONAL",
+    render: renderGlassInfo,
+  },
+  {
+    id: "glass-neon-social",
+    name: "Glass Neon Social",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u09A8\u09BF\u09AF\u09BC\u09A8 \u09B8\u09CB\u09B6\u09CD\u09AF\u09BE\u09B2",
+    previewColors: ["#050008", "#200020"],
+    accentColor: "#ff0064",
+    defaultCategory: "TRENDING",
+    render: renderGlassNeonSocial,
+  },
+  {
+    id: "glass-luxury-gradient",
+    name: "Glass Luxury Gradient",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u09B2\u09BE\u0995\u09CD\u09B8\u09BE\u09B0\u09BF",
+    previewColors: ["#1a1000", "#0d0600"],
+    accentColor: "#d4af37",
+    defaultCategory: "FEATURE",
+    render: renderGlassLuxuryGradient,
+  },
+  {
+    id: "glass-frosted-quote",
+    name: "Glass Frosted Quote",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u09AB\u09CD\u09B0\u09B8\u09CD\u099F\u09C7\u09A1 \u0989\u09A6\u09CD\u09A7\u09C3\u09A4\u09BF",
+    previewColors: ["#1a1a2e", "#2a2040"],
+    accentColor: "#ce93d8",
+    defaultCategory: "OPINION",
+    render: renderGlassFrostedQuote,
+  },
+  {
+    id: "glass-ai-poster",
+    name: "Glass AI Poster",
+    nameBn: "\u0997\u09CD\u09B2\u09BE\u09B8 \u098F\u0986\u0987 \u09AA\u09CB\u09B8\u09CD\u099F\u09BE\u09B0",
+    previewColors: ["#050510", "#0a0a2e"],
+    accentColor: "#00e5ff",
+    defaultCategory: "TECHNOLOGY",
+    render: renderGlassAiPoster,
   },
 ];

@@ -514,3 +514,410 @@ export const BANGLA_FONT_OPTIONS = [
 ] as const;
 
 export type BanglaFontId = typeof BANGLA_FONT_OPTIONS[number]['id'];
+
+export interface GlassPanelOptions {
+  bgColor?: string;
+  opacity?: number;
+  blur?: number;
+  edgeGlow?: boolean;
+  glossyStreak?: boolean;
+}
+
+export function drawGlassPanel(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  w: number, h: number,
+  radius: number,
+  options: GlassPanelOptions = {}
+) {
+  const {
+    bgColor = "rgba(255,255,255,0.12)",
+    opacity = 0.15,
+    edgeGlow = true,
+    glossyStreak = true,
+  } = options;
+
+  ctx.save();
+
+  ctx.shadowColor = "rgba(0,0,0,0.25)";
+  ctx.shadowBlur = 30;
+  ctx.shadowOffsetY = 8;
+  roundedRect(ctx, x, y, w, h, radius);
+  ctx.fillStyle = bgColor;
+  ctx.globalAlpha = opacity / 0.15;
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  roundedRect(ctx, x, y, w, h, radius);
+  ctx.fillStyle = bgColor;
+  ctx.globalAlpha = opacity / 0.15;
+  ctx.fill();
+  ctx.restore();
+
+  if (edgeGlow) {
+    ctx.save();
+    roundedRect(ctx, x, y, w, h, radius);
+    ctx.strokeStyle = "rgba(255,255,255,0.25)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    roundedRect(ctx, x + 1, y + 1, w - 2, h - 2, radius - 1);
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.save();
+  roundedRect(ctx, x, y, w, h, radius);
+  ctx.clip();
+
+  const innerGlow = ctx.createRadialGradient(
+    x + w / 2, y + h / 2, 0,
+    x + w / 2, y + h / 2, Math.max(w, h) * 0.6
+  );
+  innerGlow.addColorStop(0, "rgba(255,255,255,0.06)");
+  innerGlow.addColorStop(1, "transparent");
+  ctx.fillStyle = innerGlow;
+  ctx.fillRect(x, y, w, h);
+
+  if (glossyStreak) {
+    const glossH = h * 0.35;
+    const glossGrad = ctx.createLinearGradient(x, y, x, y + glossH);
+    glossGrad.addColorStop(0, "rgba(255,255,255,0.15)");
+    glossGrad.addColorStop(0.5, "rgba(255,255,255,0.05)");
+    glossGrad.addColorStop(1, "transparent");
+    ctx.fillStyle = glossGrad;
+    ctx.fillRect(x, y, w, glossH);
+  }
+
+  ctx.restore();
+}
+
+export function drawGlowBlobs(
+  ctx: CanvasRenderingContext2D,
+  w: number, h: number,
+  colors: string[],
+  count: number = 4,
+  intensity: number = 0.3
+) {
+  ctx.save();
+  const positions = [
+    { x: 0.2, y: 0.2 },
+    { x: 0.8, y: 0.3 },
+    { x: 0.3, y: 0.7 },
+    { x: 0.7, y: 0.8 },
+    { x: 0.5, y: 0.5 },
+    { x: 0.15, y: 0.5 },
+    { x: 0.85, y: 0.6 },
+    { x: 0.5, y: 0.15 },
+  ];
+
+  for (let i = 0; i < Math.min(count, positions.length); i++) {
+    const color = colors[i % colors.length];
+    const pos = positions[i];
+    const blobR = Math.min(w, h) * (0.25 + (i % 3) * 0.1);
+    const grad = ctx.createRadialGradient(
+      w * pos.x, h * pos.y, 0,
+      w * pos.x, h * pos.y, blobR
+    );
+    grad.addColorStop(0, color);
+    grad.addColorStop(1, "transparent");
+    ctx.globalAlpha = intensity;
+    ctx.fillStyle = grad;
+    ctx.fillRect(
+      w * pos.x - blobR, h * pos.y - blobR,
+      blobR * 2, blobR * 2
+    );
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+export function drawGlassReflection(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  w: number, h: number,
+  radius: number
+) {
+  ctx.save();
+  roundedRect(ctx, x, y, w, h, radius);
+  ctx.clip();
+
+  const streakH = h * 0.12;
+  const streakY = y + h * 0.08;
+  const grad = ctx.createLinearGradient(x, streakY, x + w, streakY + streakH);
+  grad.addColorStop(0, "transparent");
+  grad.addColorStop(0.2, "rgba(255,255,255,0.18)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0.25)");
+  grad.addColorStop(0.8, "rgba(255,255,255,0.18)");
+  grad.addColorStop(1, "transparent");
+
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(
+    x + w / 2, streakY + streakH / 2,
+    w * 0.45, streakH / 2,
+    -0.1, 0, Math.PI * 2
+  );
+  ctx.fill();
+  ctx.restore();
+}
+
+export function drawGradientMesh(
+  ctx: CanvasRenderingContext2D,
+  w: number, h: number,
+  colors: string[]
+) {
+  if (colors.length < 2) return;
+
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, colors[0]);
+  bg.addColorStop(1, colors[colors.length - 1]);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  const meshPoints = [
+    { x: 0, y: 0, r: Math.max(w, h) * 0.7 },
+    { x: w, y: 0, r: Math.max(w, h) * 0.6 },
+    { x: 0, y: h, r: Math.max(w, h) * 0.65 },
+    { x: w, y: h, r: Math.max(w, h) * 0.55 },
+    { x: w * 0.5, y: h * 0.5, r: Math.max(w, h) * 0.5 },
+  ];
+
+  for (let i = 0; i < Math.min(colors.length, meshPoints.length); i++) {
+    const pt = meshPoints[i];
+    const grad = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, pt.r);
+    grad.addColorStop(0, colors[i]);
+    grad.addColorStop(1, "transparent");
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  }
+  ctx.globalAlpha = 1;
+}
+
+export function drawGlassEdge(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  w: number, h: number,
+  radius: number,
+  color: string = "rgba(255,255,255,0.3)"
+) {
+  ctx.save();
+  roundedRect(ctx, x, y, w, h, radius);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  roundedRect(ctx, x + 1, y + 1, w - 2, Math.min(h * 0.3, 40), radius - 1);
+  const edgeGrad = ctx.createLinearGradient(x, y, x, y + Math.min(h * 0.3, 40));
+  edgeGrad.addColorStop(0, "rgba(255,255,255,0.2)");
+  edgeGrad.addColorStop(1, "transparent");
+  ctx.strokeStyle = edgeGrad;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.restore();
+}
+
+export function drawGlassBadge(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number, y: number,
+  bgColor: string,
+  textColor: string,
+  glowColor: string,
+  fontSize: number = 32
+) {
+  ctx.font = `800 ${fontSize}px "Montserrat", "Noto Sans Bengali", sans-serif`;
+  const metrics = ctx.measureText(text);
+  const padX = 28;
+  const padY = 12;
+  const bw = metrics.width + padX * 2;
+  const bh = fontSize + padY * 2;
+  const bx = x - bw / 2;
+  const by = y - bh / 2;
+  const br = bh / 2;
+
+  ctx.save();
+  ctx.shadowColor = glowColor;
+  ctx.shadowBlur = 20;
+  roundedRect(ctx, bx, by, bw, bh, br);
+  ctx.fillStyle = bgColor;
+  ctx.fill();
+  ctx.restore();
+
+  roundedRect(ctx, bx, by, bw, bh, br);
+  ctx.strokeStyle = "rgba(255,255,255,0.3)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  const glossGrad = ctx.createLinearGradient(bx, by, bx, by + bh * 0.5);
+  glossGrad.addColorStop(0, "rgba(255,255,255,0.2)");
+  glossGrad.addColorStop(1, "transparent");
+  ctx.save();
+  roundedRect(ctx, bx, by, bw, bh, br);
+  ctx.clip();
+  ctx.fillStyle = glossGrad;
+  ctx.fillRect(bx, by, bw, bh * 0.5);
+  ctx.restore();
+
+  ctx.fillStyle = textColor;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, x, y + 1);
+}
+
+export function drawDecorativeEmoji(
+  ctx: CanvasRenderingContext2D,
+  emoji: string,
+  x: number, y: number,
+  size: number = 40,
+  opacity: number = 0.7,
+  glow: boolean = true
+) {
+  ctx.save();
+
+  if (glow) {
+    const bubbleR = size * 0.7;
+    const bubbleGrad = ctx.createRadialGradient(x, y, 0, x, y, bubbleR);
+    bubbleGrad.addColorStop(0, "rgba(255,255,255,0.12)");
+    bubbleGrad.addColorStop(0.7, "rgba(255,255,255,0.05)");
+    bubbleGrad.addColorStop(1, "transparent");
+    ctx.fillStyle = bubbleGrad;
+    ctx.beginPath();
+    ctx.arc(x, y, bubbleR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(x, y, bubbleR * 0.85, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = opacity;
+  ctx.font = `${size}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(emoji, x, y);
+
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+export function drawSparkles(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  w: number, h: number,
+  count: number = 12,
+  color: string = "rgba(255,255,255,0.8)"
+) {
+  ctx.save();
+  const seed = (x * 7 + y * 13 + w * 3) % 1000;
+  for (let i = 0; i < count; i++) {
+    const hash = ((seed + i * 137) % 997) / 997;
+    const hash2 = ((seed + i * 251) % 991) / 991;
+    const sx = x + hash * w;
+    const sy = y + hash2 * h;
+    const sparkSize = 2 + hash * 4;
+
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.4 + hash2 * 0.6;
+
+    ctx.beginPath();
+    ctx.moveTo(sx, sy - sparkSize);
+    ctx.lineTo(sx + sparkSize * 0.3, sy - sparkSize * 0.3);
+    ctx.lineTo(sx + sparkSize, sy);
+    ctx.lineTo(sx + sparkSize * 0.3, sy + sparkSize * 0.3);
+    ctx.lineTo(sx, sy + sparkSize);
+    ctx.lineTo(sx - sparkSize * 0.3, sy + sparkSize * 0.3);
+    ctx.lineTo(sx - sparkSize, sy);
+    ctx.lineTo(sx - sparkSize * 0.3, sy - sparkSize * 0.3);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+export function drawGlowRing(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number,
+  radius: number,
+  color: string,
+  width: number = 3
+) {
+  ctx.save();
+
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 15;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.globalAlpha = 0.6;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.lineWidth = 1;
+  ctx.globalAlpha = 0.4;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius - width, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+export function drawFloatingOrbs(
+  ctx: CanvasRenderingContext2D,
+  w: number, h: number,
+  colors: string[],
+  count: number = 6
+) {
+  ctx.save();
+  const orbPositions = [
+    { x: 0.12, y: 0.15, s: 0.06 },
+    { x: 0.88, y: 0.22, s: 0.04 },
+    { x: 0.75, y: 0.75, s: 0.05 },
+    { x: 0.2, y: 0.82, s: 0.035 },
+    { x: 0.55, y: 0.12, s: 0.03 },
+    { x: 0.4, y: 0.65, s: 0.045 },
+    { x: 0.65, y: 0.45, s: 0.025 },
+    { x: 0.1, y: 0.5, s: 0.04 },
+  ];
+
+  for (let i = 0; i < Math.min(count, orbPositions.length); i++) {
+    const pos = orbPositions[i];
+    const color = colors[i % colors.length];
+    const orbR = Math.min(w, h) * pos.s;
+    const ox = w * pos.x;
+    const oy = h * pos.y;
+
+    const grad = ctx.createRadialGradient(
+      ox - orbR * 0.3, oy - orbR * 0.3, 0,
+      ox, oy, orbR
+    );
+    grad.addColorStop(0, "rgba(255,255,255,0.25)");
+    grad.addColorStop(0.4, color);
+    grad.addColorStop(1, "transparent");
+
+    ctx.globalAlpha = 0.4;
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(ox, oy, orbR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 0.3;
+    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(ox, oy, orbR * 0.9, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
